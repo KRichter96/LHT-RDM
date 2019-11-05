@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Parts</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="projects"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+        <ion-button routerLink="/login" routerDirection="root">
+          <ion-icon slot="icon-only" name="log-out"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+  <ion-list>
+
+    <ion-item-sliding *ngFor="let item of data | slice: 0:30; trackBy: trackByIdNo">
+      <ion-item>
+        <ion-label>{{ item.identificationNumber }}</ion-label>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="danger">Delete</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+  </ion-list>
+
+
+<!--
+  <ion-list>
+    <ion-item-sliding #slide *ngFor="let part of data | slice: 0:30; trackBy: trackByIdNo">
+      <app-item [part]="part" (openDetails)="onOpenDetails($event)"></app-item>
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="onDelete(part, slide)">
+          <ion-text
+            color="light"
+            class="status-icon lh-icon lh-icon-delete"
+          ></ion-text>
+          <ion-text color="light">Delete</ion-text>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+-->
+</ion-content>
+
+<ion-footer>
+    
+  <ion-toolbar>
+    <ion-tabs>
+      <ion-tab-bar slot="bottom" color="primary">
+        <ion-tab-button (click)="onClean()" class="footer-button">
+          <ion-icon size="large" name="close-circle"></ion-icon>
+          <ion-label color="light">Reset</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button (click)="onAddItem()" class="footer-button">
+          <ion-icon size="large" name="md-add"></ion-icon>
+          <ion-label color="light">Add</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button (click)="onSync()" class="footer-button">
+          <ion-icon size="large" name="cloud-upload"></ion-icon>
+          <ion-label color="light">Synchronize</ion-label>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+    
+  </ion-toolbar>
+</ion-footer>
