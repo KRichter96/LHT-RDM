@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-parts',
@@ -9,7 +11,7 @@ export class PartsPage implements OnInit {
 
   data: any;
 
-  constructor() { 
+  constructor(private router: Router) { 
   }
 
   ngOnInit() {
@@ -17,7 +19,11 @@ export class PartsPage implements OnInit {
       this.data = json;
     });
   }
-  
+
+  openDetail() {
+    //this.router.navigate("/part-detail");
+  }
+
   onSync() {
     
   }

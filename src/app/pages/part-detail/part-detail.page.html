@@ -1,6 +1,14 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>part-detail</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="projects"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+        <ion-button routerLink="/login" routerDirection="root">
+          <ion-icon slot="icon-only" name="log-out"></ion-icon>
+        </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

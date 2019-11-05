@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PartDetailPage implements OnInit {
 
+  identificationNumber =  null;
+
   constructor() { }
 
   ngOnInit() {
