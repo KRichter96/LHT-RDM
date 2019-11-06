@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectModel } from 'src/app/models/project/ProjectModel';
 import { ServerRepositoryService } from 'src/app/services/server/serverrepository.service';
-import { PartModel } from 'src/app/models/part/partmodel';
 
 @Component({
   selector: 'app-projects',
@@ -14,11 +13,11 @@ export class ProjectsPage implements OnInit {
   constructor(private serverRepoService : ServerRepositoryService) { }
 
   projects: Observable<ProjectModel>;
+  projectTitle: Observable<String>;
 
   ngOnInit() {
     this.serverRepoService.getData().then(prejectModelObj => {
       this.projects = prejectModelObj;
     });
   }
-
 }
