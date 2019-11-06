@@ -50,7 +50,7 @@
       "id" : "1",
       "projectId" : "90jreg0r9jg"
     }, {
-      "counterId" : 0,
+      "counterId" : 1,
       "parentId" : "-1",
       "nomenclature" : "",
       "category" : "",
@@ -97,7 +97,7 @@
       "id" : "2",
       "projectId" : "90jreg0r9jg"
     }, {
-      "counterId" : 0,
+      "counterId" : 2,
       "parentId" : "-1",
       "nomenclature" : "",
       "category" : "",

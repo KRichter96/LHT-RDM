@@ -14,11 +14,11 @@
 
 <ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let item of data">
-      <ion-item (click)="openDetail" [routerLink]="['/part-detail']" routerLinkActive="router-link-active" routerDirection="forward">
+    <ion-item-sliding *ngFor="let part of parts">
+      <ion-item (click)="openDetail" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward">
         <ion-grid>
           <ion-row>
-            <ion-label><b>{{ item.identificationNumber }}</b> {{ item.description }}</ion-label>
+            <ion-label><b>{{ part.counterId }}</b> {{ part.description }}</ion-label>
           </ion-row>
           
           <ion-row>
@@ -47,17 +47,17 @@
           <ion-row>
             <ion-col size="3">
               <div class="stacked-group">
-                <ion-label>{{ item.partNumber }}</ion-label>
+                <ion-label>{{ part.partNumber }}</ion-label>
               </div>
             </ion-col>
             <ion-col size="3">
               <div class="stacked-group">
-                <ion-label>{{ item.category }}</ion-label>
+                <ion-label>{{ part.category }}</ion-label>
               </div>
             </ion-col>
             <ion-col size="3">
               <div class="stacked-group">
-                <ion-label>{{ item.componentType }}</ion-label>
+                <ion-label>{{ part.componentType }}</ion-label>
               </div>
             </ion-col>
             <ion-col size="2">

@@ -1,7 +1,7 @@
-import { Part } from './partmodel';
+import { PartModel } from './partmodel';
 
 describe('Partmodel', () => {
   it('should create an instance', () => {
-    expect(new Part()).toBeTruthy();
+    expect(new PartModel()).toBeTruthy();
   });
 });

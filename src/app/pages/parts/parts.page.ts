@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router'
-import { from } from 'rxjs';
-import { ProjectrepositoryService } from 'src/app/services/project/projectrepository.service';
+import { from, Observable } from 'rxjs';
+import { ServerRepositoryService } from 'src/app/services/server/serverrepository.service';
+import { PartModel } from 'src/app/models/part/partmodel';
+import { PartDetailPage } from '../part-detail/part-detail.page';
 
 @Component({
   selector: 'app-parts',
@@ -10,16 +12,15 @@ import { ProjectrepositoryService } from 'src/app/services/project/projectreposi
 })
 export class PartsPage implements OnInit {
 
-  data: any;
+  parts: Observable<PartModel>;
 
-  constructor(private router: Router, private repoService : ProjectrepositoryService) { 
+  constructor(private router: Router, private repoService : ServerRepositoryService) { 
+
   }
   
   ngOnInit() {
     this.repoService.getData().then(prejectModelObj => {
-      //hier habe ich dann meine Project Daten
-      // von hier aus in die view schieben
-      this.data = prejectModelObj.parts;
+      this.parts = prejectModelObj.parts;
     });
     
   }
@@ -33,7 +34,7 @@ export class PartsPage implements OnInit {
   }
 
   onAddItem() {
-
+    //this.router.navigate();
   }
 
   onClean() {

@@ -1,7 +1,7 @@
-import { Part } from '../part/partmodel';
+import { PartModel } from '../part/partmodel';
 export class ProjectModel {
     projectTitle: string;
     projectMSN: string;
     projectACType: string;
-    parts: Part[];
+    parts: PartModel[];
 }

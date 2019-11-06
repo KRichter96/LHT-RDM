@@ -1,4 +1,4 @@
-export class Part {
+export class PartModel {
   counterId: number;
   parentId: string;
   nomenclature: string;
