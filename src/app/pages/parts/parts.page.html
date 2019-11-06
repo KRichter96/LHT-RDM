@@ -14,7 +14,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let item of data | slice: 0:30">
+    <ion-item-sliding *ngFor="let item of data">
       <ion-item (click)="openDetail" [routerLink]="['/part-detail']" routerLinkActive="router-link-active" routerDirection="forward">
         <ion-grid>
           <ion-row>
