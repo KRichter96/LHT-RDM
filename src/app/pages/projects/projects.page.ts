@@ -16,8 +16,8 @@ export class ProjectsPage implements OnInit {
   projectTitle: Observable<String>;
 
   ngOnInit() {
-    this.serverRepoService.getData().then(prejectModelObj => {
-      this.projects = prejectModelObj;
+    this.serverRepoService.getData().then(projectModelObj => {
+      this.projects = projectModelObj;
     });
   }
 }

@@ -19,8 +19,8 @@ export class PartsPage implements OnInit {
   }
   
   ngOnInit() {
-    this.repoService.getData().then(prejectModelObj => {
-      this.parts = prejectModelObj.parts;
+    this.repoService.getData().then(projectModelObj => {
+      this.parts = projectModelObj.parts;
     });
     
   }

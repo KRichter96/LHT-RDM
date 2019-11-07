@@ -9,9 +9,35 @@
           <ion-icon slot="icon-only" name="log-out"></ion-icon>
         </ion-button>
     </ion-buttons>
+    <ion-title
+    >{{ (part$ | async)?.identificationNumber || defaultPlaceholder
+      }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+    <ion-grid>
+      <ion-row>
+        <ion-col size="11" no-padding>
+          <div class="title">
+            <div class="identification-number ion-text-nowrap">
+              {{ part?.identificationNumber || defaultPlaceHolder }}
+            </div>
+            <div class="description ion-text-nowrap">
+              {{ part?.description || defaultPlaceHolder }}
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3" offset="1">
+          <div class="stacked-group">
+            <label>PNR</label>
+            <span class="ion-text-nowrap">{{
+              part?.partNumber || defaultPlaceHolder
+            }}</span>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 </ion-content>
