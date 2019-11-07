@@ -21,7 +21,7 @@ export class LocalRepositoryService {
   }
 
   syncToDevice() {
-    
+
   }
 
 }

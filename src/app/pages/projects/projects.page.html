@@ -8,11 +8,11 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
+<!--*ngFor="let project of projects"-->
 <ion-content>
-  <ion-item-sliding *ngFor="let project of projects">
+  <ion-item-sliding>
     <ion-item [routerLink]="'/parts'" routerLinkActive="router-link-active" routerDirection="forward">
-      <ion-label><b>{{ part.counterId }}</b> {{ part.description }}</ion-label>
+      <ion-label></ion-label>
     </ion-item>
   </ion-item-sliding>
 

@@ -16,13 +16,23 @@ export class PartDetailPage implements OnInit {
 
   identificationNumber =  null;
 
-  constructor(private router: Router, private route: ActivatedRoute, private repoService: ServerRepositoryService) { }
+  constructor(private router: Router, private route: ActivatedRoute, private repoService: ServerRepositoryService) { 
+  }
 
   ngOnInit() {
   this.id = this.route.snapshot.paramMap.get('id');
 
-//  this.repoService.getData().then(partModelObj => {
-//    this.partItem = partModelObj.parts[id];
-//  });
+  this.repoService.getData().then(partModelObj => {
+    //this.partItem = partModelObj.parts[this.id];
+    this.waitForData(partModelObj.parts[this.id])
+    //console.log(this.partItem.counterId);
+  });
+  //this.identificationNumber = this.partItem.counterId;
+  }
+
+  waitForData(partItem: PartModel) {
+    this.partItem = partItem;
+    this.identificationNumber = this.partItem.counterId;
+    console.log(this.identificationNumber);
   }
 }

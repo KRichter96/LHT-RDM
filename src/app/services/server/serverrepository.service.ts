@@ -24,6 +24,14 @@ export class ServerRepositoryService {
 			});
   }
 
+  public getProjects() {
+
+  }
+
+  public getParts() {
+    
+  }
+
   public setData() {
 
   }
