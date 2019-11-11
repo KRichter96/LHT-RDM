@@ -32,7 +32,6 @@ export class ProjectsPage implements OnInit {
       if (refresher) {
         refresher.targer.complete();
       }
-      console.log(this.projects[0]);
     })
   }
 }
