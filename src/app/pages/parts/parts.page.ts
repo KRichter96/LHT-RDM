@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router'
+import { Router, ActivatedRoute } from '@angular/router'
 import { from, Observable } from 'rxjs';
 import { ServerRepositoryService } from 'src/app/services/server/serverrepository.service';
 import { PartModel } from 'src/app/models/part/partmodel';
 import { PartDetailPage } from '../part-detail/part-detail.page';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-parts',
@@ -13,16 +14,30 @@ import { PartDetailPage } from '../part-detail/part-detail.page';
 export class PartsPage implements OnInit {
 
   parts: Observable<PartModel>;
+  id: String;
 
-  constructor(private router: Router, private repoService : ServerRepositoryService) { 
+  constructor(private route: ActivatedRoute, private repoService : ServerRepositoryService, private plt: Platform) { 
 
   }
   
   ngOnInit() {
-    this.repoService.getData().then(projectModelObj => {
-      this.parts = projectModelObj.parts;
-    });
-    
+    this.id = this.route.snapshot.paramMap.get('id');
+    this.plt.ready().then(() => {
+      this.loadData(true);
+    })
+  }
+
+  loadData(refresh = false, refresher?) {
+    this.repoService.getParts(refresh, this.id).subscribe(res => {
+      this.parts = res;
+      if (refresher) {
+        refresher.target.complete();
+      }
+    })
+  }
+
+  updatePart(counterId) {
+    this.repoService.updateParts(counterId, {}).subscribe();
   }
   
   openDetail() {
