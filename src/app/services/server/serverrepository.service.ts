@@ -5,7 +5,6 @@ import { NetworkService, ConnectionStatus } from '../network/network.service';
 import { map, tap, catchError } from 'rxjs/operators';
 import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
-import { PartModel } from 'src/app/models/part/partmodel';
 
 const API_STORAGE_KEY = 'specialkey';
 const PART_URL = '../../../assets/data.json';
@@ -65,8 +64,8 @@ export class ServerRepositoryService {
     }
   }
 
-  updatePart(partId, data): Observable<any> {
-    let url = `${PART_URL}/parts/${partId}`;
+  updatePart(data): Observable<any> {
+    let url = `${PART_URL}`; ///parts/${partId}
     console.log(url);
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {

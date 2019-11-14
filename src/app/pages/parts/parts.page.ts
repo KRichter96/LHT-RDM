@@ -5,6 +5,7 @@ import { ServerRepositoryService } from 'src/app/services/server/serverrepositor
 import { PartModel } from 'src/app/models/part/partmodel';
 import { PartDetailPage } from '../part-detail/part-detail.page';
 import { Platform } from '@ionic/angular';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Component({
   selector: 'app-parts',
@@ -17,7 +18,7 @@ export class PartsPage implements OnInit {
   searchTerm: string = "";
   id: any;
 
-  constructor(private route: ActivatedRoute, private repoService : ServerRepositoryService, private plt: Platform) { 
+  constructor(private route: ActivatedRoute, private repoService : ServerRepositoryService, private plt: Platform, private barcodeScanner: BarcodeScanner) { 
 
   }
   
@@ -40,23 +41,29 @@ export class PartsPage implements OnInit {
       if (refresher) {
         refresher.target.complete();
       }
-    })
+    });
   }
 
   onOpenBarcode() {
-
+    this.barcodeScanner.scan().then(barcodeData => {
+      this.searchTerm = barcodeData.text;
+    })
   }
-  
-  onSync(counterId) {
-    this.repoService.updatePart(counterId, 'Parts').subscribe();
+
+  delete() {
+    
+  }
+
+  onClean() {
+    
   }
 
   onAddItem() {
     //this.router.navigate();
   }
-
-  onClean() {
-    
+  
+  onSync() {
+    this.repoService.updatePart('Parts').subscribe();
   }
 
 }
