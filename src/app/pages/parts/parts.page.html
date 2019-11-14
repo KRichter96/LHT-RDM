@@ -1,13 +1,21 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Parts</ion-title>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="projects"></ion-back-button>
     </ion-buttons>
+    <ion-title slot="start">Parts</ion-title>
+    
+    <ion-searchbar slot="start" placeholder="Enter an Ident- or Partnumber" width="100" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()"></ion-searchbar>
+    <ion-buttons class="barcode-buttons" slot="end">
+      <button ion-button clear (click)="onOpenBarcode()">
+        <ion-icon color="light" size="small" name="barcode"></ion-icon>
+      </button>
+    </ion-buttons>
+
     <ion-buttons slot="end">
-        <ion-button routerLink="/login" routerDirection="root">
-          <ion-icon slot="icon-only" name="log-out"></ion-icon>
-        </ion-button>
+      <ion-button routerLink="/login" routerDirection="root">
+        <ion-icon slot="icon-only" name="log-out"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -20,7 +28,7 @@
           <ion-row>
             <ion-label><b>{{ part.counterId }}</b> {{ part.description }}</ion-label>
           </ion-row>
-          
+
           <ion-row>
             <ion-col size="3">
               <div class="stacked-group">

@@ -6,8 +6,8 @@
       "counterId" : 0,
       "parentId" : "-1",
       "nomenclature" : "",
-      "category" : "",
-      "componentType" : "",
+      "category" : "abc",
+      "componentType" : "a1b",
       "ipcReference" : "",
       "ipcItemNumber" : "",
       "preModPNIPC" : "",
@@ -48,7 +48,7 @@
       "statusCreate" : "",
       "statusEdit" : "",
       "id" : "1",
-      "projectId" : "90jreg0r9jg"
+      "projectId" : "1"
     }, {
       "counterId" : 1,
       "parentId" : "-1",
@@ -95,7 +95,7 @@
       "statusCreate" : "",
       "statusEdit" : "",
       "id" : "2",
-      "projectId" : "90jreg0r9jg"
+      "projectId" : "1"
     }, {
       "counterId" : 2,
       "parentId" : "-1",
@@ -142,6 +142,6 @@
       "statusCreate" : "",
       "statusEdit" : "",
       "id" : "3",
-      "projectId" : "90jreg0r9jg"
+      "projectId" : "1"
     } ]
   }

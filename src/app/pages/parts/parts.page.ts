@@ -13,8 +13,9 @@ import { Platform } from '@ionic/angular';
 })
 export class PartsPage implements OnInit {
 
-  parts: Observable<PartModel>;
-  id: String;
+  parts: Observable<PartModel[]>;
+  searchTerm: string = "";
+  id: any;
 
   constructor(private route: ActivatedRoute, private repoService : ServerRepositoryService, private plt: Platform) { 
 
@@ -24,28 +25,30 @@ export class PartsPage implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id');
     this.plt.ready().then(() => {
       this.loadData(true);
+      this.setFilteredItems();
     })
+  }
+
+  setFilteredItems() {
+    this.parts = this.repoService.filterItems(this.searchTerm);
   }
 
   loadData(refresh = false, refresher?) {
     this.repoService.getParts(refresh, this.id).subscribe(res => {
       this.parts = res;
+      console.log(this.parts)
       if (refresher) {
         refresher.target.complete();
       }
     })
   }
 
-  updatePart(counterId) {
-    this.repoService.updateParts(counterId, {}).subscribe();
+  onOpenBarcode() {
+
   }
   
-  openDetail() {
-    //this.router.navigate("/part-detail");
-  }
-  
-  onSync() {
-    
+  onSync(counterId) {
+    this.repoService.updatePart(counterId, 'Parts').subscribe();
   }
 
   onAddItem() {

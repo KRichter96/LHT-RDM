@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
-import { ProjectModel } from 'src/app/models/project/ProjectModel';
 import { NetworkService, ConnectionStatus } from '../network/network.service';
 import { map, tap, catchError } from 'rxjs/operators';
-import { PartModel } from 'src/app/models/part/partmodel';
 import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
+import { PartModel } from 'src/app/models/part/partmodel';
 
 const API_STORAGE_KEY = 'specialkey';
 const PART_URL = '../../../assets/data.json';
@@ -16,6 +15,8 @@ const PROJECT_URL = '../../../assets/projects.json';
   providedIn: 'root'
 })
 export class ServerRepositoryService {
+
+  public items: any = [];
 
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
@@ -58,12 +59,13 @@ export class ServerRepositoryService {
         tap(res => {
           console.log('returns real live API data');
           this.setLocalData('parts', res);
+          this.items = res;
         })
       );
     }
   }
 
-  updateParts(partId, data): Observable<any> {
+  updatePart(partId, data): Observable<any> {
     let url = `${PART_URL}/parts/${partId}`;
     console.log(url);
 
@@ -95,15 +97,20 @@ export class ServerRepositoryService {
     }
   }
   
+  filterItems(searchTerm) {
+    return this.items.filter(item => {
+      return item.category.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 || item.componentType.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+    });
+  }
 
-   //Save result of API requests
-   private setLocalData(key, data) {
+  //Save result of API requests
+  private setLocalData(key, data) {
     this.storage.set(`${API_STORAGE_KEY}-${key}`, data);
   }
 
   //Get cached API result
   private getLocalData(key) {
     console.log("return local data");
-    return this.storage.set(`${API_STORAGE_KEY}-${key}`, null);
+    return this.storage.get(`${API_STORAGE_KEY}-${key}`);
   }
 }
