@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ServerRepositoryService } from 'src/app/services/server/serverrepository.service';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { PartsPage } from '../parts/parts.page';
 import { ActivatedRoute, Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-part-detail',
@@ -14,25 +13,23 @@ export class PartDetailPage implements OnInit {
   partItem: PartModel;
   id: string;
 
-  identificationNumber =  null;
-
-  constructor(private router: Router, private route: ActivatedRoute, private repoService: ServerRepositoryService) { 
-  }
+  constructor(
+  private router: Router,
+  private activatedRoute: ActivatedRoute,
+  private repoService: ServerRepositoryService
+  ) { }
 
   ngOnInit() {
-  this.id = this.route.snapshot.paramMap.get('id');
-
+  this.id = this.activatedRoute.snapshot.paramMap.get('id');
   this.repoService.getData().then(partModelObj => {
-    //this.partItem = partModelObj.parts[this.id];
     this.waitForData(partModelObj.parts[this.id])
-    //console.log(this.partItem.counterId);
   });
-  //this.identificationNumber = this.partItem.counterId;
   }
 
   waitForData(partItem: PartModel) {
     this.partItem = partItem;
-    this.identificationNumber = this.partItem.counterId;
-    console.log(this.identificationNumber);
+  }
+  onSave() {
+  console.log("data saved");
   }
 }
