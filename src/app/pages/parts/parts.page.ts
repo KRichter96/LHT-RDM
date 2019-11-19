@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router'
 import { from, Observable } from 'rxjs';
-import { ServerRepositoryService } from 'src/app/services/server/serverrepository.service';
 import { PartModel } from 'src/app/models/part/partmodel';
 import { PartDetailPage } from '../part-detail/part-detail.page';
-import { Platform } from '@ionic/angular';
+import { Platform, AlertController, ToastController } from '@ionic/angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { BarcodeService } from 'src/app/services/barcode/barcode.service';
+import { PartService } from 'src/app/services/part/part.service';
 
 @Component({
   selector: 'app-parts',
@@ -18,7 +19,7 @@ export class PartsPage implements OnInit {
   searchTerm: string = "";
   id: any;
 
-  constructor(private route: ActivatedRoute, private repoService : ServerRepositoryService, private plt: Platform, private barcodeScanner: BarcodeScanner) { 
+  constructor(private partService: PartService,private barcodeService: BarcodeService, private toastCtrl: ToastController, private alertCtrl: AlertController,private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner) { 
 
   }
   
@@ -26,33 +27,65 @@ export class PartsPage implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id');
     this.plt.ready().then(() => {
       this.loadData(true);
-      this.setFilteredItems();
+      this.setSearchedItems();
     })
   }
 
-  setFilteredItems() {
-    this.parts = this.repoService.filterItems(this.searchTerm);
+  setSearchedItems() {
+    this.parts = this.partService.searchItems(this.searchTerm);
   }
 
   loadData(refresh = false, refresher?) {
-    this.repoService.getParts(refresh, this.id).subscribe(res => {
+    this.partService.getParts(refresh, this.id).subscribe(res => {
       this.parts = res;
-      console.log(this.parts)
       if (refresher) {
         refresher.target.complete();
       }
     });
   }
 
-  onOpenBarcode() {
-    this.barcodeScanner.scan().then(barcodeData => {
-      this.searchTerm = barcodeData.text;
-    })
+  scanPartIdentTag() {
+    this.searchTerm = this.barcodeService.scanPartIdentTag();
   }
 
-  delete() {
-    
-  }
+  async deletePart(i: number) {
+    let alert = await this.alertCtrl.create({
+      header: 'Reason for removal',
+      message: 'Please describe your reason for removing this part',
+      inputs: [{
+        name: 'reason',
+        placeholder: 'Reason for deletion',
+        type: 'text'
+      }],
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+
+        }
+      },
+      {
+        text: 'Ok',
+        handler: (alertData) => {
+          if (alertData.reason) {  
+            this.parts[i].remarksRemoval = true;
+            this.parts[i].reasonRemoval = alertData.reason;
+            return true;
+          }
+          else {
+            let toast = this.toastCtrl.create({
+              message: "Please enter a reason!",
+              duration: 3000,
+              position: "bottom"
+            });
+            toast.then(toast => toast.present());
+            return false;
+          }
+        }
+      }]
+    });
+    await alert.present();
+   }
 
   onClean() {
     
@@ -63,7 +96,7 @@ export class PartsPage implements OnInit {
   }
   
   onSync() {
-    this.repoService.updatePart('Parts').subscribe();
+    this.partService.updatePart('Parts').subscribe();
   }
 
 }

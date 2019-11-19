@@ -5,10 +5,10 @@
     </ion-buttons>
     <ion-title slot="start">Parts</ion-title>
     
-    <ion-searchbar slot="start" placeholder="Enter an Ident- or Partnumber" width="100" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()"></ion-searchbar>
+    <ion-searchbar slot="start" placeholder="Enter an Ident- or Partnumber" width="100" [(ngModel)]="searchTerm" (ionChange)="setSearchedItems()"></ion-searchbar>
     <ion-buttons class="barcode-buttons" slot="end">
-      <ion-button clear (click)="onOpenBarcode()">
-        <ion-icon color="light" size="small" name="barcode"></ion-icon>
+      <ion-button clear (click)="scanPartIdentTag()">
+        <ion-icon name="barcode"></ion-icon>
       </ion-button>
     </ion-buttons>
 
@@ -22,10 +22,10 @@
 
 <ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let part of parts">
+    <ion-item-sliding *ngFor="let part of parts; let i = index">
       <ion-item (click)="openDetail" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward">
         
-        <div *ngIf="parts?.length < 1">
+        <div *ngIf="!part">
           <hr><p>No results found :(</p>
         </div>
         
@@ -74,14 +74,17 @@
               </div>
             </ion-col>
             <ion-col size="2">
-              <ion-label>-</ion-label>
+              <ion-label *ngIf="!part.remarksRemoval && !part.statusEdit && !part.statusCreate">-</ion-label>
+              <ion-icon *ngIf="part.remarksRemoval" name="remove-circle"></ion-icon>
+              <ion-icon *ngIf='part.statusEdit === "1"' name="refresh-circle"></ion-icon>
+              <ion-icon *ngIf="part.statusCreate" name="add-circle"></ion-icon>
             </ion-col>
           </ion-row>
         </ion-grid>
       </ion-item>
 
       <ion-item-options side="end">
-        <ion-item-option (click)="delete()" color="danger">
+        <ion-item-option (click)="deletePart(i)" color="danger">
           <ion-icon name="trash"></ion-icon>
           <ion-label>Delete</ion-label>
         </ion-item-option>
@@ -100,7 +103,7 @@
           <ion-label color="light">Reset</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button (click)="onAddItem()" class="footer-button">
+        <ion-tab-button (click)="onAddItem()" class="footer-button" [routerLink]="'/part-detail/-1'" routerLinkActive="router-link-active" routerDirection="forward">
           <ion-icon size="large" name="md-add"></ion-icon>
           <ion-label color="light">Add</ion-label>
         </ion-tab-button>

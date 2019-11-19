@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProjectModel } from 'src/app/models/project/ProjectModel';
-import { ServerRepositoryService } from 'src/app/services/server/serverrepository.service';
 import { Platform } from '@ionic/angular';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-projects',
@@ -11,7 +11,7 @@ import { Platform } from '@ionic/angular';
 })
 export class ProjectsPage implements OnInit {
 
-  constructor(private repoService: ServerRepositoryService, private plt: Platform) { }
+  constructor(private plt: Platform, private projectService: ProjectService) { }
 
   projects: Observable<ProjectModel>;
   projectTitle: Observable<String>;
@@ -27,11 +27,19 @@ export class ProjectsPage implements OnInit {
   }
 
   loadData(refresh = false, refresher?) {
+    this.projectService.getProjects(refresh).subscribe(res => {
+      this.projects = res;
+      if (refresher) {
+        refresher.targer.complete();
+      }
+    });
+    /*
     this.repoService.getProjects(refresh).subscribe(res => {
       this.projects = res;
       if (refresher) {
         refresher.targer.complete();
       }
     })
+    */
   }
 }
