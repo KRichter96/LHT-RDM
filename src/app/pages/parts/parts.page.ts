@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router'
-import { from, Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router'
+import { Observable } from 'rxjs';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { PartDetailPage } from '../part-detail/part-detail.page';
 import { Platform, AlertController, ToastController } from '@ionic/angular';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 
@@ -19,8 +17,9 @@ export class PartsPage implements OnInit {
   searchTerm: string = "";
   id: any;
 
-  constructor(private partService: PartService,private barcodeService: BarcodeService, private toastCtrl: ToastController, private alertCtrl: AlertController,private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner) { 
-
+  constructor(private partService: PartService,private barcodeService: BarcodeService, private toastCtrl: ToastController, 
+    private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeService) { 
+  
   }
   
   ngOnInit() {
@@ -38,6 +37,7 @@ export class PartsPage implements OnInit {
   loadData(refresh = false, refresher?) {
     this.partService.getParts(refresh, this.id).subscribe(res => {
       this.parts = res;
+      console.log(this.parts);
       if (refresher) {
         refresher.target.complete();
       }
@@ -96,7 +96,7 @@ export class PartsPage implements OnInit {
   }
   
   onSync() {
-    this.partService.updatePart('Parts').subscribe();
+    //this.partService.updatePart('Parts').subscribe();
   }
 
 }
