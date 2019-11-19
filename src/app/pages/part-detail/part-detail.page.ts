@@ -53,7 +53,7 @@ export class PartDetailPage implements OnInit {
     //this.partItem.statusEdit = true;
     //console.log(this.partItem.statusEdit);
   }
-  onSave(){
-    console.log("saved?");
+  onSave(data) {
+    this.partService.updatePart(data).subscribe();
   }
 }
