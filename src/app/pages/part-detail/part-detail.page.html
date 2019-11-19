@@ -22,23 +22,23 @@
           <ion-text color="primary"><h1 class="ion-margin-start header">Part Information</h1></ion-text>
           <ion-item>
             <ion-label position="floating" color="dark">ID:</ion-label>
-            <ion-input>{{ partItem.counterId }}</ion-input>
+            <ion-input [(ngModel)]="partItem.counterId"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating" color="dark">Description</ion-label>
+            <ion-label position="floating" color="dark">Description:</ion-label>
             <ion-input> </ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating" color="dark">Serial Number</ion-label>
-            <ion-input>{{ partItem.serialNo }}</ion-input>
+            <ion-label position="floating" color="dark">Serial Number:</ion-label>
+            <ion-input [(ngModel)]="partItem.serialNo"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating" color="dark">Pre Mod Weight</ion-label>
-            <ion-input>{{ partItem.preModWeight }}</ion-input>
+            <ion-label position="floating" color="dark">Pre Mod Weight:</ion-label>
+            <ion-input [(ngModel)]="partItem.preModWeight"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating" color="dark">Post Mod Weight</ion-label>
-            <ion-input>{{ partItem.postModWeight }}</ion-input>
+            <ion-label position="floating" color="dark">Post Mod Weight:</ion-label>
+            <ion-input [(ngModel)]="partItem.postModWeight"></ion-input>
           </ion-item>
         </ion-col>
         <ion-col>
@@ -47,16 +47,16 @@
             Position Information
             </h1></ion-text>
           <ion-item>
-            <ion-label position="floating" color="dark">Pre Mod Position IPC</ion-label>
-            <ion-input>{{ partItem.preModPositionIPC }}</ion-input>
+            <ion-label position="floating" color="dark">Pre Mod Position IPC:</ion-label>
+            <ion-input [(ngModel)]="partItem.preModPositionIPC"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating" color="dark">Rack Location</ion-label>
-            <ion-input>{{ partItem.rackLocation }}</ion-input>
+            <ion-label position="floating" color="dark">Rack Location:</ion-label>
+            <ion-input [(ngModel)]="partItem.rackLocation"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating" color="dark">Rack Number</ion-label>
-            <ion-input>{{ partItem.rackNo }}</ion-input>
+            <ion-label position="floating" color="dark">Rack Number:</ion-label>
+            <ion-input [(ngModel)]="partItem.rackNo"></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -65,5 +65,4 @@
         <ion-icon name="save" size="medium"></ion-icon>
       </ion-button>
     </ion-grid>
-
 </ion-content>

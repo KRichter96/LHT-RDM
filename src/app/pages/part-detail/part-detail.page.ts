@@ -19,13 +19,12 @@ export class PartDetailPage implements OnInit {
   constructor(
   private router: Router,
   private activatedRoute: ActivatedRoute,
-  private repoService: ServerRepositoryService,
   private partService: PartService,
   private plt: Platform
   ) { }
 
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.id = this.activatedRoute.snapshot.paramMap.get('id');
     this.plt.ready().then(() => {
       this.loadData(true);
 
@@ -53,5 +52,8 @@ export class PartDetailPage implements OnInit {
     //this.identificationNumber = this.partItem.counterId;
     //this.partItem.statusEdit = true;
     //console.log(this.partItem.statusEdit);
+  }
+  onSave(){
+    console.log("saved?");
   }
 }
