@@ -35,7 +35,7 @@ export class PartService {
 
   //GO ON HERE
   public updatePart(data, partId): Observable<any> {
-    let url = `${PART_URL}/${partId}`; ///parts/${partId}
+    let url = `${PART_URL}`; ///parts/${partId}
     console.log(url);
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {

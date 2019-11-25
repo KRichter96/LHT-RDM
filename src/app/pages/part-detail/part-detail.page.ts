@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class PartDetailPage implements OnInit {
   id: string;
+  partItem: PartModel;
 
   constructor(private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) { 
   }
@@ -29,7 +30,11 @@ export class PartDetailPage implements OnInit {
     this.partService.getParts(refresh, this.id).subscribe(e => {
       partItem = e[this.id];
       partItem.statusEdit = "1";
+      this.partItem = partItem;
       this.partService.updatePart(partItem, this.id);
     });
+  }
+  onSave(data) {
+    this.partService.updatePart(data, this.id).subscribe();
   }
 }
