@@ -13,15 +13,16 @@ import { Observable } from 'rxjs';
 export class PartDetailPage implements OnInit {
   id: string;
   partItem: PartModel;
+  selectedSegment: string;
 
   constructor(private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) { 
   }
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
+    this.selectedSegment = "comment";
     this.plt.ready().then(() => {
       this.loadData(true);
-      
     })
   }
 
@@ -37,4 +38,9 @@ export class PartDetailPage implements OnInit {
   onSave(data) {
     this.partService.updatePart(data, this.id).subscribe();
   }
+
+  async segmentChanged(event) {
+    this.selectedSegment = event.detail.value;
+  }
+
 }

@@ -1,0 +1,17 @@
+<ion-button (click)="selectImage()">
+  <ion-icon name="add" size="large"></ion-icon>
+  <ion-label>Add Photo</ion-label>
+</ion-button>
+<ion-list>
+  <ion-item *ngFor="let img of images; index as pos" text-wrap>
+    <ion-thumbnail slot="start">
+      <ion-img [src]="img.path"></ion-img>
+    </ion-thumbnail>
+    <ion-label>
+      {{ img.name }}
+    </ion-label>
+    <ion-button slot="end" fill="clear" (click)="deleteImage(img, pos)">
+      <ion-icon slot="icon-only" name="trash"></ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-list>

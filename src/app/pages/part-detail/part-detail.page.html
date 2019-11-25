@@ -66,13 +66,13 @@
     -->
   </ion-grid>
   
-  <ion-segment #segment class="lht-tab-segment" value="comment">
+  <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)">
     <!-- (ionChange)="onSegmentChange($event.detail.value)"-->
     <ion-segment-button class="lht-tab-segment-button" value="comment">
       <ion-icon name="chatbubbles"></ion-icon>
       <ion-label>Comment</ion-label>
     </ion-segment-button>
-    <ion-segment-button class="lht-tab-segment-button" value="attachments">
+    <ion-segment-button class="lht-tab-segment-button" value="photos">
       <ion-icon name="images"></ion-icon>
       <ion-label>Photos</ion-label>
     </ion-segment-button>
@@ -81,5 +81,9 @@
       <ion-label>Findings</ion-label>
     </ion-segment-button>
   </ion-segment>
+  
+  <app-comment *ngIf="selectedSegment === 'comment'"></app-comment>
+  <app-photo *ngIf="selectedSegment === 'photos'"></app-photo>
+  <app-finding *ngIf="selectedSegment === 'findings'"></app-finding>
 
 </ion-content>
