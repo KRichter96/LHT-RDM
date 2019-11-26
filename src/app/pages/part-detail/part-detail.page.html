@@ -1,15 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>part-detail</ion-title>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="projects"></ion-back-button>
-    </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button routerLink="/login" routerDirection="root">
-        <ion-icon slot="icon-only" name="log-out"></ion-icon>
-      </ion-button>
+      <ion-button (click)="onSave()" href="parts/:id">Done</ion-button>
     </ion-buttons>
-    <ion-title></ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -65,23 +59,23 @@
     </ion-button>
     -->
   </ion-grid>
-  
+
   <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)">
     <!-- (ionChange)="onSegmentChange($event.detail.value)"-->
-    <ion-segment-button class="lht-tab-segment-button" value="comment">
+    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="comment">
       <ion-icon name="chatbubbles"></ion-icon>
       <ion-label>Comment</ion-label>
     </ion-segment-button>
-    <ion-segment-button class="lht-tab-segment-button" value="photos">
+    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="photos">
       <ion-icon name="images"></ion-icon>
       <ion-label>Photos</ion-label>
     </ion-segment-button>
-    <ion-segment-button class="lht-tab-segment-button" value="findings">
+    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="findings">
       <ion-icon name="flash"></ion-icon>
       <ion-label>Findings</ion-label>
     </ion-segment-button>
   </ion-segment>
-  
+
   <app-comment *ngIf="selectedSegment === 'comment'"></app-comment>
   <app-photo *ngIf="selectedSegment === 'photos'"></app-photo>
   <app-finding *ngIf="selectedSegment === 'findings'"></app-finding>
