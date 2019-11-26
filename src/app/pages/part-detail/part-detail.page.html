@@ -1,68 +1,83 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>part-detail</ion-title>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="projects"></ion-back-button>
-    </ion-buttons>
     <ion-buttons slot="end">
-        <ion-button routerLink="/login" routerDirection="root">
-          <ion-icon slot="icon-only" name="log-out"></ion-icon>
-        </ion-button>
+      <ion-button (click)="onSave()" href="parts/:id">Done</ion-button>
     </ion-buttons>
-    <ion-title
-    >
-      </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-grid *ngIf="partItem">
-      <ion-row>
-        <ion-col>
-          <ion-text color="primary"><h1 class="ion-margin-start header">Part Information</h1></ion-text>
-          <ion-item>
-            <ion-label position="floating" color="dark">ID:</ion-label>
-            <ion-input [(ngModel)]="partItem.counterId"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating" color="dark">Description:</ion-label>
-            <ion-input> </ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating" color="dark">Serial Number:</ion-label>
-            <ion-input [(ngModel)]="partItem.serialNo"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating" color="dark">Pre Mod Weight:</ion-label>
-            <ion-input [(ngModel)]="partItem.preModWeight"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating" color="dark">Post Mod Weight:</ion-label>
-            <ion-input [(ngModel)]="partItem.postModWeight"></ion-input>
-          </ion-item>
-        </ion-col>
-        <ion-col>
-          <ion-text color="primary">
-            <h1 class="ion-margin-start header">
-            Position Information
-            </h1></ion-text>
-          <ion-item>
-            <ion-label position="floating" color="dark">Pre Mod Position IPC:</ion-label>
-            <ion-input [(ngModel)]="partItem.preModPositionIPC"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating" color="dark">Rack Location:</ion-label>
-            <ion-input [(ngModel)]="partItem.rackLocation"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating" color="dark">Rack Number:</ion-label>
-            <ion-input [(ngModel)]="partItem.rackNo"></ion-input>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-      <ion-button (click)="onSave(partItem)">
-        <ion-label position="floating" >Save</ion-label>
-        <ion-icon name="save" size="medium"></ion-icon>
-      </ion-button>
-    </ion-grid>
+  <ion-grid *ngIf="partItem">
+    <ion-row>
+      <ion-col>
+        <ion-text color="primary"><h1 class="ion-margin-start header">Part Information</h1></ion-text>
+        <ion-item>
+          <ion-label position="floating" color="dark">ID:</ion-label>
+          <ion-input [(ngModel)]="partItem.counterId"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating" color="dark">Description:</ion-label>
+          <ion-input> </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating" color="dark">Serial Number:</ion-label>
+          <ion-input [(ngModel)]="partItem.serialNo"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating" color="dark">Pre Mod Weight:</ion-label>
+          <ion-input [(ngModel)]="partItem.preModWeight"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating" color="dark">Post Mod Weight:</ion-label>
+          <ion-input [(ngModel)]="partItem.postModWeight"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-text color="primary">
+          <h1 class="ion-margin-start header">
+          Position Information
+          </h1></ion-text>
+        <ion-item>
+          <ion-label position="floating" color="dark">Pre Mod Position IPC:</ion-label>
+          <ion-input [(ngModel)]="partItem.preModPositionIPC"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating" color="dark">Rack Location:</ion-label>
+          <ion-input [(ngModel)]="partItem.rackLocation"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating" color="dark">Rack Number:</ion-label>
+          <ion-input [(ngModel)]="partItem.rackNo"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <!--
+    <ion-button (click)="onSave(partItem)" style="height: 100">
+      <ion-label position="floating" >Save</ion-label>
+      <ion-icon name="save" size="medium"></ion-icon>
+    </ion-button>
+    -->
+  </ion-grid>
+
+  <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)">
+    <!-- (ionChange)="onSegmentChange($event.detail.value)"-->
+    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="comment">
+      <ion-icon name="chatbubbles"></ion-icon>
+      <ion-label>Comment</ion-label>
+    </ion-segment-button>
+    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="photos">
+      <ion-icon name="images"></ion-icon>
+      <ion-label>Photos</ion-label>
+    </ion-segment-button>
+    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="findings">
+      <ion-icon name="flash"></ion-icon>
+      <ion-label>Findings</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <app-comment *ngIf="selectedSegment === 'comment'"></app-comment>
+  <app-photo *ngIf="selectedSegment === 'photos'"></app-photo>
+  <app-finding *ngIf="selectedSegment === 'findings'"></app-finding>
+
 </ion-content>
