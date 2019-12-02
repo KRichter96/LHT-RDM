@@ -3,9 +3,21 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="projects"></ion-back-button>
     </ion-buttons>
-    <ion-title slot="start">Parts</ion-title>
+    <ion-title slot="start">RDM</ion-title>
     
-    <ion-searchbar slot="start" placeholder="Enter an Ident- or Partnumber" width="100" [(ngModel)]="searchTerm" (ionChange)="setSearchedItems()"></ion-searchbar>
+    <ion-searchbar slot="start" placeholder="Search/Filter" style="width: 250px" [(ngModel)]="searchTerm" (ionChange)="setSearchedItems()"></ion-searchbar>
+    
+    <ion-select style="width: 20px;" slot="end" style="color: white;" (ionChange)="onChangeFilter($event)">
+      <ion-select-option value="Ident-Nr">Ident-Nr.</ion-select-option>
+      <ion-select-option value="P/N">P/N</ion-select-option>
+      <ion-select-option value="Category">Category</ion-select-option>
+      <ion-select-option value="componentType">Component Type</ion-select-option>
+      <ion-select-option value="Status">Status</ion-select-option>
+      <ion-select-option value="Rack-Nr">Rack-Nr.</ion-select-option>
+      <ion-select-option value="Position">Position</ion-select-option>
+      <ion-select-option value="InstallationRoom">Installation Room</ion-select-option>
+    </ion-select>
+    
     <ion-buttons class="barcode-buttons" slot="end">
       <ion-button clear (click)="scanPartIdentTag()">
         <ion-icon name="barcode"></ion-icon>
@@ -21,43 +33,49 @@
 </ion-header>
 
 <ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="2">
-        <div class="stacked-group">
-          <ion-label>PNR</ion-label>
-        </div>
-      </ion-col>
-      <ion-col size="2">
-          <div class="stacked-group">
-            <ion-label>Nomenclature</ion-label>
-          </div>
-        </ion-col>
-      <ion-col size="2">
-        <div class="stacked-group">
-          <ion-label>Category</ion-label>
-        </div>
-      </ion-col>
-      <ion-col size="2">
-        <div class="stacked-group">
-          <ion-label>Component</ion-label>
-        </div>
-      </ion-col>
-      <ion-col size="2">
-        <div class="stacked-group">
-          <ion-label>Status</ion-label>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  
+  <ion-chip *ngFor="let chip of chips; let i = index" color="primary">
+    <ion-label>{{ chip.FilterObj }}: {{chip.FilterTerm }}</ion-label>
+    <ion-icon name="close-circle" (click)="deleteChip(i, $event)"></ion-icon>
+  </ion-chip>
 
   <ion-list>
+    <ion-list-header>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="2">
+            <div class="stacked-group">
+              <ion-label>P/N</ion-label>
+            </div>
+          </ion-col>
+          <ion-col size="2">
+              <div class="stacked-group">
+                <ion-label>Nomenclature</ion-label>
+              </div>
+            </ion-col>
+          <ion-col size="2">
+            <div class="stacked-group">
+              <ion-label>Category</ion-label>
+            </div>
+          </ion-col>
+          <ion-col size="2">
+            <div class="stacked-group">
+              <ion-label>Component</ion-label>
+            </div>
+          </ion-col>
+          <ion-col size="2">
+            <div class="stacked-group">
+              <ion-label>Status</ion-label>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list-header>
+
+    
     <ion-item-sliding *ngFor="let part of parts; let i = index">
+      <ion-label *ngIf="part?.length">No results found :(</ion-label>
       <ion-item (click)="openDetail" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward">
-        
-        <div *ngIf="!part">
-          <hr><p>No results found :(</p>
-        </div>
         
         <ion-grid>
           <ion-row>
@@ -108,10 +126,6 @@
   <ion-toolbar>
     <ion-tabs>
       <ion-tab-bar slot="bottom" color="primary">
-        <ion-tab-button (click)="onClean()" class="footer-button">
-          <ion-icon size="large" name="close-circle"></ion-icon>
-          <ion-label color="light">Reset</ion-label>
-        </ion-tab-button>
 
         <ion-tab-button (click)="onAddItem()" class="footer-button" [routerLink]="'/part-detail/-1'" routerLinkActive="router-link-active" routerDirection="forward">
           <ion-icon size="large" name="md-add"></ion-icon>

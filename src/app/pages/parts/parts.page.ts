@@ -6,6 +6,8 @@ import { Platform, AlertController, ToastController } from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { filter } from 'rxjs/operators';
+import { Chip } from './Chip';
 
 @Component({
   selector: 'app-parts',
@@ -15,12 +17,14 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 export class PartsPage implements OnInit {
 
   parts: Observable<PartModel[]>;
+  chips: Array<Chip>;
   searchTerm: string = "";
   id: any;
 
-  constructor(private partService: PartService,private barcodeService: BarcodeService, private toastCtrl: ToastController, 
+  constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastController, 
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
     private router: Router) { 
+      this.chips = new Array<Chip>();
   
   }
   
@@ -32,8 +36,77 @@ export class PartsPage implements OnInit {
     })
   }
 
+  onChangeFilter(event) {
+    if (event.target.value == null) { //Durch doppelten Aufruf, da event sicherstellen dass der Filter nur 1mal angewendet wird
+      return;
+    }
+    else if (event.target.value == -1) {
+      this.parts = this.partService.filterItems(this.chips);
+      return;
+    }
+    
+    if (!this.searchTerm) { //Wenn Suchfeld leer
+      event.target.value = null;
+      let toast = this.toastCtrl.create({
+        message: "Please insert something to filter!",
+        duration: 3000,
+        position: "bottom"
+      });
+      toast.then(toast => toast.present());
+    }
+    else {
+      var filterTerm = this.searchTerm;
+      var filterObj = event.target.value;
+      if (!this.chips) { //Wenn kein Filter gesetzt
+        // this.chips = [filterObj + ": " + filterTerm]; //Erstelle Chipsarray
+        let chip = new Chip(filterObj, filterTerm);
+        this.chips.push(chip) //Erstelle Chipsarray
+        this.parts = this.partService.filterItems(this.chips); //Wende Filter an
+      }
+      else { //Wenn Filter bereits gesetzt
+        if (this.chips.length >= 3) {
+          let toast = this.toastCtrl.create({
+            message: "max 3 filter!!!",
+            duration: 3000,
+            position: "bottom"
+          });
+          toast.then(toast => toast.present());
+          return;
+        }
+        for (let i = 0; i < this.chips.length; i++) {
+          if (this.chips[i].equals(this.chips[i], new Chip(filterObj, filterTerm))) {
+            let toast = this.toastCtrl.create({
+              message: "already have this filter!!!",
+              duration: 3000,
+              position: "bottom"
+            });
+            toast.then(toast => toast.present());
+            
+            this.searchTerm = "";
+            event.target.value = null;
+            return;
+          }
+        }
+
+        // this.chips = [...this.chips, filterObj + ": " + filterTerm]; //Füge an Chipsarray, falls bereits Filter gesetzt
+        this.chips.push(new Chip(filterObj, filterTerm)); //Füge an Chipsarray, falls bereits Filter gesetzt
+        this.parts = this.partService.filterItems(this.chips); //Wende Filter an
+      }
+      event.target.value = null; //leere Filterfeld (Select), evt bessere Methode als ion-select?
+    }
+    this.searchTerm = ""; //leere Suchfeld
+  }
+
+  deleteChip(i, event) {
+    if(i > -1) { //Prüfe Index der chips
+      this.chips.splice(i, 1); //Entferne ausgewählten Chip
+    }
+    event.target.value = -1;
+    this.onChangeFilter(event); //Wende Filter an
+  }
+
   setSearchedItems() {
-    this.parts = this.partService.searchItems(this.searchTerm);
+    this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
   }
 
   loadData(refresh = false, refresher?) {
@@ -46,24 +119,22 @@ export class PartsPage implements OnInit {
     });
   }
 
-//DIREKT IN PARTDETAIL
   scanPartIdentTag() {
     //this.searchTerm = this.barcodeService.scanPartIdentTag();
     if (this.plt.is("android") || this.plt.is("ios") || this.plt.is("cordova")) {  // FIX HERE
       this.barcodeScanner.scan().then(barcodeData => {
         this.router.navigate(['/part-detail/' + barcodeData.text]);
         //this.searchTerm = barcodeData.text;
-    })
-  }
-  else {
-    let toast = this.toastCtrl.create({
-      message: "This will only work on a device!",
-      duration: 3000,
-      position: "bottom"
-    });
-    toast.then(toast => toast.present());
-  }
-
+      })
+    }
+    else {
+      let toast = this.toastCtrl.create({
+        message: "This will only work on a device!",
+        duration: 3000,
+        position: "bottom"
+      });
+      toast.then(toast => toast.present());
+    }
   }
 
   async deletePart(i: number) {
@@ -78,9 +149,7 @@ export class PartsPage implements OnInit {
       buttons: [{
         text: 'Cancel',
         role: 'cancel',
-        handler: () => {
-
-        }
+        handler: () => { }
       },
       {
         text: 'Ok',
@@ -103,14 +172,10 @@ export class PartsPage implements OnInit {
       }]
     });
     await alert.present();
-   }
+  }
 
   onClean() {
     
-  }
-
-  onAddItem() {
-    //this.router.navigate();
   }
   
   onSync() {
@@ -118,3 +183,6 @@ export class PartsPage implements OnInit {
   }
 
 }
+
+
+

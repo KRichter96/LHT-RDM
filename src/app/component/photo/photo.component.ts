@@ -5,6 +5,7 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Storage } from '@ionic/storage';
+import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
 
 const STORAGE_KEY = 'my_images';
 
@@ -17,12 +18,13 @@ export class PhotoComponent implements OnInit {
 
   images = [];
 
-  constructor(private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
+  constructor(private partDetail: PartDetailPage,private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
     private toastController: ToastController, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
 
   ngOnInit() {}
 
   async selectImage() {
+    this.partDetail.onSave(null); //Speicher zwischen
     const actionSheet = await this.actionSheetController.create({
       header: "Select Image source",
       buttons: [{
