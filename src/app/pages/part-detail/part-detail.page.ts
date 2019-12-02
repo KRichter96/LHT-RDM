@@ -35,8 +35,10 @@ export class PartDetailPage implements OnInit {
       this.partService.updatePart(partItem, this.id);
     });
   }
-  onSave(data) {
-    this.partService.updatePart(data, this.id).subscribe();
+  onSave() {
+    this.partService.updatePart(this.partItem, this.id).subscribe(e => {
+      this.partItem = e[this.id];
+    });
   }
 
   async segmentChanged(event) {
