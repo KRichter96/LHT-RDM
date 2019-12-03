@@ -1,8 +1,8 @@
 {
-  "name": "aaaaa",
-  "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "name": "RDM App",
+  "version": "0.5.0",
+  "author": "Fortis IT-Services",
+  "homepage": "https://fortis-it.de/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -31,6 +31,7 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^4.7.1",
     "@ionic/storage": "^2.2.0",
+    "cordova": "^9.0.0",
     "cordova-android": "^8.1.0",
     "cordova-ios": "^5.0.1",
     "cordova-plugin-camera": "^4.1.0",
@@ -38,6 +39,7 @@
     "cordova-plugin-network-information": "^2.0.2",
     "cordova-sqlite-storage": "^3.4.0",
     "core-js": "^2.5.4",
+    "ionic": "^5.4.9",
     "ngx-qrcode2": "0.0.9",
     "phonegap-plugin-barcodescanner": "^8.1.0",
     "rxjs": "~6.5.1",

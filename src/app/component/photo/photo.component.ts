@@ -24,7 +24,7 @@ export class PhotoComponent implements OnInit {
   ngOnInit() {}
 
   async selectImage() {
-    this.partDetail.onSave(null); //Speicher zwischen
+    this.partDetail.onSave(); //Speicher zwischen
     const actionSheet = await this.actionSheetController.create({
       header: "Select Image source",
       buttons: [{
@@ -130,7 +130,7 @@ export class PhotoComponent implements OnInit {
         position: 'bottom',
         duration: 3000
     });
-    toast.present();
+    await toast.present();
   }
 
   pathForImage(img) {
