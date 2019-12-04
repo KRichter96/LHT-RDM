@@ -128,10 +128,15 @@ export class PartService {
       )}
     }
     else {
-      console.log("länge 0");
+      console.log("chipsanzahl 0");
+      return this.items;
     }
-
-    return this.retItems;
+    console.log(this.retItems);
+    var o = Observable.create((observer: Subscriber<any>) => {
+      observer.next(this.retItems);
+      observer.complete();
+    });
+    return o;
   }
 
   public searchItems(searchTerm) {
