@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ProjectsPage } from '../projects/projects.page';
 import { AuthenticationService } from 'src/app/services/auth/authentication.service';
 import { ToastController } from '@ionic/angular';
+import { ToastService } from 'src/app/services/toast/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -13,27 +14,19 @@ export class LoginPage implements OnInit {
 
   pwField: string;
 
-  constructor(private router: Router, private authService: AuthenticationService, private toastCtrl: ToastController) { }
+  constructor(private router: Router, private authService: AuthenticationService, private toastCtrl: ToastController,
+    private toastService: ToastService) { }
 
   ngOnInit() {
   }
 
   login() {
+    //this.authService.login();
     if (this.pwField == "Rm2020") {
       this.router.navigate(["projects"]);
     }
     else {
-      let toast = this.toastCtrl.create({
-        message: "Wrong Password, please try again!",
-        duration: 3000,
-        position: "bottom"
-      });
-      toast.then(toast => toast.present());
+      this.toastService.displayToast("Wrong password, please try again!")
     }
   }
-/*
-  login() {
-    this.authService.login();
-  }
-*/
 }

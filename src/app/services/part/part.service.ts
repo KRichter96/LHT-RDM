@@ -36,7 +36,7 @@ export class PartService {
     }
   }
 
-  //GO ON HERE
+  //TODO
   public updatePart(data, partId): Observable<any> {
     let url = `${PART_URL}`; ///parts/${partId}
     console.log(url);
