@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { PartService } from 'src/app/services/part/part.service';
 import { Observable } from 'rxjs';
+import { PartsPage } from '../parts/parts.page';
 
 @Component({
   selector: 'app-part-detail',
@@ -15,15 +16,22 @@ export class PartDetailPage implements OnInit {
   partItem: PartModel;
   selectedSegment: string;
 
-  constructor(private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) { 
+  constructor(private partPage: PartsPage, private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) { 
   }
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
+    if (this.id == "-1") {
+      this.partItem = new PartModel();
+    }
     this.selectedSegment = "comment";
     this.plt.ready().then(() => {
       this.loadData(true);
     })
+  }
+
+  createNewPartItem() {
+    
   }
 
   loadData(refresh = false) {
@@ -32,10 +40,14 @@ export class PartDetailPage implements OnInit {
       partItem = e[this.id];
       partItem.statusEdit = "1";
       this.partItem = partItem;
-      this.partService.updatePart(partItem, this.id);
+      // this.partService.updatePart(partItem, this.id);
     });
   }
   onSave() {
+    if (this.id == "-1") {
+      this.partItem.id = "1001";
+      this.partPage.addNewPartItem(this.partItem);
+    }
     this.partService.updatePart(this.partItem, this.id).subscribe(e => {
       this.partItem = e[this.id];
     });
