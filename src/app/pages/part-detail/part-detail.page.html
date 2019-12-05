@@ -9,55 +9,143 @@
 
 <ion-content>
   <ion-grid *ngIf="partItem">
+    <ion-col>
+      <ion-text color="primary"><h1 class="ion-margin-start header">General Information</h1></ion-text>
+    </ion-col>
     <ion-row>
       <ion-col>
-        <ion-text color="primary"><h1 class="ion-margin-start header">Part Information</h1></ion-text>
         <ion-item>
-          <ion-label position="floating" color="dark">ID:</ion-label>
-          <ion-input [(ngModel)]="partItem.counterId"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating" color="dark">Description:</ion-label>
-          <ion-input> </ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating" color="dark">Serial Number:</ion-label>
-          <ion-input [(ngModel)]="partItem.serialNo"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating" color="dark">Pre Mod Weight:</ion-label>
-          <ion-input [(ngModel)]="partItem.preModWeight"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating" color="dark">Post Mod Weight:</ion-label>
-          <ion-input [(ngModel)]="partItem.postModWeight"></ion-input>
+          <ion-label position="floating" color="dark">Nomenclature:</ion-label>
+          <ion-input> {{partItem.nomenclature}}</ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-text color="primary">
-          <h1 class="ion-margin-start header">
-          Position Information
-          </h1></ion-text>
         <ion-item>
-          <ion-label position="floating" color="dark">Pre Mod Position IPC:</ion-label>
-          <ion-input [(ngModel)]="partItem.preModPositionIPC"></ion-input>
+          <ion-label position="floating" color="dark">Category:</ion-label>
+          <ion-input [(ngModel)]="partItem.category"></ion-input>
         </ion-item>
+      </ion-col>
+      <ion-col>
         <ion-item>
-          <ion-label position="floating" color="dark">Rack Location:</ion-label>
-          <ion-input [(ngModel)]="partItem.rackLocation"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="floating" color="dark">Rack Number:</ion-label>
-          <ion-input [(ngModel)]="partItem.rackNo"></ion-input>
+          <ion-label position="floating" color="dark">Component Type:</ion-label>
+          <ion-input [(ngModel)]="partItem.componentType"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
-    <!--
-    <ion-button (click)="onSave(partItem)" style="height: 100">
-      <ion-label position="floating" >Save</ion-label>
-      <ion-icon name="save" size="medium"></ion-icon>
-    </ion-button>
-    -->
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">IPC Reference:</ion-label>
+          <ion-input [(ngModel)]="partItem.ipcReference"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">IPC Item-Number:</ion-label>
+          <ion-input [(ngModel)]="partItem.ipcItemNumber"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Pre-Mod P/N (IPC):</ion-label>
+          <ion-input [(ngModel)]="partItem.postModPN"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Pre Mod Position (IPC):</ion-label>
+          <ion-input [(ngModel)]="partItem.preModPositionIPC"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Arrangement:</ion-label>
+          <ion-input>TBD??</ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">AMM Removal Task:</ion-label>
+          <ion-input [(ngModel)]="partItem.ammRemovalTask"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">AMM Installation Task:</ion-label>
+          <ion-input [(ngModel)]="partItem.ammInstallTask"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Reason For Removal:</ion-label>
+          <ion-input [(ngModel)]="partItem.reasonRemoval"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Intended Purpose:</ion-label>
+          <ion-input [(ngModel)]="partItem.intendedPurpose"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Install Room/Zone:</ion-label>
+          <ion-input [(ngModel)]="partItem.installZoneRoom"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <<ion-grid *ngIf="partItem">
+  <ion-col>
+    <ion-text color="primary">
+      <h1 class="ion-margin-start header">Removal Related Information</h1></ion-text>
+  </ion-col>
+  <ion-row>
+    <ion-col>
+      <ion-item>
+        <ion-label position="floating" color="dark">Pre-Mod P/N (A/C):</ion-label>
+        <ion-input [(ngModel)]="partItem.preModPNAC"></ion-input>
+      </ion-item>
+    </ion-col>
+    <ion-col>
+      <ion-item>
+        <ion-label position="floating" color="dark">Serial No.:</ion-label>
+        <ion-input [(ngModel)]="partItem.serialNo"></ion-input>
+      </ion-item>
+    </ion-col>
+    <ion-col>
+      <ion-item>
+        <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
+        <ion-input [(ngModel)]="partItem.preModWeight"></ion-input>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-item>
+        <ion-label position="floating" color="dark">Rack Number:</ion-label>
+        <ion-input [(ngModel)]="partItem.rackNo"></ion-input>
+      </ion-item>
+    </ion-col>
+    <ion-col>
+      <ion-item>
+        <ion-label position="floating" color="dark">Rack Location:</ion-label>
+        <ion-input [(ngModel)]="partItem.rackLocation"></ion-input>
+      </ion-item>
+    </ion-col>
+    <ion-col>
+      <ion-item>
+        <ion-label position="floating" color="dark">Remarks Removal:</ion-label>
+        <ion-input>TBD??? remarksMod??</ion-input>
+      </ion-item>
+    </ion-col>
+    </ion-row>
   </ion-grid>
 
   <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)">
