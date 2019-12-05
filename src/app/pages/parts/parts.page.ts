@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router'
-import { from, Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router'
+import { Observable } from 'rxjs';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { PartDetailPage } from '../part-detail/part-detail.page';
 import { Platform, AlertController, ToastController } from '@ionic/angular';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { filter } from 'rxjs/operators';
+import { Chip } from './Chip';
+import { ToastService } from 'src/app/services/toast/toast.service';
 
 @Component({
   selector: 'app-parts',
@@ -15,12 +17,16 @@ import { PartService } from 'src/app/services/part/part.service';
 })
 export class PartsPage implements OnInit {
 
-  parts: Observable<PartModel[]>;
+  parts: PartModel[] = [];
+  chips: Array<Chip> = [];
   searchTerm: string = "";
   id: any;
 
-  constructor(private partService: PartService,private barcodeService: BarcodeService, private toastCtrl: ToastController, private alertCtrl: AlertController,private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner) { 
-
+  constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService, 
+    private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
+    private router: Router) { 
+      this.chips = new Array<Chip>();
+  
   }
   
   ngOnInit() {
@@ -30,22 +36,54 @@ export class PartsPage implements OnInit {
       this.setSearchedItems();
     })
   }
-
-  setSearchedItems() {
-    this.parts = this.partService.searchItems(this.searchTerm);
-  }
-
+  
   loadData(refresh = false, refresher?) {
-    this.partService.getParts(refresh, this.id).subscribe(res => {
+    this.partService.getParts(refresh, this.id)
+    .subscribe(res => {
       this.parts = res;
+      console.log(this.parts);
       if (refresher) {
         refresher.target.complete();
       }
     });
   }
+  
+  onSync() {
+    this.partService.updatePart('Parts', this.id).subscribe();
+  }
+
+//FILTER
+/*
+1. Filter umbauen das neue terms nur angehängt werden und der typ nur 1x vorhanden ist
+-- innerhalb und & außerhalb oder
+2. filtered parts sind immer die current, gefiltert + suche (suche am ende)
+
+anstatt 2 suche & filter, nur eine die jeweils beides prüft
+*/
+
+  setSearchedItems() {
+    //this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
+  }
 
   scanPartIdentTag() {
-    this.searchTerm = this.barcodeService.scanPartIdentTag();
+    //this.searchTerm = this.barcodeService.scanPartIdentTag();
+    if (this.plt.is("android") || this.plt.is("ios") || this.plt.is("cordova")) {  // FIX HERE
+      this.barcodeScanner.scan().then(barcodeData => {
+        this.router.navigate(['/part-detail/' + barcodeData.text]);
+        //this.searchTerm = barcodeData.text;
+      })
+    }
+    else {
+      this.toastCtrl.displayToast("Works only on a device!");
+    }
+  }
+
+  deleteChip(i, event) {
+    if(i > -1) { //Prüfe Index der chips
+      this.chips.splice(i, 1); //Entferne ausgewählten Chip
+    }
+    event.target.value = -1;
+    this.onChangeFilter(event); //Wende Filter an
   }
 
   async deletePart(i: number) {
@@ -60,43 +98,80 @@ export class PartsPage implements OnInit {
       buttons: [{
         text: 'Cancel',
         role: 'cancel',
-        handler: () => {
-
-        }
+        handler: () => { }
       },
       {
         text: 'Ok',
         handler: (alertData) => {
           if (alertData.reason) {  
-            this.parts[i].remarksRemoval = true;
+            this.parts[i].remarksRemoval = "true";
             this.parts[i].reasonRemoval = alertData.reason;
             return true;
           }
           else {
-            let toast = this.toastCtrl.create({
-              message: "Please enter a reason!",
-              duration: 3000,
-              position: "bottom"
-            });
-            toast.then(toast => toast.present());
-            return false;
+            this.toastCtrl.displayToast("Please enter a reason for deletion!");
           }
         }
       }]
     });
     await alert.present();
-   }
+  }
 
-  onClean() {
+  onChangeFilter(event) {
+    if (event.target.value == null) { //Durch doppelten Aufruf, da event sicherstellen dass der Filter nur 1mal angewendet wird
+      return;
+    }
+    else if (event.target.value == -1) {
+      this.parts = this.partService.filterItems(this.chips);
+      return;
+    }
     
-  }
+    if (!this.searchTerm) { //Wenn Suchfeld leer
+      event.target.value = null;
+      this.toastCtrl.displayToast("Please enter a filter value!");
+    }
+    else {
+      var filterTerm = this.searchTerm;
+      var filterObj = event.target.value;
+      if (this.chips.length == 0) { //Wenn kein Filter gesetzt
+        // this.chips = [filterObj + ": " + filterTerm]; //Erstelle Chipsarray
+        this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
+        this.parts = this.partService.filterItems(this.chips); //Wende Filter an
+      }
+      else { //Wenn Filter bereits gesetzt
+        if (this.chips.length >= 3) {
+          this.toastCtrl.displayToast("Max filters applied, maximum is 3");
+          return;
+        }
+        for (let chip of this.chips) {
+          for (let term of chip.FilterTerm) {
+            if (term == filterTerm) {
+              this.toastCtrl.displayToast("Already have this filter!");
+              
+              this.searchTerm = "";
+              event.target.value = null;
+              return;
+            }
+          }
+        }
+        for (let chip of this.chips) {
+          if (chip.FilterObj == filterObj && chip.FilterTerm.filter(x => {x == filterTerm}).length == 0) {
+            chip.FilterTerm.push(filterTerm);
+          }
+          else {
+            this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
+          }
+        }
+       
+        this.parts = this.partService.filterItems(this.chips); //Wende Filter an
 
-  onAddItem() {
-    //this.router.navigate();
+        console.log(this.chips);
+      }
+      event.target.value = null; //leere Filterfeld (Select), evt bessere Methode als ion-select?
+    }
+    this.searchTerm = ""; //leere Suchfeld
   }
-  
-  onSync() {
-    this.partService.updatePart('Parts').subscribe();
-  }
-
 }
+
+
+
