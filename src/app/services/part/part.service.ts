@@ -16,8 +16,7 @@ const PART_URL = '../../../assets/data.json';
 })
 export class PartService {
 
-  public items: any = [];
-  public retItems: Array<PartModel>;
+  public items: PartModel[] = [];
 
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
@@ -53,11 +52,7 @@ export class PartService {
     }
   }
 
-  public filterItems(chips: Chip[]) :any {
-    var ret;
-    this.retItems = new Array();
-    console.log("Filtermethode in service");
-    
+  public filterItems(chips: Chip[]) :PartModel[] {
     if (chips.length == 3) {
       if (chips[0].FilterObj == chips[1].FilterObj && chips[0].FilterObj == chips[2].FilterObj) {
         console.log("alle gleich");
@@ -85,58 +80,51 @@ export class PartService {
     }
     else if (chips.length == 1) {
       console.log("nur 1");
-      for (var i = 0; i < chips.length; i++)
-      { 
-        this.retItems.push( this.items.filter(item => {
-          switch(chips[i].FilterObj) { 
-            case "Ident-Nr": { 
-              ret = item.id.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1; //FIX HERE
-              break; 
-            } 
-            case "P/N": { 
-              ret = item.postModPN.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1;
-              break; 
-            } 
-            case "Category": { 
-              ret = item.category.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1;
-              console.log(ret);
-              break; 
-            } 
-            case "componentType": { 
-              ret =  item.componentType.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1;
-              break; 
-            } 
-            case "Status": { 
-              ret =  item.statusEdit.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1;
-              break; 
-            } 
-            case "Rack-Nr": { 
-              ret =  item.rackNo.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1; 
-              break; 
-            } 
-            case "Position": { 
-              ret =  item.postModPosition.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1;
-              break; 
-            } 
-            case "InstallationRoom": { 
-              ret =  item.installZoneRoom.toLowerCase().indexOf(chips[i].FilterTerm.toLowerCase()) > -1;
-              break; 
-            } 
-          }
-          return ret;
-        })
-      )}
+      return this.items.filter(item => this.filterObj(chips[0], item));
     }
     else {
       console.log("chipsanzahl 0");
       return this.items;
     }
-    console.log(this.retItems);
-    var o = Observable.create((observer: Subscriber<any>) => {
-      observer.next(this.retItems);
-      observer.complete();
-    });
-    return o;
+  }
+
+  filterObj(chip: Chip, item: PartModel) {
+    
+    for(let term of chip.FilterTerm) {
+      switch(chip.FilterObj) { 
+        case "Ident-Nr": { 
+          return item.id.toLowerCase().indexOf(term.toLowerCase()) > -1; //FIX HERE
+          
+        } 
+        case "P/N": { 
+          return item.postModPN.toLowerCase().indexOf(term.toLowerCase()) > -1;
+          
+        } 
+        case "Category": { 
+          return item.category.toLowerCase().indexOf(term.toLowerCase()) > -1;
+          
+        } 
+        case "componentType": { 
+          return  item.componentType.toLowerCase().indexOf(term.toLowerCase()) > -1;
+          
+        } 
+        case "Status": { 
+          return  item.statusEdit.toLowerCase().indexOf(term.toLowerCase()) > -1;
+          
+        } 
+        case "Rack-Nr": { 
+          return  item.rackNo.toLowerCase().indexOf(term.toLowerCase()) > -1; 
+          
+        } 
+        case "Position": { 
+          return item.postModPosition.toLowerCase().indexOf(term.toLowerCase()) > -1;
+          
+        } 
+        case "InstallationRoom": { 
+          return item.installZoneRoom.toLowerCase().indexOf(term.toLowerCase()) > -1;
+        } 
+      }
+    }
   }
 
   public searchItems(searchTerm) {

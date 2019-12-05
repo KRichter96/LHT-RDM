@@ -17,8 +17,8 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 })
 export class PartsPage implements OnInit {
 
-  parts: Observable<PartModel[]>;
-  chips: Array<Chip>;
+  parts: PartModel[] = [];
+  chips: Array<Chip> = [];
   searchTerm: string = "";
   id: any;
 
@@ -38,7 +38,8 @@ export class PartsPage implements OnInit {
   }
   
   loadData(refresh = false, refresher?) {
-    this.partService.getParts(refresh, this.id).subscribe(res => {
+    this.partService.getParts(refresh, this.id)
+    .subscribe(res => {
       this.parts = res;
       console.log(this.parts);
       if (refresher) {
@@ -51,8 +52,17 @@ export class PartsPage implements OnInit {
     this.partService.updatePart('Parts', this.id).subscribe();
   }
 
+//FILTER
+/*
+1. Filter umbauen das neue terms nur angehängt werden und der typ nur 1x vorhanden ist
+-- innerhalb und & außerhalb oder
+2. filtered parts sind immer die current, gefiltert + suche (suche am ende)
+
+anstatt 2 suche & filter, nur eine die jeweils beides prüft
+*/
+
   setSearchedItems() {
-    this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
+    //this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
   }
 
   scanPartIdentTag() {
@@ -94,7 +104,7 @@ export class PartsPage implements OnInit {
         text: 'Ok',
         handler: (alertData) => {
           if (alertData.reason) {  
-            this.parts[i].remarksRemoval = true;
+            this.parts[i].remarksRemoval = "true";
             this.parts[i].reasonRemoval = alertData.reason;
             return true;
           }
@@ -125,34 +135,37 @@ export class PartsPage implements OnInit {
       var filterObj = event.target.value;
       if (this.chips.length == 0) { //Wenn kein Filter gesetzt
         // this.chips = [filterObj + ": " + filterTerm]; //Erstelle Chipsarray
-        let chip = new Chip(filterObj, filterTerm);
-        this.chips.push(chip) //Erstelle Chipsarray
-        this.parts = null;
+        this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
         this.parts = this.partService.filterItems(this.chips); //Wende Filter an
-        console.log(this.parts);
       }
       else { //Wenn Filter bereits gesetzt
         if (this.chips.length >= 3) {
           this.toastCtrl.displayToast("Max filters applied, maximum is 3");
           return;
         }
-        for (let i = 0; i < this.chips.length; i++) {
-          if (this.chips[i].equals(this.chips[i], new Chip(filterObj, filterTerm))) {
-            this.toastCtrl.displayToast("Already have this filter!");
-            
-            this.searchTerm = "";
-            event.target.value = null;
-            return;
+        for (let chip of this.chips) {
+          for (let term of chip.FilterTerm) {
+            if (term == filterTerm) {
+              this.toastCtrl.displayToast("Already have this filter!");
+              
+              this.searchTerm = "";
+              event.target.value = null;
+              return;
+            }
           }
         }
-
-        // this.chips = [...this.chips, filterObj + ": " + filterTerm]; //Füge an Chipsarray, falls bereits Filter gesetzt
-        this.chips.push(new Chip(filterObj, filterTerm)); //Füge an Chipsarray, falls bereits Filter gesetzt
-        this.parts = null;
-        console.log("huhu");
-        
+        for (let chip of this.chips) {
+          if (chip.FilterObj == filterObj && chip.FilterTerm.filter(x => {x == filterTerm}).length == 0) {
+            chip.FilterTerm.push(filterTerm);
+          }
+          else {
+            this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
+          }
+        }
+       
         this.parts = this.partService.filterItems(this.chips); //Wende Filter an
-        console.log(this.parts);
+
+        console.log(this.chips);
       }
       event.target.value = null; //leere Filterfeld (Select), evt bessere Methode als ion-select?
     }
