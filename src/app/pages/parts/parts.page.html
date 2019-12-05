@@ -4,8 +4,8 @@
       <ion-back-button defaultHref="projects"></ion-back-button>
     </ion-buttons>
 
-    <ion-searchbar slot="start" placeholder="Search/Filter" style="width: 550px" [(ngModel)]="searchTerm" (ionChange)="setSearchedItems()"></ion-searchbar>
-
+    <ion-searchbar slot="start" placeholder="Search/Filter" style="width: 550px" [(ngModel)]="searchTerm"></ion-searchbar>
+<!-- (ionChange)="setSearchedItems()"-->
     <ion-button slot="end">
       <ion-icon icon name="funnel" ></ion-icon>
       <ion-select name="filter" (ionChange)="onChangeFilter($event)" >
