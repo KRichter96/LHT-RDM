@@ -53,78 +53,70 @@ export class PartService {
   }
 
   public filterItems(chips: Chip[]) :PartModel[] {
-    if (chips.length == 3) {
-      if (chips[0].FilterObj == chips[1].FilterObj && chips[0].FilterObj == chips[2].FilterObj) {
-        console.log("alle gleich");
-        //TODO
-      }
-      else if (chips[0].FilterObj == chips[1].FilterObj || chips[0].FilterObj == chips[2].FilterObj || chips[1].FilterObj == chips[2].FilterObj) {
-        console.log("zwei gleich");
-        //TODO
-      }
-      else {
-        console.log("alle 3 versch.");
-        //TODO
-      }
-    }
-    else if (chips.length == 2)
-    {
-      if (chips[0].FilterObj == chips[1].FilterObj) {
-        console.log("beide gleich");
-        //TODO
-      }
-      else {
-        console.log("alle 2 versch.");
-        //TODO
-      }
-    }
-    else if (chips.length == 1) {
-      console.log("nur 1");
-      return this.items.filter(item => this.filterObj(chips[0], item));
-    }
-    else {
-      console.log("chipsanzahl 0");
-      return this.items;
-    }
+    return this.items.filter(item => this.filterObj(chips, item));
   }
 
-  filterObj(chip: Chip, item: PartModel) {
-    
-    for(let term of chip.FilterTerm) {
-      switch(chip.FilterObj) { 
-        case "Ident-Nr": { 
-          return item.id.toLowerCase().indexOf(term.toLowerCase()) > -1; //FIX HERE
-          
-        } 
-        case "P/N": { 
-          return item.postModPN.toLowerCase().indexOf(term.toLowerCase()) > -1;
-          
-        } 
-        case "Category": { 
-          return item.category.toLowerCase().indexOf(term.toLowerCase()) > -1;
-          
-        } 
-        case "componentType": { 
-          return  item.componentType.toLowerCase().indexOf(term.toLowerCase()) > -1;
-          
-        } 
-        case "Status": { 
-          return  item.statusEdit.toLowerCase().indexOf(term.toLowerCase()) > -1;
-          
-        } 
-        case "Rack-Nr": { 
-          return  item.rackNo.toLowerCase().indexOf(term.toLowerCase()) > -1; 
-          
-        } 
-        case "Position": { 
-          return item.postModPosition.toLowerCase().indexOf(term.toLowerCase()) > -1;
-          
-        } 
-        case "InstallationRoom": { 
-          return item.installZoneRoom.toLowerCase().indexOf(term.toLowerCase()) > -1;
-        } 
+  filterObj(chips: Chip[], item: PartModel): boolean {
+    let ret = true;
+    for (let chip of chips) {
+      for (let term of chip.FilterTerm) {
+        switch(chip.FilterObj) { 
+          case "Ident-Nr": { 
+            if (item.id.toLowerCase().indexOf(term.toLowerCase()) > -1) {
+              ret = false;
+            }
+            break;
+          } 
+          case "P/N": { 
+            if(item.postModPN.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+              ret = false;
+            }
+            break;
+          } 
+          case "Category": { 
+            if (item.componentType.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+              ret = false;
+            }
+            break;
+          } 
+          case "componentType": {
+              if (item.componentType.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+                ret = false;
+            }
+            break;
+          } 
+          case "Status": { 
+            if (item.statusEdit.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+              ret = false;
+            }
+            break;
+          } 
+          case "Rack-Nr": { 
+            if (item.rackNo.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+              ret = false;
+            }
+            break;
+          } 
+          case "Position": { 
+            if (item.postModPosition.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+              ret = false;
+            }
+            break;
+            
+          } 
+          case "InstallationRoom": { 
+            if (item.installZoneRoom.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+              ret = false;
+            }
+            break;
+          } 
+        }
+      }
+      if (!ret) {
+        return ret;
       }
     }
+    return ret;
   }
 
   public searchItems(searchTerm) {
