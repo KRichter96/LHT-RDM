@@ -17,10 +17,6 @@ export class ProjectsPage implements OnInit {
   projectTitle: Observable<String>;
 
   ngOnInit() {
-    /*
-    this.serverRepoService.getData().then(projectModelObj => {
-      this.projects = projectModelObj;
-    });*/
     this.plt.ready().then(() => {
       this.loadData(true);
     })
@@ -33,13 +29,5 @@ export class ProjectsPage implements OnInit {
         refresher.targer.complete();
       }
     });
-    /*
-    this.repoService.getProjects(refresh).subscribe(res => {
-      this.projects = res;
-      if (refresher) {
-        refresher.targer.complete();
-      }
-    })
-    */
   }
 }

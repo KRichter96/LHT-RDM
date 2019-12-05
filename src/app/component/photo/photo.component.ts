@@ -6,6 +6,7 @@ import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Storage } from '@ionic/storage';
 import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
+import { ToastService } from 'src/app/services/toast/toast.service';
 
 const STORAGE_KEY = 'my_images';
 
@@ -19,9 +20,11 @@ export class PhotoComponent implements OnInit {
   images = [];
 
   constructor(private partDetail: PartDetailPage,private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
-    private toastController: ToastController, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
+    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.storage.get(STORAGE_KEY);
+  }
 
   async selectImage() {
     this.partDetail.onSave(); //Speicher zwischen
@@ -75,7 +78,7 @@ export class PhotoComponent implements OnInit {
     this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
       this.updateStoredImages(newFileName);
     }, error => {
-      this.presentToast('Error while storing file.');
+      this.toastController.displayToast('Error while storing file.');
     });
   }
 
@@ -119,18 +122,9 @@ export class PhotoComponent implements OnInit {
       var correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
 
       this.file.removeFile(correctPath, imgEntry.name).then(res => {
-          this.presentToast('File removed.');
+          this.toastController.displayToast('File removed.');
       });
     });
-  }
-
-  async presentToast(text) {
-    const toast = await this.toastController.create({
-        message: text,
-        position: 'bottom',
-        duration: 3000
-    });
-    await toast.present();
   }
 
   pathForImage(img) {

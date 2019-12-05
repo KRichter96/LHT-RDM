@@ -1,11 +1,11 @@
 export class Chip {
 
   FilterObj: string;
-  FilterTerm: string;
+  FilterTerm: string[] = [];
 
   constructor(filterObj: string, filterTerm: string) {
     this.FilterObj = filterObj;
-    this.FilterTerm = filterTerm;
+    this.FilterTerm.push(filterTerm);
   }
 
   equals(c1 : Chip, c2 : Chip) : boolean
