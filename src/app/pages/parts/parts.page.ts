@@ -134,20 +134,14 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
       var filterTerm = this.searchTerm;
       var filterObj = event.target.value;
       if (this.chips.length == 0) { //Wenn kein Filter gesetzt
-        // this.chips = [filterObj + ": " + filterTerm]; //Erstelle Chipsarray
         this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
         this.parts = this.partService.filterItems(this.chips); //Wende Filter an
       }
       else { //Wenn Filter bereits gesetzt
-        if (this.chips.length >= 3) {
-          this.toastCtrl.displayToast("Max filters applied, maximum is 3");
-          return;
-        }
         for (let chip of this.chips) {
           for (let term of chip.FilterTerm) {
             if (term == filterTerm) {
               this.toastCtrl.displayToast("Already have this filter!");
-              
               this.searchTerm = "";
               event.target.value = null;
               return;
@@ -156,13 +150,13 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
         }
         for (let chip of this.chips) {
           if (chip.FilterObj == filterObj && chip.FilterTerm.filter(x => {x == filterTerm}).length == 0) {
+            console.log(filterTerm);
             chip.FilterTerm.push(filterTerm);
           }
           else {
             this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
           }
         }
-       
         this.parts = this.partService.filterItems(this.chips); //Wende Filter an
 
         console.log(this.chips);
