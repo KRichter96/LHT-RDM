@@ -20,20 +20,18 @@ export class PartsPage implements OnInit {
 
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
-  searchTerm: string = "";
+  searchTerm = '';
   id: any;
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService, 
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
-    private router: Router, private filterService: FilterService) { 
+    private router: Router, private filterService: FilterService) {
       this.chips = new Array<Chip>();
-  
   }
-  
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
     console.log("onInit");
-    
+
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
       this.partService.filterItems(this.chips);
@@ -46,16 +44,16 @@ export class PartsPage implements OnInit {
 
   openDetail() {
     console.log("ende");
-    
+
     this.filterService.setChips(this.chips);
   }
 
   ngOnDestroy(): void {
     console.log("ende");
-    
+
     this.filterService.setChips(this.chips);
   }
-  
+
   loadData(refresh = false, refresher?) {
     this.partService.getParts(refresh, this.id)
     .subscribe(res => {
@@ -67,18 +65,18 @@ export class PartsPage implements OnInit {
     });
   }
 
-  public addNewPartItem(part: PartModel) {
+  /*public addNewPartItem(part: PartModel) {
     this.parts.pipe(map(partList => {
       partList.push(part);
       return partList;
     }));
-  }
-  
+  }*/
+
   onSync() {
     this.partService.updatePart('Parts', this.id).subscribe();
   }
 
-//FILTER
+// FILTER
 /*
 1. Filter umbauen das neue terms nur angehängt werden und der typ nur 1x vorhanden ist
 -- innerhalb und & außerhalb oder
@@ -88,32 +86,31 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
 */
 
   setSearchedItems() {
-    //this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
+    // this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
   }
 
   scanPartIdentTag() {
-    //this.searchTerm = this.barcodeService.scanPartIdentTag();
-    if (this.plt.is("android") || this.plt.is("ios") || this.plt.is("cordova")) {  // FIX HERE
+    // this.searchTerm = this.barcodeService.scanPartIdentTag();
+    if (this.plt.is('android') || this.plt.is('ios') || this.plt.is('cordova')) {  // FIX HERE
       this.barcodeScanner.scan().then(barcodeData => {
         this.router.navigate(['/part-detail/' + barcodeData.text]);
-        //this.searchTerm = barcodeData.text;
-      })
-    }
-    else {
-      this.toastCtrl.displayToast("Works only on a device!");
+        // this.searchTerm = barcodeData.text;
+      });
+    } else {
+      this.toastCtrl.displayToast('Works only on a device!');
     }
   }
 
   deleteChip(i, event) {
-    if(i > -1) { //Prüfe Index der chips
-      this.chips.splice(i, 1); //Entferne ausgewählten Chip
+    if (i > -1) { // Prüfe Index der chips
+      this.chips.splice(i, 1); // Entferne ausgewählten Chip
     }
     event.target.value = -1;
-    this.onChangeFilter(event); //Wende Filter an
+    this.onChangeFilter(event); // Wende Filter an
   }
 
   async deletePart(i: number) {
-    let alert = await this.alertCtrl.create({
+    const alert = await this.alertCtrl.create({
       header: 'Reason for removal',
       message: 'Please describe your reason for removing this part',
       inputs: [{
@@ -129,13 +126,12 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
       {
         text: 'Ok',
         handler: (alertData) => {
-          if (alertData.reason) {  
-            this.parts[i].remarksRemoval = "true";
+          if (alertData.reason) {
+            this.parts[i].remarksRemoval = 'true';
             this.parts[i].reasonRemoval = alertData.reason;
             return true;
-          }
-          else {
-            this.toastCtrl.displayToast("Please enter a reason for deletion!");
+          } else {
+            this.toastCtrl.displayToast('Please enter a reason for deletion!');
           }
         }
       }]
@@ -144,22 +140,20 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
   }
 
   onChangeFilter(event) {
-    if (event.target.value == null) { //Durch doppelten Aufruf, da event sicherstellen dass der Filter nur 1mal angewendet wird
+    if (event.target.value == null) { // Durch doppelten Aufruf, da event sicherstellen dass der Filter nur 1mal angewendet wird
       return;
-    }
-    else if (event.target.value == -1) {
+    } else if (event.target.value == -1) {
       this.parts = this.partService.filterItems(this.chips);
       return;
     }
-    
-    if (!this.searchTerm) { //Wenn Suchfeld leer
+    if (!this.searchTerm) { // Wenn Suchfeld leer
       event.target.value = null;
       this.toastCtrl.displayToast("Please enter a filter value!");
     }
     else {
       var filterTerm = this.searchTerm;
       var filterObj = event.target.value;
-      
+
       if (this.chips.length == 0) { //Wenn kein Filter gesetzt
         this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
         this.parts = this.partService.filterItems(this.chips); //Wende Filter an
@@ -170,11 +164,11 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
           if (!(chip.FilterTerm.filter(x => x == filterTerm).length > 0)) {
             chip.FilterTerm = [...chip.FilterTerm, filterTerm];
             break;
-          }       
+          }
           for (let term of chip.FilterTerm) {
             if (term == filterTerm) {
-              this.toastCtrl.displayToast("Already have this filter!");
-              this.searchTerm = "";
+              this.toastCtrl.displayToast('Already have this filter!');
+              this.searchTerm = '';
               event.target.value = null;
               return;
             }

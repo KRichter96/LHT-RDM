@@ -7,6 +7,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Storage } from '@ionic/storage';
 import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { PartService } from 'src/app/services/part/part.service';
 
 const STORAGE_KEY = 'my_images';
 
@@ -19,15 +20,17 @@ export class PhotoComponent implements OnInit {
 
   images = [];
 
-  constructor(private partDetail: PartDetailPage,private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
-    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
+  constructor(private partDetail: PartDetailPage, private actionSheetController: ActionSheetController,
+              private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File,
+              private toastController: ToastService, private webview: WebView, private storage: Storage,
+              private ref: ChangeDetectorRef, private partService: PartService) { }
 
   ngOnInit() {
     this.storage.get(STORAGE_KEY);
   }
 
   async selectImage() {
-    this.partDetail.onSave(); //Speicher zwischen
+    this.partDetail.onSave(); // Speicher zwischen
     const actionSheet = await this.actionSheetController.create({
       header: "Select Image source",
       buttons: [{
@@ -54,7 +57,7 @@ export class PhotoComponent implements OnInit {
     var options: CameraOptions = {
       quality: 100,
       sourceType: sourceType,
-      saveToPhotoAlbum: false, //Nicht in Bibliothek
+      saveToPhotoAlbum: false, // Nicht in Bibliothek
       correctOrientation: true
     };
 
@@ -107,13 +110,15 @@ export class PhotoComponent implements OnInit {
       // const pizzas = [...featured, 'veg pizza', ...specialty];
       // console.log(pizzas); // 'Deep Dish', 'Pepperoni', 'Hawaiian', 'veg pizza', 'Meatzza', 'Spicy Mama', 'Margherita'
       this.images = [newEntry, ...this.images];
+      const partId = this.partDetail.getId();
+      this.partService.updatePart(this.images, partId);
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }
 
   deleteImage(imgEntry, position) {
     this.images.splice(position, 1);
- 
+
     this.storage.get(STORAGE_KEY).then(images => {
       let arr = JSON.parse(images);
       let filtered = arr.filter(name => name != imgEntry.name);
@@ -130,8 +135,7 @@ export class PhotoComponent implements OnInit {
   pathForImage(img) {
     if (img === null) {
       return '';
-    } 
-    else {
+    } else {
       let converted = this.webview.convertFileSrc(img);
       return converted;
     }
