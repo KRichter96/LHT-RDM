@@ -8,6 +8,7 @@ import { Storage } from '@ionic/storage';
 import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { PartService } from 'src/app/services/part/part.service';
+import { ImageService } from 'src/app/services/image/Image.service';
 
 const STORAGE_KEY = 'my_images';
 
@@ -19,13 +20,15 @@ const STORAGE_KEY = 'my_images';
 export class PhotoComponent implements OnInit {
 
   images = [];
+  partId: number;
 
-  constructor(private partDetail: PartDetailPage, private actionSheetController: ActionSheetController,
-              private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File,
-              private toastController: ToastService, private webview: WebView, private storage: Storage,
-              private ref: ChangeDetectorRef, private partService: PartService) { }
+  constructor(private partDetail: PartDetailPage,private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
+    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private imageService: ImageService, private partService: PartService) { }
 
   ngOnInit() {
+    if (this.imageService.getImage(this.partId).length > 0) {
+      this.images = this.imageService.getImage(this.partId);
+    }
     this.storage.get(STORAGE_KEY);
   }
 
@@ -112,6 +115,7 @@ export class PhotoComponent implements OnInit {
       this.images = [newEntry, ...this.images];
       const partId = this.partDetail.getId();
       this.partService.updatePart(this.images, partId);
+      this.imageService.setImage(this.images, this.partId);
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }

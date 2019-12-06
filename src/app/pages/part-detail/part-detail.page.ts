@@ -19,32 +19,45 @@ export class PartDetailPage implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) {
   }
 
-    ngOnInit() {
-        this.id = this.route.snapshot.paramMap.get('id');
-        this.selectedSegment = "comment";
-        this.plt.ready().then(() => {
-            this.loadData(true);
-        })
+  ngOnInit() {
+    this.id = this.route.snapshot.paramMap.get('id');
+    if (this.id == "-1") {
+      this.partItem = new PartModel();
     }
-    loadData(refresh = false) {
-        let partItem: PartModel;
-        this.partService.getParts(refresh, this.id).subscribe(e => {
-            partItem = e[this.id];
-            partItem.statusEdit = "1";
-            this.partItem = partItem;
-            this.partService.updatePart(partItem, this.id);
-        });
-    }
-    onSave() {
-        this.partService.updatePart(this.partItem, this.id).subscribe(e => {
-            this.partItem = e[this.id];
-        });
-    }
-    async segmentChanged(event) {
-        this.selectedSegment = event.detail.value;
-    }
+    this.selectedSegment = "comment";
+    this.plt.ready().then(() => {
+      this.loadData(true);
+    })
+  }
 
+  getPartId(): string {
+    return this.id;
+  }
     getId() {
-      return this.id;
+        return this.id;
     }
+  createNewPartItem() {
+
+  }
+
+  loadData(refresh = false) {
+    let partItem: PartModel;
+    this.partService.getParts(refresh, this.id).subscribe(e => {
+      partItem = e[this.id];
+      partItem.statusEdit = "1";
+      this.partItem = partItem;
+      // this.partService.updatePart(partItem, this.id);
+    });
+  }
+  onSave() {
+    this.partService.updatePart(this.partItem, this.id).subscribe(e => {
+      this.partItem = e[this.id];
+    });
+  }
+
+  async segmentChanged(event) {
+    this.selectedSegment = event.detail.value;
+  }
+
+
 }

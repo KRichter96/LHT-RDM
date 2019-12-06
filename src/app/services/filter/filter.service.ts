@@ -8,19 +8,13 @@ export class FilterService {
 
   chips: Array<Chip> = [];
 
-  constructor() {
-
-    console.log("filterService init");
-   }
+  constructor() { }
 
   public setChips(chips: Array<Chip>) {
-    console.log("set chips");
     this.chips = chips;
   }
 
   public getChips(): Array<Chip> {
-    console.log("get chips");
-    console.log(this.chips);
     return this.chips;
   }
 }
