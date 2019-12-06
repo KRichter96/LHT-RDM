@@ -7,6 +7,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Storage } from '@ionic/storage';
 import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { ImageService } from 'src/app/services/image/Image.service';
 
 const STORAGE_KEY = 'my_images';
 
@@ -18,11 +19,15 @@ const STORAGE_KEY = 'my_images';
 export class PhotoComponent implements OnInit {
 
   images = [];
+  partId: number;
 
   constructor(private partDetail: PartDetailPage,private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
-    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
+    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private imageService: ImageService) { }
 
   ngOnInit() {
+    if (this.imageService.getImage(this.partId).length > 0) {
+      this.images = this.imageService.getImage(this.partId);
+    }
     this.storage.get(STORAGE_KEY);
   }
 
@@ -107,6 +112,7 @@ export class PhotoComponent implements OnInit {
       // const pizzas = [...featured, 'veg pizza', ...specialty];
       // console.log(pizzas); // 'Deep Dish', 'Pepperoni', 'Hawaiian', 'veg pizza', 'Meatzza', 'Spicy Mama', 'Margherita'
       this.images = [newEntry, ...this.images];
+      this.imageService.setImage(this.images, this.partId);
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }

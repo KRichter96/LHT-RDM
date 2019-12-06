@@ -32,7 +32,6 @@ export class PartsPage implements OnInit {
   
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
-    console.log("onInit");
     
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
@@ -45,14 +44,6 @@ export class PartsPage implements OnInit {
   }
 
   openDetail() {
-    console.log("ende");
-    
-    this.filterService.setChips(this.chips);
-  }
-
-  ngOnDestroy(): void {
-    console.log("ende");
-    
     this.filterService.setChips(this.chips);
   }
   
@@ -66,26 +57,10 @@ export class PartsPage implements OnInit {
       }
     });
   }
-
-  public addNewPartItem(part: PartModel) {
-    this.parts.pipe(map(partList => {
-      partList.push(part);
-      return partList;
-    }));
-  }
   
   onSync() {
     this.partService.updatePart('Parts', this.id).subscribe();
   }
-
-//FILTER
-/*
-1. Filter umbauen das neue terms nur angehängt werden und der typ nur 1x vorhanden ist
--- innerhalb und & außerhalb oder
-2. filtered parts sind immer die current, gefiltert + suche (suche am ende)
-
-anstatt 2 suche & filter, nur eine die jeweils beides prüft
-*/
 
   setSearchedItems() {
     //this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component

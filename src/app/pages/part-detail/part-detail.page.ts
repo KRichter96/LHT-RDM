@@ -16,7 +16,7 @@ export class PartDetailPage implements OnInit {
   partItem: PartModel;
   selectedSegment: string;
 
-  constructor(private partPage: PartsPage, private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) { 
+  constructor(private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) { 
   }
 
   ngOnInit() {
@@ -28,6 +28,10 @@ export class PartDetailPage implements OnInit {
     this.plt.ready().then(() => {
       this.loadData(true);
     })
+  }
+
+  getPartId(): string {
+    return this.id;
   }
 
   createNewPartItem() {
@@ -44,10 +48,6 @@ export class PartDetailPage implements OnInit {
     });
   }
   onSave() {
-    if (this.id == "-1") {
-      this.partItem.id = "1001";
-      this.partPage.addNewPartItem(this.partItem);
-    }
     this.partService.updatePart(this.partItem, this.id).subscribe(e => {
       this.partItem = e[this.id];
     });
