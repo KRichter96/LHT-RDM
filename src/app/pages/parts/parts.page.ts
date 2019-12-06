@@ -9,6 +9,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { filter } from 'rxjs/operators';
 import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { FilterService } from 'src/app/services/filter/filter.service';
 
 @Component({
   selector: 'app-parts',
@@ -24,17 +25,35 @@ export class PartsPage implements OnInit {
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService, 
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
-    private router: Router) { 
+    private router: Router, private filterService: FilterService) { 
       this.chips = new Array<Chip>();
   
   }
   
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
+    console.log("onInit");
+    
+    if (this.filterService.getChips().length > 0) {
+      this.chips = this.filterService.getChips();
+      this.partService.filterItems(this.chips);
+    }
     this.plt.ready().then(() => {
       this.loadData(true);
       this.setSearchedItems();
     })
+  }
+
+  openDetail() {
+    console.log("ende");
+    
+    this.filterService.setChips(this.chips);
+  }
+
+  ngOnDestroy(): void {
+    console.log("ende");
+    
+    this.filterService.setChips(this.chips);
   }
   
   loadData(refresh = false, refresher?) {
@@ -133,12 +152,18 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
     else {
       var filterTerm = this.searchTerm;
       var filterObj = event.target.value;
+      
       if (this.chips.length == 0) { //Wenn kein Filter gesetzt
         this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
         this.parts = this.partService.filterItems(this.chips); //Wende Filter an
       }
       else { //Wenn Filter bereits gesetzt
-        for (let chip of this.chips) {
+        let tempChips = this.chips.filter(x => x.FilterObj == filterObj);
+        for (let chip of tempChips) {
+          if (!(chip.FilterTerm.filter(x => x == filterTerm).length > 0)) {
+            chip.FilterTerm = [...chip.FilterTerm, filterTerm];
+            break;
+          }       
           for (let term of chip.FilterTerm) {
             if (term == filterTerm) {
               this.toastCtrl.displayToast("Already have this filter!");
@@ -148,22 +173,14 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
             }
           }
         }
-        for (let chip of this.chips) {
-          if (chip.FilterObj == filterObj && chip.FilterTerm.filter(x => {x == filterTerm}).length == 0) {
-            console.log(filterTerm);
-            chip.FilterTerm.push(filterTerm);
-          }
-          else {
-            this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
-          }
+        if (tempChips.length == 0) {
+          this.chips = [...this.chips, new Chip(filterObj, filterTerm)];
         }
-        this.parts = this.partService.filterItems(this.chips); //Wende Filter an
-
-        console.log(this.chips);
+        this.parts = this.partService.filterItems(this.chips);
       }
-      event.target.value = null; //leere Filterfeld (Select), evt bessere Methode als ion-select?
+      event.target.value = null;
     }
-    this.searchTerm = ""; //leere Suchfeld
+    this.searchTerm = "";
   }
 }
 

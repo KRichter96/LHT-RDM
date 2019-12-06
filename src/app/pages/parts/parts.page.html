@@ -8,7 +8,7 @@
 <!-- (ionChange)="setSearchedItems()"-->
     <ion-button slot="end">
       <ion-icon icon name="funnel" ></ion-icon>
-      <ion-select name="filter" (ionChange)="onChangeFilter($event)" >
+      <ion-select name="filter" interface="popover" (ionChange)="onChangeFilter($event)">
         <ion-select-option value="Ident-Nr">Ident-Nr.</ion-select-option>
         <ion-select-option value="P/N">P/N</ion-select-option>
         <ion-select-option value="Category">Category</ion-select-option>
@@ -63,10 +63,20 @@
           </ion-col>
           <ion-col size="2">
             <div class="stacked-group">
-              <ion-label>Component</ion-label>
+              <ion-label>Component Type</ion-label>
+            </div>
+          </ion-col>
+          <ion-col size="1">
+            <div class="stacked-group">
+              <ion-label>Pre-Mod Position</ion-label>
             </div>
           </ion-col>
           <ion-col size="2">
+            <div class="stacked-group">
+              <ion-label>Arrangement</ion-label>
+            </div>
+          </ion-col>
+          <ion-col size="1">
             <div class="stacked-group">
               <ion-label>Status</ion-label>
             </div>
@@ -78,7 +88,7 @@
     
     <ion-item-sliding *ngFor="let part of parts; let i = index">
       <ion-label *ngIf="part?.length">No results found :(</ion-label>
-      <ion-item (click)="openDetail" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward">
+      <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward">
         
         <ion-grid>
           <ion-row>
@@ -104,7 +114,17 @@
                 <ion-label>{{ part.componentType }}</ion-label>
               </div>
             </ion-col>
+            <ion-col size="1">
+              <div class="stacked-group">
+                <ion-label>{{ part.preModPositionIPC }}</ion-label>
+              </div>
+            </ion-col>
             <ion-col size="2">
+              <div class="stacked-group">
+                <ion-label>{{ part.ammRemovalTask }}</ion-label>
+              </div>
+            </ion-col>
+            <ion-col size="1">
               <ion-label *ngIf="!part.remarksRemoval && !part.statusEdit && !part.statusCreate">-</ion-label>
               <ion-icon *ngIf="part.remarksRemoval" name="remove-circle"></ion-icon>
               <ion-icon *ngIf="part.statusEdit === '1'" name="refresh-circle"></ion-icon>

@@ -1,7 +1,21 @@
 .stacked-group {
-  width: 100px;
-    label {
+  //width: 100px;
+    ion-label {
       color: black;
-      
+      font-size: 12px;
+      overflow: inherit ;
+      text-overflow: inherit ;
+      white-space: normal ;
     }
 }
+
+.alert-wrapper {
+  height: 710px !important;
+}
+
+
+.popover-content {
+  --min-width: 100%;
+}
+
+$alert-ios-content-height:700px !default; $alert-md-content-height:400px !default;
