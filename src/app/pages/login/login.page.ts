@@ -22,7 +22,7 @@ export class LoginPage implements OnInit {
 
   login() {
     //this.authService.login();
-    if (this.pwField == "Rm2020") {
+    if (this.pwField == "vmod") {
       this.router.navigate(["projects"]);
     }
     else {

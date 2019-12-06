@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { PartModel } from 'src/app/models/part/partmodel';
 import { Platform, AlertController, ToastController } from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
@@ -65,6 +65,13 @@ export class PartsPage implements OnInit {
         refresher.target.complete();
       }
     });
+  }
+
+  public addNewPartItem(part: PartModel) {
+    this.parts.pipe(map(partList => {
+      partList.push(part);
+      return partList;
+    }));
   }
   
   onSync() {
