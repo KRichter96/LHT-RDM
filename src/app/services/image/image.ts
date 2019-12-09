@@ -1,18 +1,18 @@
 export class Image {
 
-    images: any[] = [];
+    images: any;
     part: number;
   
     constructor(part: number, image: any) {
       this.part = part;
-      this.images.push(image);
+      this.images = image;
     }
 
-    public setImages(images: any[]) {
+    public setImages(images: any) {
       this.images = images;
     }
   
-    public getImages(): any[] {
+    public getImages(): any {
       return this.images;
     }
 

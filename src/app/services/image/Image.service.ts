@@ -7,15 +7,26 @@ import { Image } from './image';
 export class ImageService {
 
   images: Image[] = [];
-  partId: number;
 
   constructor() { }
 
   public setImage(images: Array<Image>, partId: number) {
-    this.images = images;
+    this.images = [...this.images, new Image(partId, images)];
+    
   }
 
-  public getImage(partId: number): Array<Image> {
-    return this.images;
+  public getImage(partId: number): Array<any> {
+    var ret = [];
+    for (let image of this.images) {
+      if (image.part == partId)
+      {
+        ret.push(image.images);
+      }
+    }
+    return ret;
+  }
+
+  public deleteImage(partId: number) {
+    
   }
 }

@@ -3,8 +3,7 @@ import { PartModel } from 'src/app/models/part/partmodel';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { PartService } from 'src/app/services/part/part.service';
-import { Observable } from 'rxjs';
-import { PartsPage } from '../parts/parts.page';
+import { ToastService } from 'src/app/services/toast/toast.service';
 
 @Component({
   selector: 'app-part-detail',
@@ -12,32 +11,27 @@ import { PartsPage } from '../parts/parts.page';
   styleUrls: ['./part-detail.page.scss'],
 })
 export class PartDetailPage implements OnInit {
-  id: string;
+  id: number;
   partItem: PartModel;
   selectedSegment: string;
 
-  constructor(private router: Router, private route: ActivatedRoute, private partService: PartService, private plt: Platform) {
+  constructor(private toastCtrl: ToastService, private route: ActivatedRoute, private partService: PartService, private plt: Platform) {
   }
 
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
-    if (this.id == "-1") {
+    this.id = +this.route.snapshot.paramMap.get('id');
+    if (this.id == -1) {
       this.partItem = new PartModel();
+      this.createNewPartItem();
     }
     this.selectedSegment = "comment";
     this.plt.ready().then(() => {
       this.loadData(true);
     })
   }
-
-  getPartId(): string {
-    return this.id;
-  }
-    getId() {
-        return this.id;
-    }
+  
   createNewPartItem() {
-
+    this.toastCtrl.displayToast("Moin");
   }
 
   loadData(refresh = false) {
@@ -50,14 +44,13 @@ export class PartDetailPage implements OnInit {
     });
   }
   onSave() {
-    this.partService.updatePart(this.partItem, this.id).subscribe(e => {
-      this.partItem = e[this.id];
-    });
+    // this.partService.updatePart(this.partItem, this.id).subscribe(e => {
+    //   this.partItem = e[this.id];
+    // });
   }
 
   async segmentChanged(event) {
     this.selectedSegment = event.detail.value;
   }
-
 
 }

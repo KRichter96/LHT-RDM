@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="projects"></ion-back-button>
+      <ion-back-button [routerLink]="['/projects']" routerLinkActive="router-link-active"></ion-back-button>
     </ion-buttons>
 
     <ion-searchbar slot="start" placeholder="Search/Filter" style="width: 550px" [(ngModel)]="searchTerm"></ion-searchbar>
@@ -44,7 +44,7 @@
 
   <ion-list>
     <ion-list-header>
-      <ion-grid>
+      <ion-grid style="padding-right: 3em;">
         <ion-row>
           <ion-col size="2">
             <div class="stacked-group">
@@ -68,7 +68,7 @@
           </ion-col>
           <ion-col size="1">
             <div class="stacked-group">
-              <ion-label>Pre-Mod Position</ion-label>
+              <ion-label>Position</ion-label>
             </div>
           </ion-col>
           <ion-col size="2">
@@ -150,12 +150,12 @@
     <ion-tabs>
       <ion-tab-bar slot="bottom" color="primary">
 
-        <ion-tab-button (click)="onAddItem()" class="footer-button" [routerLink]="'/part-detail/-1'" routerLinkActive="router-link-active" routerDirection="forward">
+        <ion-tab-button (click)="onAddItem()" [routerLink]="'/part-detail/-1'" routerLinkActive="router-link-active" routerDirection="forward">
           <ion-icon size="large" name="md-add"></ion-icon>
           <ion-label color="light">Add</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button (click)="onSync()" class="footer-button">
+        <ion-tab-button (click)="onSync()">
           <ion-icon size="large" name="cloud-upload"></ion-icon>
           <ion-label color="light">Synchronize</ion-label>
         </ion-tab-button>

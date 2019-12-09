@@ -3,5 +3,5 @@ export class ProjectModel {
     projectTitle: string;
     projectMSN: string;
     projectACType: string;
-    parts: PartModel[];
+    parts: PartModel[] = [];
 }

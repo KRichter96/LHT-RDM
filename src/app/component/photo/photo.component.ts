@@ -2,13 +2,14 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActionSheetController, Platform, ToastController } from '@ionic/angular';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { File, FileEntry } from '@ionic-native/file/ngx';
+import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Storage } from '@ionic/storage';
 import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { ImageService } from 'src/app/services/image/Image.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 const STORAGE_KEY = 'my_images';
 
@@ -22,10 +23,13 @@ export class PhotoComponent implements OnInit {
   images = [];
   partId: number;
 
-  constructor(private partDetail: PartDetailPage,private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
+  constructor(private route: ActivatedRoute, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
     private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private imageService: ImageService, private partService: PartService) { }
 
   ngOnInit() {
+    this.partId = this.partDetail.id;
+    console.log(this.partId);
+    
     if (this.imageService.getImage(this.partId).length > 0) {
       this.images = this.imageService.getImage(this.partId);
     }
@@ -107,14 +111,9 @@ export class PhotoComponent implements OnInit {
         path: resPath,
         filePath: filePath
       };
-      // ... BEDEUTET:
-      // const featured = ['Deep Dish', 'Pepperoni', 'Hawaiian'];
-      // const specialty = ['Meatzza', 'Spicy Mama', 'Margherita'];
-      // const pizzas = [...featured, 'veg pizza', ...specialty];
-      // console.log(pizzas); // 'Deep Dish', 'Pepperoni', 'Hawaiian', 'veg pizza', 'Meatzza', 'Spicy Mama', 'Margherita'
+
       this.images = [newEntry, ...this.images];
-      const partId = this.partDetail.getId();
-      this.partService.updatePart(this.images, partId);
+      this.partService.updatePart(this.images, this.partId);
       this.imageService.setImage(this.images, this.partId);
       this.ref.detectChanges(); // trigger change detection cycle
     });
