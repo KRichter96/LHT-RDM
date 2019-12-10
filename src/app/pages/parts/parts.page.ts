@@ -8,6 +8,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-parts',
@@ -19,17 +20,18 @@ export class PartsPage implements OnInit {
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm: string = "";
-  projectId: number;
-  id: any;
+  id: number;
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService, 
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
-    private router: Router, private filterService: FilterService) { 
+    private router: Router, private filterService: FilterService, private projectService: ProjectService) { 
       this.chips = new Array<Chip>();
   }
   
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.id = +this.route.snapshot.paramMap.get('id');
+    console.log(this.id)
+    this.projectService.setProjectId(this.id);
 
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
@@ -39,6 +41,10 @@ export class PartsPage implements OnInit {
       this.loadData(true);
       this.setSearchedItems();
     })
+  }
+
+  public getProjectId (): number {
+    return this.id;
   }
 
   openDetail() {

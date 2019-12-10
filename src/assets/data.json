@@ -144,7 +144,7 @@
     "id" : "3",
     "projectId" : "1"
   }, {
-    "counterId" : 2,
+    "counterId" : 3,
     "parentId" : "-1",
     "nomenclature" : "OUTBD STOWAGE BIN",
     "category" : "Component",
@@ -191,7 +191,7 @@
     "id" : "3",
     "projectId" : "1"
   }, {
-    "counterId" : 2,
+    "counterId" : 4,
     "parentId" : "-1",
     "nomenclature" : "OUTBD STOWAGE BIN",
     "category" : "Component",

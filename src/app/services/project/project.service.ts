@@ -14,6 +14,8 @@ const PROJECT_URL = '../../../assets/projects.json';
 })
 export class ProjectService {
 
+  projectId: number;
+
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
   public getProjects(forceRefresh: boolean = false): Observable<any>  {
@@ -54,5 +56,13 @@ export class ProjectService {
   private getLocalData(key) {
     console.log("return local data");
     return this.storage.get(`${API_STORAGE_KEY}-${key}`);
+  }
+
+  public setProjectId(projectId: number) {
+    this.projectId = projectId;
+  }
+
+  public getProjectId(): number {
+    return this.projectId;
   }
 }

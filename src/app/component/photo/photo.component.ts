@@ -2,16 +2,13 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActionSheetController, Platform, ToastController } from '@ionic/angular';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { File } from '@ionic-native/file/ngx';
+import { File, FileEntry } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Storage } from '@ionic/storage';
 import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { PartService } from 'src/app/services/part/part.service';
-import { ImageService } from 'src/app/services/image/Image.service';
-import { Router, ActivatedRoute } from '@angular/router';
-
-const STORAGE_KEY = 'my_images';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-photo',
@@ -21,19 +18,33 @@ const STORAGE_KEY = 'my_images';
 export class PhotoComponent implements OnInit {
 
   images = [];
+  imagePath = "";
   partId: number;
+  projectId: number;
 
-  constructor(private route: ActivatedRoute, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
-    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private imageService: ImageService, private partService: PartService) { }
+  constructor(private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
+    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private partService: PartService) { }
 
   ngOnInit() {
     this.partId = this.partDetail.id;
-    console.log(this.partId);
-    
-    if (this.imageService.getImage(this.partId).length > 0) {
-      this.images = this.imageService.getImage(this.partId);
-    }
-    this.storage.get(STORAGE_KEY);
+    this.projectId = this.projectService.getProjectId();
+    this.imagePath = "image/" + this.projectId + "/" + this.partId;
+    this.loadStoredImages();
+    console.log(this.imagePath);
+  }
+
+  loadStoredImages() {
+    this.storage.get(this.imagePath).then(images => {
+      if (images) {
+        let arr = JSON.parse(images);
+        this.images = [];
+        for (let img of arr) {
+          let filePath = this.file.dataDirectory + img;
+          let resPath = this.pathForImage(filePath);
+          this.images.push({ name: img, path: resPath, filePath: filePath });
+        }
+      }
+    });
   }
 
   async selectImage() {
@@ -64,6 +75,9 @@ export class PhotoComponent implements OnInit {
     var options: CameraOptions = {
       quality: 100,
       sourceType: sourceType,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
       saveToPhotoAlbum: false, // Nicht in Bibliothek
       correctOrientation: true
     };
@@ -93,14 +107,14 @@ export class PhotoComponent implements OnInit {
   }
 
   updateStoredImages(name) {
-    this.storage.get(STORAGE_KEY).then(images => {
+    this.storage.get(this.imagePath).then(images => {
       let arr = JSON.parse(images);
       if (!arr) {
         let newImages = [name];
-        this.storage.set(STORAGE_KEY, JSON.stringify(newImages));
+        this.storage.set(this.imagePath, JSON.stringify(newImages));
       } else {
         arr.push(name);
-        this.storage.set(STORAGE_KEY, JSON.stringify(arr));
+        this.storage.set(this.imagePath, JSON.stringify(arr));
       }
 
       let filePath = this.file.dataDirectory + name;
@@ -114,7 +128,6 @@ export class PhotoComponent implements OnInit {
 
       this.images = [newEntry, ...this.images];
       this.partService.updatePart(this.images, this.partId);
-      this.imageService.setImage(this.images, this.partId);
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }
@@ -122,10 +135,10 @@ export class PhotoComponent implements OnInit {
   deleteImage(imgEntry, position) {
     this.images.splice(position, 1);
 
-    this.storage.get(STORAGE_KEY).then(images => {
+    this.storage.get(this.imagePath).then(images => {
       let arr = JSON.parse(images);
       let filtered = arr.filter(name => name != imgEntry.name);
-      this.storage.set(STORAGE_KEY, JSON.stringify(filtered));
+      this.storage.set(this.imagePath, JSON.stringify(filtered));
 
       var correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
 
