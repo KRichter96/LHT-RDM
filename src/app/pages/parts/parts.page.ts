@@ -42,11 +42,7 @@ export class PartsPage implements OnInit {
       this.setSearchedItems();
     })
   }
-
-  public getProjectId (): number {
-    return this.id;
-  }
-
+  
   openDetail() {
     this.filterService.setChips(this.chips);
   }

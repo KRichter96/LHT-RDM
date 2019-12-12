@@ -148,7 +148,7 @@
     </ion-row>
   </ion-grid>
 
-  <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)">
+  <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)" style="padding-top: 2em;">
     <!-- (ionChange)="onSegmentChange($event.detail.value)"-->
     <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="comment">
       <ion-icon name="chatbubbles"></ion-icon>
