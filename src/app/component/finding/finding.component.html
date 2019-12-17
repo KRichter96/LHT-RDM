@@ -1,3 +1,12 @@
-<p>
-  finding works!
-</p>
+<ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
+          <div class="img-wrapper" [style.background-image]="'url(' + img.path + ')'"></div>
+  <!-- <ion-img [src]="img.path"></ion-img> IN DIV -->
+  <!-- [ngStyle]="{'background-image': 'url(' + your url + ')'}" -->
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  

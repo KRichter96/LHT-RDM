@@ -6,8 +6,8 @@ import { map, tap, catchError } from 'rxjs/operators';
 import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
 
-const API_STORAGE_KEY = 'specialkey';
-const PROJECT_URL = '../../../assets/projects.json';
+const API_STORAGE_KEY = 'projects';
+const PROJECT_URL = 'http://192.168.176.77:8081/api/projects';
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +31,9 @@ export class ProjectService {
       );
     }
   }
-
+  //Evt löschen, da nichts geändert wird
   public updateProjects(projectid, data): Observable<any> {
-    let url = `${PROJECT_URL}/projects/${projectid}`;
+    let url = `${PROJECT_URL}/${projectid}`;
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       return from(this.offlineManager.storeRequest(url, 'PUT', data));

@@ -21,7 +21,7 @@ export class PartDetailPage implements OnInit {
   }
 
   ngOnInit() {
-    this.id = +this.route.snapshot.paramMap.get('id');
+    this.id = +this.route.snapshot.paramMap.get('id') - 1;
     this.projectId = this.projectService.getProjectId();
     if (this.id == -1) {
       this.partItem = new PartModel();
@@ -39,17 +39,15 @@ export class PartDetailPage implements OnInit {
 
   loadData(refresh = false) {
     let partItem: PartModel;
-    this.partService.getParts(refresh, this.id).subscribe(e => {
+    this.partService.getParts(refresh, this.projectId).subscribe(e => {
       partItem = e[this.id];
-      partItem.statusEdit = "1";
+      //partItem.statusEdit = "1";
       this.partItem = partItem;
       // this.partService.updatePart(partItem, this.id);
     });
   }
   onSave() {
-    // this.partService.updatePart(this.partItem, this.id).subscribe(e => {
-    //   this.partItem = e[this.id];
-    // });
+    this.partService.updatePart(this.partItem, this.id);
   }
 
   async segmentChanged(event) {

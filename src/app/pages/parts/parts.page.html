@@ -43,10 +43,15 @@
   </ion-chip>
 
   <ion-list>
-    <ion-list-header>
+    <ion-list-header class="ion-no-padding">
       <ion-grid style="padding-right: 3em;">
         <ion-row>
-          <ion-col size="2">
+            <ion-col size="1">
+              <div class="stacked-group">
+                <ion-label>Ident</ion-label>
+              </div>
+            </ion-col>
+          <ion-col size="1">
             <div class="stacked-group">
               <ion-label>P/N</ion-label>
             </div>
@@ -88,11 +93,16 @@
     
     <ion-item-sliding *ngFor="let part of parts; let i = index">
       <ion-label *ngIf="part?.length">No results found :(</ion-label>
-      <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward">
+      <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward" class="ion-no-padding">
         
         <ion-grid>
           <ion-row>
-            <ion-col size="2">
+            <ion-col size="1">
+              <div class="stacked-group">
+                <ion-label>{{ part.counterId }}</ion-label>
+              </div>
+            </ion-col>
+            <ion-col size="1">
               <div class="stacked-group">
                 <ion-label>{{ part.postModPN }}</ion-label>
               </div>
@@ -121,14 +131,15 @@
             </ion-col>
             <ion-col size="2">
               <div class="stacked-group">
-                <ion-label>{{ part.ammRemovalTask }}</ion-label> <!--TBD-->
+                <ion-label>{{ part.location }}</ion-label> <!--TBD-->
               </div>
             </ion-col>
             <ion-col size="1">
-              <ion-label *ngIf="!part.remarksRemoval && !part.statusEdit && !part.statusCreate">-</ion-label>
-              <ion-icon *ngIf="part.remarksRemoval" name="remove-circle"></ion-icon>
-              <ion-icon *ngIf="part.statusEdit === '1'" name="refresh-circle"></ion-icon>
-              <ion-icon *ngIf="part.statusCreate" name="add-circle"></ion-icon>
+              
+              <!-- <ion-label *ngIf="!part.remarksRemoval && !part.statusEdit && !part.statusCreate">-</ion-label>
+              <ion-icon *ngIf="part.remarksRemoval != 'Permanent Removal'" name="remove-circle"></ion-icon>
+              <ion-icon *ngIf="part.statusEdit != 'Edited'" name="refresh-circle"></ion-icon>
+              <ion-icon *ngIf="part.statusCreate != 'New'" name="add-circle"></ion-icon> -->
             </ion-col>
           </ion-row>
         </ion-grid>

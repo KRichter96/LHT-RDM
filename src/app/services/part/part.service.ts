@@ -8,8 +8,9 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const API_STORAGE_KEY = 'specialkey';
-const PART_URL = '../../../assets/data.json';
+const API_STORAGE_KEY = 'parts';
+const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +21,11 @@ export class PartService {
 
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
-  public getParts(forceRefresh: boolean = false, partId): Observable<any> {
+  public getParts(forceRefresh: boolean = false, projectId): Observable<any> {
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline || !forceRefresh) {
       return from(this.getLocalData('parts'));
     } else {
-      return this.http.get(`${PART_URL}` /*append partId*/).pipe(
+      return this.http.get(`${PART_URL + projectId}`).pipe(
         map(res => res['parts']),
         tap(res => {
           console.log('returns real live API data');
@@ -37,13 +38,21 @@ export class PartService {
 
   //TODO
   public updatePart(data, partId): Observable<any> {
-    let url = `${PART_URL}`; ///parts/${partId}
+    let url = `${UPDATE_PART_URL}`;
     console.log(url);
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
     } 
     else {
+      this.http.put(url, data).subscribe(
+        response => {
+        console.log(response);
+        },
+        error => {
+                alert(error);
+                console.log(error);
+        });
       return this.http.put(url, data).pipe(catchError(err => {
           this.offlineManager.storeRequest(url, 'PUT', data);
           throw new Error(err);

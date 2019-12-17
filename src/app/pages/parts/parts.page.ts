@@ -30,7 +30,6 @@ export class PartsPage implements OnInit {
   
   ngOnInit() {
     this.id = +this.route.snapshot.paramMap.get('id');
-    console.log(this.id)
     this.projectService.setProjectId(this.id);
 
     if (this.filterService.getChips().length > 0) {
@@ -51,7 +50,6 @@ export class PartsPage implements OnInit {
     this.partService.getParts(refresh, this.id)
     .subscribe(res => {
       this.parts = res;
-      console.log(this.parts);
       if (refresher) {
         refresher.target.complete();
       }
@@ -70,7 +68,14 @@ export class PartsPage implements OnInit {
     //this.searchTerm = this.barcodeService.scanPartIdentTag();
     if (this.plt.is("android") || this.plt.is("ios") || this.plt.is("cordova")) {  // FIX HERE
       this.barcodeScanner.scan().then(barcodeData => {
-        this.router.navigate(['/part-detail/' + barcodeData.text]);
+        for (let part of this.parts) {
+          if (part.postModPN === barcodeData.text) {
+            this.router.navigate(['/part-detail/' + part.id]);
+          } 
+          else {
+            this.toastCtrl.displayToast("No Part found");
+          }
+        }
       })
     }
     else {

@@ -21,6 +21,10 @@
     <ion-col size="12">
       <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
         <div class="img-wrapper" [style.background-image]="'url(' + img.path + ')'"></div>
+        ODER
+<ion-img [src]="img.path"></ion-img> IN DIV
+        ODER
+[ngStyle]="{'background-image': 'url(' + your url + ')'}"
       </ion-item>
     </ion-col>
   </ion-row>

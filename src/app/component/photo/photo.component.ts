@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActionSheetController, Platform, ToastController } from '@ionic/angular';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { File, FileEntry } from '@ionic-native/file/ngx';
+import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Storage } from '@ionic/storage';
 import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
@@ -158,7 +158,7 @@ export class PhotoComponent implements OnInit {
   }
 
   createFileName() {
-    return new Date().getTime() + ".jpg";
+    return new Date().getTime() + ".png";
   }
 
 }
