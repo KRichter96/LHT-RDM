@@ -81,7 +81,7 @@ export class PartsPage implements OnInit {
         for (let part of this.parts) {
           if (part.postModPN === barcodeData.text) {
             this.router.navigate(['/part-detail/' + part.id]);
-          } 
+          }
           else {
             this.toastCtrl.displayToast("No Part found");
           }
@@ -178,7 +178,9 @@ export class PartsPage implements OnInit {
     }
     this.searchTerm = "";
   }
+
+  onAddItem() {
+    console.log("this works");
+
+  }
 }
-
-
-

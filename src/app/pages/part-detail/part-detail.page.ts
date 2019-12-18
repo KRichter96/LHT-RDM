@@ -16,6 +16,7 @@ export class PartDetailPage implements OnInit {
   projectId: number;
   partItem: PartModel;
   selectedSegment: string;
+  existingItem: boolean;
 
   constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute, private partService: PartService, private plt: Platform) {
   }
@@ -32,9 +33,9 @@ export class PartDetailPage implements OnInit {
       this.loadData(true);
     })
   }
-  
+
   createNewPartItem() {
-    this.toastCtrl.displayToast("Moin");
+    this.existingItem = false;
   }
 
   loadData(refresh = false) {
@@ -48,6 +49,16 @@ export class PartDetailPage implements OnInit {
   }
   onSave() {
     this.partService.updatePart(this.partItem, this.id);
+    if (+this.partItem.id === -1) { //check if partItem.id is filled else this.id
+      this.partItem.id = Date.now().toString();
+      this.partService.setParts(false, this.partItem.id, this.partItem);
+      this.partService.updatePart(this.partItem, this.partItem.id).subscribe(e => {
+        this.partItem = e[this.partItem.id];
+      });
+    } else {
+
+    }
+
   }
 
   async segmentChanged(event) {

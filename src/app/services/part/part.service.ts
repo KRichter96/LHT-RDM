@@ -34,6 +34,11 @@ export class PartService {
       );
     }
   }
+ array
+  public setParts(forceRefresh: boolean = false,partId, partItem) {
+        console.log('sets partdetail');
+        this.setLocalData('parts', partItem);
+  }
 
   getDimensionsByFind(id) {
     return this.items.find(x => x.counterId === id);
