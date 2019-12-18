@@ -9,6 +9,9 @@ import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { ProjectService } from 'src/app/services/project/project.service';
+import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
+import { OfflineService } from 'src/app/services/offline/offline.service';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Component({
   selector: 'app-parts',
@@ -24,8 +27,15 @@ export class PartsPage implements OnInit {
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService, 
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
-    private router: Router, private filterService: FilterService, private projectService: ProjectService) { 
+    private router: Router, private filterService: FilterService, private projectService: ProjectService, private networkService: NetworkService, private offlineManager: OfflineService) { 
       this.chips = new Array<Chip>();
+      this.plt.ready().then(() => {
+        this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
+          if (status == ConnectionStatus.Online) {
+            this.offlineManager.checkForEvents().subscribe();
+          }
+        });
+      });
   }
   
   ngOnInit() {

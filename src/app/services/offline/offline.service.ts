@@ -2,7 +2,7 @@ import { forkJoin, Observable, from, of } from 'rxjs';
 import { ToastController } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, finalize } from 'rxjs/operators';
+import { switchMap, finalize, map, tap } from 'rxjs/operators';
 import { Storage } from '@ionic/storage';
 
 const STORAGE_REQ_KEY = "storedreq";
@@ -26,18 +26,28 @@ export class OfflineService {
     return from(this.storage.get(STORAGE_REQ_KEY)).pipe(
       switchMap(storedOperations => {
         let storedObj = JSON.parse(storedOperations);
+        console.log("online");
         if (storedObj && storedObj.length > 0) {
+
+          // this.http.get('http://192.168.176.77:8081/api/projects').subscribe(response => {
+          //   console.log(response);
+        console.log("awef");
           return this.sendRequests(storedObj).pipe(
-            finalize(() => {
-              let toast = this.toastController.create({
-                message: "Local data successfully synced to API!",
-                duration: 3000,
-                position: "bottom"
-              });
-              toast.then(toast => toast.present());
-              this.storage.remove(STORAGE_REQ_KEY);
-            })
-          );
+              finalize(() => {
+                let toast = this.toastController.create({
+                  message: "Local data successfully synced to API!",
+                  duration: 3000,
+                  position: "bottom"
+                });
+                toast.then(toast => toast.present());
+                this.storage.remove(STORAGE_REQ_KEY);
+              })
+            );
+          // }, error => {
+          //   console.log(error);
+          // });
+
+          
         } else {
           console.log("no local events");
           return of(false);
@@ -82,7 +92,7 @@ export class OfflineService {
 
     for (let op of operations) {
       console.log("Make one request: ", op);
-      let oneObs = this.http.request(op.type, op.url, op.data);
+      let oneObs = this.http.request(op.type, op.url, { body:op.data });
       obs.push(oneObs);
     }
     //Send out all local events and return once they are finished

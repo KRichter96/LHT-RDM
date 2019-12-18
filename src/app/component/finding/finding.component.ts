@@ -9,6 +9,7 @@ import { PartDetailPage } from 'src/app/pages/part-detail/part-detail.page';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { ProjectService } from 'src/app/services/project/project.service';
+import { ImageService } from 'src/app/services/image/image.service';
 
 @Component({
   selector: 'app-finding',
@@ -22,11 +23,11 @@ export class FindingComponent implements OnInit {
   partId: number;
   projectId: number;
 
-  constructor(private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
+  constructor(private imageService: ImageService, private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
     private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private partService: PartService) { }
 
   ngOnInit() {
-    this.partId = this.partDetail.id;
+    this.partId = this.partDetail.id + 1;
     this.projectId = this.projectService.getProjectId();
     this.imagePath = "finding/" + this.projectId + "/" + this.partId;
     this.loadStoredImages();
@@ -127,7 +128,8 @@ export class FindingComponent implements OnInit {
       };
 
       this.images = [newEntry, ...this.images];
-      this.partService.updatePart(this.images, this.partId);
+      //this.partService.updatePart(this.images, this.partId);
+      this.imageService.uploadFinding(this.images, this.partId)
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }

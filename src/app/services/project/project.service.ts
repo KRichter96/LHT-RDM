@@ -7,7 +7,7 @@ import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
 
 const API_STORAGE_KEY = 'projects';
-const PROJECT_URL = 'http://192.168.176.77:8081/api/projects';
+const PROJECT_URL = 'http://192.168.40.124:8081/api/projects';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class ProjectService {
       return this.http.get(`${PROJECT_URL}`).pipe(
         map(res => res['projects']),
         tap(res => {
-          console.log('returns real live API data');
+          console.log('returns real live API data', PROJECT_URL);
           this.setLocalData('projects', res);
         })
       );

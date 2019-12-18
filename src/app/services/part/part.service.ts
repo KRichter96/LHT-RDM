@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from, Subscriber } from 'rxjs';
 import { NetworkService, ConnectionStatus } from '../network/network.service';
-import { map, tap, catchError, filter, count } from 'rxjs/operators';
+import { map, tap, catchError } from 'rxjs/operators';
 import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const API_STORAGE_KEY = 'parts';
-const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
+const PART_URL = 'http://192.168.40.124:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.40.124:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +27,7 @@ export class PartService {
       return this.http.get(`${PART_URL + projectId}`).pipe(
         map(res => res['parts']),
         tap(res => {
-          console.log('returns real live API data');
+          console.log('returns real live API data', PART_URL+projectId);
           this.setLocalData('parts', res);
           this.items = res;
         })
@@ -36,12 +35,17 @@ export class PartService {
     }
   }
 
+  getDimensionsByFind(id) {
+    return this.items.find(x => x.counterId === id);
+  }
+
   //TODO
   public updatePart(data, partId): Observable<any> {
     let url = `${UPDATE_PART_URL}`;
-    console.log(url);
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+      this.items[this.getDimensionsByFind(data.counterId).counterId -1] = data;
+      this.setLocalData('parts', this.items); //something went wrong here
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
     } 
     else {
@@ -71,7 +75,7 @@ export class PartService {
       for (let term of chip.FilterTerm) {
         switch(chip.FilterObj) { 
           case "Ident-Nr": { 
-            if (item.id.toLowerCase().indexOf(term.toLowerCase()) > -1) {
+            if (item.counterId.toString().toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
               ret = false;
             }
             break;
@@ -136,12 +140,12 @@ export class PartService {
 
   //Save result of API requests
   private setLocalData(key, data) {
-    this.storage.set(`${API_STORAGE_KEY}-${key}`, data);
+    this.storage.set(`${key}`, data);
   }
 
   //Get cached API result
   private getLocalData(key) {
     console.log("return local data");
-    return this.storage.get(`${API_STORAGE_KEY}-${key}`);
+    return this.storage.get(`${key}`);
   }
 }

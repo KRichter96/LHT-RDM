@@ -1,12 +1,17 @@
 <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
-          <div class="img-wrapper" [style.background-image]="'url(' + img.path + ')'"></div>
-  <!-- <ion-img [src]="img.path"></ion-img> IN DIV -->
+  <ion-row>
+    <ion-col size="12">
+      <ion-button (click)="selectImage()" class="img-wrapper">
+        <ion-icon name="add" size="large"></ion-icon>
+        <ion-label>Add Photo</ion-label>
+      </ion-button>
+      <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
+        <div class="img-wrapper" ></div>
+        <ion-img [src]="img.path"></ion-img>
+  <!--  IN DIV   [style.background-image]="'url(' + img.path + ')'"-->
   <!-- [ngStyle]="{'background-image': 'url(' + your url + ')'}" -->
-        </ion-item>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+</ion-grid>
   
