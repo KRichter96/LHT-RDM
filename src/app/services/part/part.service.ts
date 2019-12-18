@@ -35,6 +35,11 @@ export class PartService {
       );
     }
   }
+ array
+  public setParts(forceRefresh: boolean = false,partId, partItem) {
+        console.log('sets partdetail');
+        this.setLocalData('parts', partItem);
+  }
 
   //TODO
   public updatePart(data, partId): Observable<any> {

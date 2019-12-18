@@ -1,4 +1,4 @@
-<ion-grid>
+<ion-grid *ngIf="partItem">
   <ion-label>Comment:</ion-label>
-  <ion-input partItem.cmmReference></ion-input>
+  <ion-input {{partDetail.partItem.comment}}></ion-input>
 </ion-grid>
