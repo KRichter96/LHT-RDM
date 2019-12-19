@@ -1,4 +1,4 @@
-<ion-grid *ngIf="partItem">
-  <ion-label>Comment:</ion-label>
-  <ion-input {{partDetail.partItem.comment}}></ion-input>
-</ion-grid>
+<ion-item>
+  <ion-label position="floating">Comment:</ion-label>
+    <ion-input placeholder="Enter more information here..." debounce="300"  [(ngModel)]="comment" (ionChange)="notify()"></ion-input>
+</ion-item>

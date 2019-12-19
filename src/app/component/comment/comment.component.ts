@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ProjectService} from '../../services/project/project.service';
 import {PartDetailPage} from '../../pages/part-detail/part-detail.page';
 import {PartModel} from '../../models/part/partmodel';
+import {PartService} from '../../services/part/part.service';
 
 @Component({
   selector: 'app-comment',
@@ -11,22 +12,18 @@ import {PartModel} from '../../models/part/partmodel';
 export class CommentComponent implements OnInit {
 
   comment: string;
-  commentPath = "";
-  partId: number;
   projectId: number;
-  partItem: PartModel;
 
-
-  constructor(private projectService: ProjectService, private partDetail: PartDetailPage,) { }
+  constructor(private projectService: ProjectService, private partService: PartService, private partDetail: PartDetailPage) { }
 
   ngOnInit() {
-    console.log("comment:" + this.partDetail.partItem.remarksRemoval);
-    this.partId = this.partDetail.id;
-    console.log("comment:" + this.partDetail.partItem.remarksRemoval);
     this.comment = this.partDetail.partItem.remarksRemoval;
     this.projectId = this.projectService.getProjectId();
-    this.commentPath = "comment/" + this.projectId + "/" + this.partId;
-    console.log(this.comment);
+    this.partService.getParts(false, this.projectId);
+  }
 
+  notify() {
+      this.partDetail.partItem.remarksRemoval = this.comment;
+      console.log("Updated remarksRemoval: " + this.partDetail.partItem.remarksRemoval);
   }
 }
