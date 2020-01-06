@@ -8,8 +8,8 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const PART_URL = 'http://192.168.40.124:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.40.124:8081/api/parts';
+const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +34,7 @@ export class PartService {
       );
     }
   }
- array
+  
   public setParts(forceRefresh: boolean = false,partId, partItem) {
         console.log('sets partdetail');
         this.setLocalData('parts', partItem);

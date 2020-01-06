@@ -5,12 +5,15 @@
         <ion-icon name="add" size="large"></ion-icon>
         <ion-label>Add Photo</ion-label>
       </ion-button>
-      <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
-        <div class="img-wrapper" ></div>
-        <ion-img [src]="img.path"></ion-img>
+        <div class="images">
+          <div class="one-image" *ngFor="let img of images; index as pos" (press)="pressImage($event, pos)">
+        
+            <ion-img [src]="img.path"></ion-img>
+          </div>
+        </div>
   <!--  IN DIV   [style.background-image]="'url(' + img.path + ')'"-->
-  <!-- [ngStyle]="{'background-image': 'url(' + your url + ')'}" -->
-      </ion-item>
+  <!-- [ngStyle]="{'background-image': 'url(' + img.pat + ')'}" -->
+      
     </ion-col>
   </ion-row>
 </ion-grid>

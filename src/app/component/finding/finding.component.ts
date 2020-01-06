@@ -34,6 +34,10 @@ export class FindingComponent implements OnInit {
     console.log(this.imagePath);
   }
 
+  pressImage(event, pos) {
+    console.log("HoldImage", event, pos);
+  }
+
   loadStoredImages() {
     this.storage.get(this.imagePath).then(images => {
       if (images) {

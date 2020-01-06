@@ -58,7 +58,10 @@ export class PartDetailPage implements OnInit {
     } else {
 
     }
+  }
 
+  getPartId(): string {
+    return this.partItem.id;
   }
 
   async segmentChanged(event) {

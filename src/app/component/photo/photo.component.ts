@@ -129,7 +129,8 @@ export class PhotoComponent implements OnInit {
 
       this.images = [newEntry, ...this.images];
       //this.partService.updatePart(this.images, this.partId);
-      this.imageService.uploadImage(this.images, this.partId);
+      console.log("partID", this.partDetail.getPartId())
+      this.imageService.uploadImage(this.images, this.partDetail.getPartId());
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }
