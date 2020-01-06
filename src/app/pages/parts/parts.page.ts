@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PartModel } from 'src/app/models/part/partmodel';
-import {Platform, AlertController, PopoverController} from '@ionic/angular';
+import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
@@ -9,10 +9,9 @@ import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import {PopoverPage} from '../../component/popover/popover.page';
+import { PopoverPage } from '../../component/popover/popover.page';
 import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
 import { OfflineService } from 'src/app/services/offline/offline.service';
-import { async } from 'rxjs/internal/scheduler/async';
 
 @Component({
   selector: 'app-parts',
@@ -22,11 +21,12 @@ import { async } from 'rxjs/internal/scheduler/async';
 })
 export class PartsPage implements OnInit {
 
+  @ViewChild('slidingList', null) slidingList: any;
+
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm: string = "";
   id: number;
-
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
@@ -45,7 +45,7 @@ export class PartsPage implements OnInit {
   ngOnInit() {
     this.id = +this.route.snapshot.paramMap.get('id');
     this.projectService.setProjectId(this.id);
-
+    
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
       this.partService.filterItems(this.chips);
@@ -54,6 +54,15 @@ export class PartsPage implements OnInit {
       this.loadData(true);
       this.setSearchedItems();
     })
+  }
+
+  doRefresh(event) {
+    console.log('Begin async operation');
+    this.loadData(true);
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 2000);
   }
   
   openDetail() {
@@ -134,6 +143,7 @@ export class PartsPage implements OnInit {
       }]
     });
     await alert.present();
+    await this.slidingList.closeSlidingItems();
   }
 
   onChangeFilter(event) {
