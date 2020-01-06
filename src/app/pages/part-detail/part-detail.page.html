@@ -9,9 +9,10 @@
 
 <ion-content>
 
-    <div *ngIf="!partItem" class="errorMsg">
-      <ion-label><h1>No results found!</h1></ion-label>
-    </div>
+<!--TODO Uncomment and fix-->
+<!--    <div *ngIf="partItem.counterId != -1 && !partItem" class="errorMsg">-->
+<!--      <ion-label><h1>No results found!</h1></ion-label>-->
+<!--    </div>-->
 
   <ion-grid *ngIf="partItem">
     <ion-col>
@@ -135,14 +136,14 @@
     <ion-col>
       <ion-item>
         <ion-label position="floating" color="dark">Rack Number:</ion-label>
-        <ion-input [(ngModel)]="partItem.rackNo"></ion-input>
+        <ion-input [(ngModel)]="partItem.rackNo" required="true"></ion-input>
         <!-- [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}" -->
       </ion-item>
     </ion-col>
     <ion-col>
       <ion-item>
         <ion-label position="floating" color="dark">Rack Location:</ion-label>
-        <ion-input [(ngModel)]="partItem.rackLocation"></ion-input>
+        <ion-input [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
       </ion-item>
     </ion-col>
     <ion-col>

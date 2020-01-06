@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { Platform, AlertController } from '@ionic/angular';
+import {Platform, AlertController, PopoverController} from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
@@ -9,6 +9,7 @@ import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { ProjectService } from 'src/app/services/project/project.service';
+import {PopoverPage} from '../../component/popover/popover.page';
 import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
 import { OfflineService } from 'src/app/services/offline/offline.service';
 import { async } from 'rxjs/internal/scheduler/async';
@@ -25,9 +26,11 @@ export class PartsPage implements OnInit {
   searchTerm: string = "";
   id: number;
 
-  constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService, 
+
+  constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
-    private router: Router, private filterService: FilterService, private projectService: ProjectService, private networkService: NetworkService, private offlineManager: OfflineService) { 
+    private router: Router, private filterService: FilterService, private projectService: ProjectService,
+              private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController) {
       this.chips = new Array<Chip>();
       this.plt.ready().then(() => {
         this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
@@ -179,8 +182,16 @@ export class PartsPage implements OnInit {
     this.searchTerm = "";
   }
 
-  onAddItem() {
-    console.log("this works");
 
+  async openPopover(ev: Event) {
+    const popover = await this.popoverController.create({
+      component: PopoverPage,
+      componentProps: {
+        partsArray: this.parts
+      },
+      event: ev
+    });
+    console.log("a " + this.parts);
+    await popover.present();
   }
 }

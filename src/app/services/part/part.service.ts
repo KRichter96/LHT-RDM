@@ -35,7 +35,7 @@ export class PartService {
     }
   }
   
-  public setParts(forceRefresh: boolean = false,partId, partItem) {
+  public setParts(forceRefresh: boolean = false, partId, partItem) {
         console.log('sets partdetail');
         this.setLocalData('parts', partItem);
   }

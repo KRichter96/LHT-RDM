@@ -17,40 +17,42 @@ export class PartDetailPage implements OnInit {
   partItem: PartModel;
   selectedSegment: string;
   existingItem: boolean;
+  newId: any; //todo needed?
 
   constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute, private partService: PartService, private plt: Platform) {
   }
 
   ngOnInit() {
-    this.id = +this.route.snapshot.paramMap.get('id') - 1;
+    this.id = +this.route.snapshot.paramMap.get('id') -1;
     this.projectId = this.projectService.getProjectId();
-    if (this.id == -1) {
+    if (this.id == -2) {
       this.partItem = new PartModel();
       this.createNewPartItem();
     }
     this.selectedSegment = "comment";
     this.plt.ready().then(() => {
       this.loadData(true);
-    })
+    });
   }
 
   createNewPartItem() {
     this.existingItem = false;
+    this.id = Date.now();
   }
 
   loadData(refresh = false) {
     let partItem: PartModel;
     this.partService.getParts(refresh, this.projectId).subscribe(e => {
       partItem = e[this.id];
-      //partItem.statusEdit = "1";
+      console.log("id: load data: "+ this.id);
+      partItem.statusEdit = "1";
       this.partItem = partItem;
-      // this.partService.updatePart(partItem, this.id);
     });
   }
   onSave() {
     this.partService.updatePart(this.partItem, this.id);
+
     if (+this.partItem.id === -1) { //check if partItem.id is filled else this.id
-      this.partItem.id = Date.now().toString();
       this.partService.setParts(false, this.partItem.id, this.partItem);
       this.partService.updatePart(this.partItem, this.partItem.id).subscribe(e => {
         this.partItem = e[this.partItem.id];
@@ -67,5 +69,4 @@ export class PartDetailPage implements OnInit {
   async segmentChanged(event) {
     this.selectedSegment = event.detail.value;
   }
-
 }
