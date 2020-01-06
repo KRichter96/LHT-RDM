@@ -14,9 +14,9 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import {PartsPageModule} from './pages/parts/parts.module';
-import {PartDetailPageModule} from './pages/part-detail/part-detail.module';
-import {PopoverPageModule} from './component/popover/popover.module';
+import { PartsPageModule } from './pages/parts/parts.module';
+import { PartDetailPageModule } from './pages/part-detail/part-detail.module';
+import { PopoverPageModule } from './component/popover/popover.module';
 
 @NgModule({
   declarations: [AppComponent],

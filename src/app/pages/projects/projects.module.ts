@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProjectsPage } from './projects.page';
 
+import { ProgressComponent } from './../../component/progress/progress.component'
+
 const routes: Routes = [
   {
     path: '',
@@ -21,6 +23,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ProjectsPage]
+  declarations: [ProjectsPage, ProgressComponent]
 })
 export class ProjectsPageModule {}

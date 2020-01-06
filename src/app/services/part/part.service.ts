@@ -78,9 +78,11 @@ export class PartService {
     let ret = true;
     for (let chip of chips) {
       for (let term of chip.FilterTerm) {
+        //Helper
         switch(chip.FilterObj) { 
           case "Ident-Nr": { 
             if (item.counterId.toString().toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+              //if helper > 0 save last to variable and check for next
               ret = false;
             }
             break;

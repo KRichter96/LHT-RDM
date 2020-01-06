@@ -36,6 +36,9 @@
 </ion-header>
 
 <ion-content class="has-header">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   
   <ion-chip *ngFor="let chip of chips; let i = index" color="primary">
     <ion-label>{{ chip.FilterObj }}: {{chip.FilterTerm }}</ion-label>
@@ -97,7 +100,7 @@
         
         <ion-grid>
           <ion-row>
-            <ion-col size="1">
+            <ion-col size="1" [ngClass]="{greenClass: checkStatus(part), yellowClass: !checkStatus(part)}">
               <div class="stacked-group">
                 <ion-label>{{ part.counterId }}</ion-label>
               </div>
@@ -163,11 +166,6 @@
         <ion-tab-button (click)="openPopover($event)">
           <ion-icon size="large" name="md-add"></ion-icon>
           <ion-label color="light">Add</ion-label>
-        </ion-tab-button>
-
-        <ion-tab-button (click)="onSync()">
-          <ion-icon size="large" name="cloud-upload"></ion-icon>
-          <ion-label color="light">Synchronize</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>

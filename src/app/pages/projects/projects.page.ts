@@ -13,8 +13,7 @@ export class ProjectsPage implements OnInit {
 
   constructor(private plt: Platform, private projectService: ProjectService) { }
 
-  projects: Observable<ProjectModel>;
-  projectTitle: Observable<String>;
+  projects: ProjectModel[] = [];
 
   ngOnInit() {
     this.plt.ready().then(() => {
@@ -29,5 +28,9 @@ export class ProjectsPage implements OnInit {
         refresher.targer.complete();
       }
     });
+  }
+
+  checkStatus(project) {
+    return 50;
   }
 }

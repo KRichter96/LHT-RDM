@@ -18,6 +18,7 @@ import { async } from 'rxjs/internal/scheduler/async';
   selector: 'app-parts',
   templateUrl: './parts.page.html',
   styleUrls: ['./parts.page.scss'],
+  styles: [ ".greenClass { background-color: green } .yellowClass {background-color: red }"]
 })
 export class PartsPage implements OnInit {
 
@@ -182,6 +183,20 @@ export class PartsPage implements OnInit {
     this.searchTerm = "";
   }
 
+  checkStatus(part) {
+    try {
+      let p: PartModel = part;
+      if (p.rackLocation && p.rackNo && p.preModWeight && p.preModWeight != "N/A" && p.rackLocation != "N/A" && p.rackNo != "N/A") {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    catch (Exception) {
+      return false;
+    }
+  }
 
   async openPopover(ev: Event) {
     const popover = await this.popoverController.create({
