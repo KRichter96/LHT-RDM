@@ -41,6 +41,7 @@ export class PartModel {
   testSample: string;
   moC4Flameability: string;
   moC7: string;
+  deleteReason: string;
   statusCreate: string;
   statusEdit: string;
   id: string;

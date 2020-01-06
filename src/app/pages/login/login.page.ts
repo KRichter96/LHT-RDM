@@ -20,9 +20,9 @@ export class LoginPage implements OnInit {
   }
 
   login() {
-    //this.authService.login();
+    this.authService.login();
     if (this.pwField == "vmod") {
-      this.router.navigate(["projects"]);
+       this.router.navigate(["projects"]);
     }
     else {
       this.toastService.displayToast("Wrong password, please try again!")

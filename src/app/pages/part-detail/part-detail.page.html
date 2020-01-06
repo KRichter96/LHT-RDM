@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Part-Detail</ion-title>
+      <ion-buttons slot="start">
+          <ion-button [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="back">Cancel</ion-button>
+      </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="onSave()" [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="forward">Done</ion-button>
     </ion-buttons>
@@ -116,32 +119,31 @@
     <ion-col>
       <ion-item>
         <ion-label position="floating" color="dark">Pre-Mod P/N (A/C):</ion-label>
-        <ion-input [(ngModel)]="partItem.preModPNAC"></ion-input>
+        <ion-input [(ngModel)]="partItem.preModPNAC" required="false"></ion-input>
       </ion-item>
     </ion-col>
     <ion-col>
       <ion-item>
         <ion-label position="floating" color="dark">Serial No.:</ion-label>
-        <ion-input [(ngModel)]="partItem.serialNo"></ion-input>
+        <ion-input [(ngModel)]="partItem.serialNo" required="false"></ion-input>
       </ion-item>
     </ion-col>
     <ion-col>
-      <ion-item>
+      <ion-item [ngStyle]="{'color': partItem.preModWeight? 'green' : 'red'}">
         <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
-        <ion-input [(ngModel)]="partItem.preModWeight"></ion-input>
+        <ion-input id="pmw" type="number" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
       </ion-item>
     </ion-col>
   </ion-row>
   <ion-row>
     <ion-col>
-      <ion-item>
+      <ion-item [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}">
         <ion-label position="floating" color="dark">Rack Number:</ion-label>
-        <ion-input [(ngModel)]="partItem.rackNo" required="true"></ion-input>
-        <!-- [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}" -->
+        <ion-input type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
       </ion-item>
     </ion-col>
     <ion-col>
-      <ion-item>
+      <ion-item [ngStyle]="{'color': partItem.rackLocation? 'green' : 'red'}">
         <ion-label position="floating" color="dark">Rack Location:</ion-label>
         <ion-input [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
       </ion-item>

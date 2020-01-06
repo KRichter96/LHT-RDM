@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { ProjectModel } from 'src/app/models/project/ProjectModel';
 import { Platform } from '@ionic/angular';
 import { ProjectService } from 'src/app/services/project/project.service';
+import {PartModel} from '../../models/part/partmodel';
 
 @Component({
   selector: 'app-projects',
@@ -13,7 +14,9 @@ export class ProjectsPage implements OnInit {
 
   constructor(private plt: Platform, private projectService: ProjectService) { }
 
-  projects: ProjectModel[] = [];
+  //projects: ProjectModel[] = [];
+  projects: Observable<ProjectModel>;
+  projectTitle: Observable<String>;
 
   ngOnInit() {
     this.plt.ready().then(() => {
@@ -25,7 +28,7 @@ export class ProjectsPage implements OnInit {
     this.projectService.getProjects(refresh).subscribe(res => {
       this.projects = res;
       if (refresher) {
-        refresher.targer.complete();
+        refresher.target.complete();
       }
     });
   }

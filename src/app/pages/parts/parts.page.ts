@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { Platform, AlertController, PopoverController } from '@ionic/angular';
+import {Platform, AlertController, PopoverController} from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
@@ -9,9 +9,10 @@ import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import { PopoverPage } from '../../component/popover/popover.page';
+import {PopoverPage} from '../../component/popover/popover.page';
 import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
 import { OfflineService } from 'src/app/services/offline/offline.service';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Component({
   selector: 'app-parts',
@@ -21,17 +22,17 @@ import { OfflineService } from 'src/app/services/offline/offline.service';
 })
 export class PartsPage implements OnInit {
 
-  @ViewChild('slidingList', null) slidingList: any;
-
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm: string = "";
   id: number;
+  progress: number = 0;
+
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
     private router: Router, private filterService: FilterService, private projectService: ProjectService,
-              private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController) {
+    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController) {
       this.chips = new Array<Chip>();
       this.plt.ready().then(() => {
         this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
@@ -45,7 +46,7 @@ export class PartsPage implements OnInit {
   ngOnInit() {
     this.id = +this.route.snapshot.paramMap.get('id');
     this.projectService.setProjectId(this.id);
-    
+
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
       this.partService.filterItems(this.chips);
@@ -53,8 +54,20 @@ export class PartsPage implements OnInit {
     this.plt.ready().then(() => {
       this.loadData(true);
       this.setSearchedItems();
-    })
+    });
   }
+
+  updateProgressBar() {
+    let cento = this.parts.length;
+    console.log(cento);
+    let percent = this.parts.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
+        || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" )) && (x.existingComponents !="" && x.preModPNAC !="" && x.serialNo !="")).length;
+// todo adriel
+    let progress = percent / cento;
+    console.log(percent);
+    return progress;
+  }
+
 
   doRefresh(event) {
     console.log('Begin async operation');
@@ -64,7 +77,8 @@ export class PartsPage implements OnInit {
       event.target.complete();
     }, 2000);
   }
-  
+
+
   openDetail() {
     this.filterService.setChips(this.chips);
   }
@@ -73,10 +87,12 @@ export class PartsPage implements OnInit {
     this.partService.getParts(refresh, this.id)
     .subscribe(res => {
       this.parts = res;
+      this.updateProgressBar();
       if (refresher) {
         refresher.target.complete();
       }
     });
+
   }
 
   onSync() {
@@ -143,7 +159,6 @@ export class PartsPage implements OnInit {
       }]
     });
     await alert.present();
-    await this.slidingList.closeSlidingItems();
   }
 
   onChangeFilter(event) {

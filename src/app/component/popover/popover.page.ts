@@ -12,21 +12,21 @@ import {PartService} from '../../services/part/part.service';
 })
 export class PopoverPage implements OnInit {
 
-  partsArray: [];
+  partsArray: PartModel[] = [];
   childItem: false;
   id: number;
+  parentId: -1;
 
   constructor(private navParams: NavParams, private popoverController: PopoverController) { }
 
   ngOnInit() {
-    this.partsArray = this.navParams.get('parts');
-
-    console.log("test: " +  this.partsArray);
+    this.childItem = false;
+    this.parentId = -1;
+    console.log(this.childItem);
+    console.log(this.parentId);
   }
 
   closePopover() {
     this.popoverController.dismiss();
   }
-
-
 }

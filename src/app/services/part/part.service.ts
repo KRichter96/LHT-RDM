@@ -8,8 +8,8 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
+const PART_URL = 'http://192.168.2.55:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.2.55:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -22,22 +22,43 @@ export class PartService {
 
   public getParts(forceRefresh: boolean = false, projectId): Observable<any> {
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline || !forceRefresh) {
+      console.log("parts service");
       return from(this.getLocalData('parts'));
     } else {
       return this.http.get(`${PART_URL + projectId}`).pipe(
         map(res => res['parts']),
         tap(res => {
-          console.log('returns real live API data', PART_URL+projectId);
+          console.log('returns real live API data', PART_URL + projectId);
           this.setLocalData('parts', res);
           this.items = res;
         })
       );
     }
   }
-  
-  public setParts(forceRefresh: boolean = false, partId, partItem) {
-        console.log('sets partdetail');
-        this.setLocalData('parts', partItem);
+  public createPart(data): Observable<any> {
+    let url = `${UPDATE_PART_URL}`;
+    console.log(data);
+    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+      this.items = [...this.items, data];
+      console.log(this.items);
+      this.setLocalData('parts', this.items); //something went wrong here
+      return from(this.offlineManager.storeRequest(url, 'POST', data));
+    }
+    else {
+      this.http.post(url, data).subscribe(
+          response => {
+            console.log(response);
+          },
+          error => {
+            alert(error);
+            console.log(error);
+          });
+      return this.http.post(url, data).pipe(catchError(err => {
+            this.offlineManager.storeRequest(url, 'POST', data);
+            throw new Error(err);
+          })
+      );
+    }
   }
 
   getDimensionsByFind(id) {
@@ -79,7 +100,7 @@ export class PartService {
     for (let chip of chips) {
       for (let term of chip.FilterTerm) {
         //Helper
-        switch(chip.FilterObj) { 
+        switch(chip.FilterObj) {
           case "Ident-Nr": { 
             if (item.counterId.toString().toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
               //if helper > 0 save last to variable and check for next

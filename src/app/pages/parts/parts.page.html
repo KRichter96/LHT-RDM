@@ -18,7 +18,6 @@
         <ion-select-option value="Position">Position</ion-select-option>
         <ion-select-option value="InstallationRoom">Installation Room</ion-select-option>
       </ion-select>
-
     </ion-button>
     
     <ion-buttons class="barcode-buttons" slot="end">
@@ -45,7 +44,7 @@
     <ion-icon name="close-circle" (click)="deleteChip(i, $event)"></ion-icon>
   </ion-chip>
 
-  <ion-list #slidingList>
+  <ion-list>
     <ion-list-header class="ion-no-padding">
       <ion-grid style="padding-right: 3em;">
         <ion-row>
@@ -159,7 +158,9 @@
 
 </ion-content>
 
-<ion-footer> 
+<ion-footer>
+  <ion-progress-bar [value]="updateProgressBar()" mode="ios"></ion-progress-bar>
+  <br>
   <ion-toolbar>
     <ion-tabs>
       <ion-tab-bar slot="bottom" color="primary">
