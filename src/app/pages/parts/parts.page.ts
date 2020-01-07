@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PartModel } from 'src/app/models/part/partmodel';
-import {Platform, AlertController, PopoverController} from '@ionic/angular';
+import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
@@ -9,10 +9,9 @@ import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { FilterService } from 'src/app/services/filter/filter.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import {PopoverPage} from '../../component/popover/popover.page';
+import { PopoverPage } from '../../component/popover/popover.page';
 import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
 import { OfflineService } from 'src/app/services/offline/offline.service';
-import { async } from 'rxjs/internal/scheduler/async';
 
 @Component({
   selector: 'app-parts',
@@ -22,11 +21,15 @@ import { async } from 'rxjs/internal/scheduler/async';
 })
 export class PartsPage implements OnInit {
 
+  @ViewChild('slidingList', null) slidingList: any;
+
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm: string = "";
   id: number;
   progress: number = 0;
+  offline: boolean = true;
+  progressColor: string;
 
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService,
@@ -59,12 +62,14 @@ export class PartsPage implements OnInit {
 
   updateProgressBar() {
     let cento = this.parts.length;
-    console.log(cento);
     let percent = this.parts.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
         || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" )) && (x.existingComponents !="" && x.preModPNAC !="" && x.serialNo !="")).length;
-// todo adriel
     let progress = percent / cento;
-    console.log(percent);
+    if(progress != cento) {
+      this.progressColor = "red";
+    } else {
+      this.progressColor = "green";
+    }
     return progress;
   }
 
@@ -147,9 +152,16 @@ export class PartsPage implements OnInit {
       {
         text: 'Ok',
         handler: (alertData) => {
-          if (alertData.reason) {  
+          if (alertData.reason) {
             this.parts[i].remarksRemoval = "true";
             this.parts[i].reasonRemoval = alertData.reason;
+            this.parts[i].statusEdit = "Deleted";
+            if(this.parts[i].statusCreate == 'New' && this.offline == true) { //todo set real var
+                if (i > -1) {
+                    this.parts.splice(i, 1);
+                    this.partService.deletePart(this.parts[i]);
+                }
+            }
             return true;
           }
           else {
@@ -159,6 +171,7 @@ export class PartsPage implements OnInit {
       }]
     });
     await alert.present();
+    await this.slidingList.closeSlidingItems();
   }
 
   onChangeFilter(event) {
@@ -227,11 +240,9 @@ export class PartsPage implements OnInit {
     const popover = await this.popoverController.create({
       component: PopoverPage,
       componentProps: {
-        partsArray: this.parts
       },
       event: ev
     });
-    console.log("a " + this.parts);
     await popover.present();
   }
 }

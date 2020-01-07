@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { ActivatedRoute, Router } from '@angular/router';
-import {Platform, PopoverController} from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
+import { Platform } from '@ionic/angular';
 import { PartService } from 'src/app/services/part/part.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ProjectService } from 'src/app/services/project/project.service';
-import {OfflineService} from '../../services/offline/offline.service';
-import {generateUUID} from 'ionic/lib/utils/uuid';
-import random from '@angular-devkit/schematics/src/rules/random';
+import { generateUUID } from 'ionic/lib/utils/uuid';
+
 
 @Component({
   selector: 'app-part-detail',
@@ -84,9 +83,9 @@ export class PartDetailPage implements OnInit {
   }
 
   prepareForChildItem(partItem: PartModel): PartModel {
-      partItem.id = generateUUID();
-      partItem.projectId = this.projectId.toString();
-      partItem.counterId = this.randomInt();
+      partItem.id = "";
+      partItem.projectId = "";
+      //partItem.counterId;
       //partItem.nomenclature = "";
       //partItem.category = "";
       //partItem.componentType = "";

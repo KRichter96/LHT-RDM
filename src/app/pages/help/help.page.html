@@ -1,9 +1,33 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>help</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Help</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="has-header">
+  <ion-item>
+    <ion-text color="primary"><h1 class="ion-margin-start header">Status Icons</h1></ion-text>
+  </ion-item>
+  <ion-item class="my-label">
+    <ion-icon name="cloud-upload"></ion-icon> <ion-text class="my-label"> The icon "<ion-icon name="cloud-upload"></ion-icon>" means that this part will be updated once there is internet connection.</ion-text>
+  </ion-item>
+  <ion-item class="my-label">
+    <ion-icon name="trash"></ion-icon> <ion-text class="my-label"> The icon "<ion-icon name="trash"></ion-icon>" means that this part will be deleted once there is internet connection. Locally created parts will automatically be deleted</ion-text>
+  </ion-item>
+  <ion-item class="my-label">
+    <ion-icon name="add"></ion-icon> <ion-text class="my-label"> The icon "<ion-icon name="add"></ion-icon>" means that this part has been created in the RDM-Application.</ion-text>
+  </ion-item>
+  <ion-item class="my-label">
+    <ion-icon name="document"></ion-icon>  <ion-text class="my-label"> The icon "<ion-icon name="document"></ion-icon>" means that this part has been taken from the RDM-Database.</ion-text>
+  </ion-item>
+  <ion-item class="my-label">
+    <ion-icon name="create"></ion-icon> <ion-text class="my-label"> The icon "<ion-icon name="create"></ion-icon>" means that this part has been edited.</ion-text>
+  </ion-item>
+  <ion-item class="my-label">
+    <ion-icon name="checkmark"></ion-icon> <ion-text class="my-label"> The icon "<ion-icon name="create"></ion-icon>" means that this part's edits has been acknowledged.</ion-text>
+  </ion-item>
 
 </ion-content>

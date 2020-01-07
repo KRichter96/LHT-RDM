@@ -38,8 +38,8 @@ export class PartService {
   public createPart(data): Observable<any> {
     let url = `${UPDATE_PART_URL}`;
     console.log(data);
+    this.items = [...this.items, data];
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      this.items = [...this.items, data];
       console.log(this.items);
       this.setLocalData('parts', this.items); //something went wrong here
       return from(this.offlineManager.storeRequest(url, 'POST', data));
@@ -89,6 +89,37 @@ export class PartService {
         })
       );
     }
+  }
+
+
+  public deletePart(data): Observable<any>  {
+    let url = `${UPDATE_PART_URL + "/" + data.id}`;
+    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+      //this.removeLocalData(); //something went wrong here
+      let filtered = this.items.filter(x => {
+        return x != data;
+      });
+      console.log("old List", this.items);
+      console.log("new List", filtered);
+      this.items = filtered;
+      this.setLocalData('parts', this.items);
+      return from(this.offlineManager.storeRequest(url, 'DELETE', data)); //todo Check if this works?
+    } else {
+      this.http.delete(url).subscribe(
+          response => {
+            console.log(response);
+          },
+          error => {
+            alert(error);
+            console.log(error);
+          });
+      return this.http.delete(url).pipe(catchError(err => {
+            this.offlineManager.storeRequest(url, 'DELETE', data);
+            throw new Error(err);
+          })
+      );
+    }
+
   }
 
   public filterItems(chips: Chip[]) :PartModel[] {
@@ -175,5 +206,12 @@ export class PartService {
   private getLocalData(key) {
     console.log("return local data");
     return this.storage.get(`${key}`);
+  }
+
+  //delete
+  private removeLocalData(){
+    this.storage.remove('parts').then(()=>{
+      console.log('part is removed');
+    });
   }
 }
