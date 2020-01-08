@@ -27,11 +27,15 @@ export class PartsPage implements OnInit {
   chips: Array<Chip> = [];
   searchTerm: string = "";
   id: number;
+  progress: number = 0;
+  offline: boolean = true;
+  progressColor: string;
+
 
   constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
     private router: Router, private filterService: FilterService, private projectService: ProjectService,
-              private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController) {
+    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController) {
       this.chips = new Array<Chip>();
       this.plt.ready().then(() => {
         this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
@@ -45,7 +49,7 @@ export class PartsPage implements OnInit {
   ngOnInit() {
     this.id = +this.route.snapshot.paramMap.get('id');
     this.projectService.setProjectId(this.id);
-    
+
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
       this.partService.filterItems(this.chips);
@@ -53,8 +57,22 @@ export class PartsPage implements OnInit {
     this.plt.ready().then(() => {
       this.loadData();
       this.setSearchedItems();
-    })
+    });
   }
+
+  updateProgressBar() {
+    let cento = this.parts.length;
+    let percent = this.parts.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
+        || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" )) && (x.existingComponents !="" && x.preModPNAC !="" && x.serialNo !="")).length;
+    let progress = percent / cento;
+    if(progress != cento) {
+      this.progressColor = "red";
+    } else {
+      this.progressColor = "green";
+    }
+    return progress;
+  }
+
 
   doRefresh(event) {
     console.log('Begin async operation');
@@ -64,15 +82,17 @@ export class PartsPage implements OnInit {
       event.target.complete();
     }, 2000);
   }
-  
+
+
   openDetail() {
     this.filterService.setChips(this.chips);
   }
 
   loadData() {
-    this.partService.getParts(this.id).subscribe(res => 
-      this.parts = res
-    );
+    this.partService.getParts(this.id).subscribe(res => {
+      this.parts = res;
+      this.updateProgressBar();
+    });
   }
 
   onSync() {
@@ -89,7 +109,7 @@ export class PartsPage implements OnInit {
       this.barcodeScanner.scan().then(barcodeData => {
         for (let part of this.parts) {
           if (part.postModPN === barcodeData.text) {
-            this.router.navigate(['/part-detail/' + part.id]);
+            this.router.navigate(['/part-detail/' + part.id + "/false"]);
           }
           else {
             this.toastCtrl.displayToast("No Part found");
@@ -127,9 +147,16 @@ export class PartsPage implements OnInit {
       {
         text: 'Ok',
         handler: (alertData) => {
-          if (alertData.reason) {  
+          if (alertData.reason) {
             this.parts[i].remarksRemoval = "true";
             this.parts[i].reasonRemoval = alertData.reason;
+            this.parts[i].statusEdit = "Deleted";
+            if(this.parts[i].statusCreate == 'New' && this.offline == true) { //todo set real var
+                if (i > -1) {
+                    this.parts.splice(i, 1);
+                    this.partService.deletePart(this.parts[i]);
+                }
+            }
             return true;
           }
           else {
@@ -208,11 +235,9 @@ export class PartsPage implements OnInit {
     const popover = await this.popoverController.create({
       component: PopoverPage,
       componentProps: {
-        partsArray: this.parts
       },
       event: ev
     });
-    console.log("a " + this.parts);
     await popover.present();
   }
 }

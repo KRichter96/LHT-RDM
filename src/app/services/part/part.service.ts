@@ -8,8 +8,8 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
+const PART_URL = 'http://192.168.2.55:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.2.55:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +22,9 @@ export class PartService {
 
   public getParts(projectId): Observable<any> {
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      console.log("leer");
-      
       return from(this.getLocalData('parts'));
-    } else {
+    } 
+    else {
       return this.http.get(`${PART_URL + projectId}`).pipe(
         map(res => res['parts']),
         tap(res => {
@@ -38,8 +37,33 @@ export class PartService {
   }
   
   public setParts(partId, partItem) {
-        console.log('sets partdetail');
-        this.setLocalData('parts', partItem);
+    console.log('sets partdetail');
+    this.setLocalData('parts', partItem);
+  }
+
+  public createPart(data): Observable<any> {
+    let url = `${UPDATE_PART_URL}`;
+    console.log(data);
+    this.items = [...this.items, data];
+    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+      console.log(this.items);
+      this.setLocalData('parts', this.items); //something went wrong here
+      return from(this.offlineManager.storeRequest(url, 'POST', data));
+    }
+    else {
+      this.http.post(url, data).subscribe(response => {
+          console.log(response);
+        },
+        error => {
+          alert(error);
+          console.log(error);
+      });
+      return this.http.post(url, data).pipe(catchError(err => {
+          this.offlineManager.storeRequest(url, 'POST', data);
+          throw new Error(err);
+        })
+      );
+    }
   }
 
   getDimensionsByFind(id) {
@@ -70,6 +94,37 @@ export class PartService {
         })
       );
     }
+  }
+
+
+  public deletePart(data): Observable<any>  {
+    let url = `${UPDATE_PART_URL + "/" + data.id}`;
+    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+      //this.removeLocalData(); //something went wrong here
+      let filtered = this.items.filter(x => {
+        return x != data;
+      });
+      console.log("old List", this.items);
+      console.log("new List", filtered);
+      this.items = filtered;
+      this.setLocalData('parts', this.items);
+      return from(this.offlineManager.storeRequest(url, 'DELETE', data)); //todo Check if this works?
+    } else {
+      this.http.delete(url).subscribe(
+          response => {
+            console.log(response);
+          },
+          error => {
+            alert(error);
+            console.log(error);
+          });
+      return this.http.delete(url).pipe(catchError(err => {
+            this.offlineManager.storeRequest(url, 'DELETE', data);
+            throw new Error(err);
+          })
+      );
+    }
+
   }
 
   public filterItems(chips: Chip[]) :PartModel[] {
@@ -161,5 +216,12 @@ export class PartService {
   private getLocalData(key) {
     console.log("return local data");
     return this.storage.get(`${key}`);
+  }
+
+  //delete
+  private removeLocalData(){
+    this.storage.remove('parts').then(()=>{
+      console.log('part is removed');
+    });
   }
 }

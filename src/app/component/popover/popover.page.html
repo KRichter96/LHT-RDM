@@ -1,29 +1,25 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Add New Part</ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="primary">
+        <ion-title>Part-Detail</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
     <ion-item>
       <ion-label>Child Part</ion-label>
       <ion-toggle [(ngModel)]="childItem"></ion-toggle>
     </ion-item>
     <ion-item *ngIf="childItem == true">
-      <ion-select *ngFor="let part of parts; let i = index">
-        <ion-label>{{ part.counterId }}</ion-label>
-      </ion-select>
+      <ion-input type="number" [(ngModel)]="parentId" placeholder="Enter Parent Id here..."></ion-input>
     </ion-item>
-  </ion-list>
   <ion-row>
     <ion-tab-button (click)="closePopover()">
       <ion-icon name="close"></ion-icon>
-      Cancel
+        Cancel
     </ion-tab-button>
-    <ion-tab-button (close)="closePopover()" [routerLink]="'/part-detail/-1'" routerLinkActive="router-link-active" routerDirection="forward">
+    <ion-tab-button (click)="closePopover()" [routerLink]="'/part-detail/'+ parentId +'/' + childItem" routerLinkActive="router-link-active" routerDirection="forward">
       <ion-icon name="add"></ion-icon>
-      Add
+        Add
     </ion-tab-button>
   </ion-row>
 </ion-content>

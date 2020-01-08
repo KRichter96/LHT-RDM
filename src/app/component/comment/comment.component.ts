@@ -24,6 +24,5 @@ export class CommentComponent implements OnInit {
 
   notify() {
       this.partDetail.partItem.remarksRemoval = this.comment;
-      console.log("Updated remarksRemoval: " + this.partDetail.partItem.remarksRemoval);
   }
 }

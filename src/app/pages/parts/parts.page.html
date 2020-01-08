@@ -18,7 +18,6 @@
         <ion-select-option value="Position">Position</ion-select-option>
         <ion-select-option value="InstallationRoom">Installation Room</ion-select-option>
       </ion-select>
-
     </ion-button>
     
     <ion-buttons class="barcode-buttons" slot="end">
@@ -99,7 +98,7 @@
       <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward" class="ion-no-padding">
         
         <ion-grid>
-          <ion-row>
+          <ion-row *ngIf="part.statusEdit != 'Deleted' && offline == true">
             <ion-col size="1" [ngClass]="{greenClass: checkStatus(part), yellowClass: !checkStatus(part)}">
               <div class="stacked-group">
                 <ion-label>{{ part.counterId }}</ion-label>
@@ -138,11 +137,15 @@
               </div>
             </ion-col>
             <ion-col size="1">
-              
-              <!-- <ion-label *ngIf="!part.remarksRemoval && !part.statusEdit && !part.statusCreate">-</ion-label>
-              <ion-icon *ngIf="part.remarksRemoval != 'Permanent Removal'" name="remove-circle"></ion-icon>
-              <ion-icon *ngIf="part.statusEdit != 'Edited'" name="refresh-circle"></ion-icon>
-              <ion-icon *ngIf="part.statusCreate != 'New'" name="add-circle"></ion-icon> -->
+              <div *ngIf="offline == true" > <!--TODO fix with real variable-->
+                <ion-icon name="cloud-upload"></ion-icon>
+                <ion-icon *ngIf="part.statusEdit == 'Deleted'" name="trash"></ion-icon>
+              </div>
+              <ion-icon *ngIf="part.statusCreate == 'New' else elseBlock" name="add"></ion-icon>
+                <ng-template #elseBlock><ion-icon name="document"></ion-icon></ng-template> <!-- Initial (from backend) -->
+              <ion-icon *ngIf="part.statusEdit == 'Edited'" name="create"></ion-icon>
+              <ion-icon *ngIf="part.statusEdit == 'Acknowledged'" name="checkmark"></ion-icon>
+                <!-- No Icon for local deleted OR Not Edited -->
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -159,13 +162,21 @@
 
 </ion-content>
 
-<ion-footer> 
+<ion-footer>
+  <ion-progress-bar [value]="updateProgressBar()" [color]="progressColor" mode="ios"></ion-progress-bar>
+  <br>
   <ion-toolbar>
     <ion-tabs>
       <ion-tab-bar slot="bottom" color="primary">
         <ion-tab-button (click)="openPopover($event)">
           <ion-icon size="large" name="md-add"></ion-icon>
           <ion-label color="light">Add</ion-label>
+        </ion-tab-button>
+
+
+        <ion-tab-button routerLink="/help" routerLinkActive="router-link-active" routerDirection="forward" >
+          <ion-icon size="large" name="md-help"></ion-icon>
+          <ion-label color="light">Help</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>

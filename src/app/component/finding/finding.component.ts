@@ -27,7 +27,7 @@ export class FindingComponent implements OnInit {
     private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.partId = this.partDetail.id + 1;
+    this.partId = this.partDetail.counterId + 1;
     this.projectId = this.projectService.getProjectId();
     this.imagePath = "finding/" + this.projectId + "/" + this.partId;
     this.loadStoredImages();
