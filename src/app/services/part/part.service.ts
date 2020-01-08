@@ -128,7 +128,9 @@ export class PartService {
   }
 
   public filterItems(chips: Chip[]) :PartModel[] {
-    return this.items.filter(item => this.filterObj(chips, item));
+    if (chips.length > 0) 
+      return this.items.filter(item => this.filterObj(chips, item));
+    return this.items;
   }
 
   filterObj(chips: Chip[], item: PartModel): boolean {
