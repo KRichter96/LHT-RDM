@@ -8,8 +8,8 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const PART_URL = 'http://192.168.2.55:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.2.55:8081/api/parts';
+const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -128,13 +128,6 @@ export class PartService {
   }
 
   public filterItems(chips: Chip[]) :PartModel[] {
-    // var pm: PartModel[] = [];
-    // for (var item of this.items) {
-    //   if (this.filterObj(chips, item)) {
-    //     pm = [...pm, item];
-    //   }
-    // }
-    // return pm;
     return this.items.filter(item => this.filterObj(chips, item));
   }
 
