@@ -5,7 +5,8 @@ import { Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 
 export enum ConnectionStatus { Online, Offline }
-const PROJECT_URL = 'http://192.168.176.77:8081/api/projects';
+//const PROJECT_URL = 'http://192.168.176.77:8081/api/projects';
+const PROJECT_URL = 'http://192.168.2.55:8081/api/projects';
 
 @Injectable({
   providedIn: 'root'

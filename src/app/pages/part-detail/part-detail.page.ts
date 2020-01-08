@@ -22,6 +22,7 @@ export class PartDetailPage implements OnInit {
   existingItem: boolean;
   isNewItem: boolean;
   disable: boolean;
+  childItem: boolean;
   newId: any; //todo needed?
 
   constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute
@@ -38,6 +39,8 @@ export class PartDetailPage implements OnInit {
     console.log("newitem: "+ this.isNewItem);
     this.selectedSegment = "comment";
 
+    this.childItem = false;
+
     if (this.counterId == -1) {
       this.partItem = new PartModel();
       this.createNewPartItem();
@@ -50,7 +53,6 @@ export class PartDetailPage implements OnInit {
 
   createNewPartItem() {
     this.existingItem = false;
-    this.disable = true;
     this.partItem.projectId = this.strProjectId;
     this.partItem.id = generateUUID();
     this.partItem.counterId = this.randomInt();
@@ -68,8 +70,15 @@ export class PartDetailPage implements OnInit {
         this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
         this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service
         this.partItem.id = generateUUID();
+        this.childItem = true;
       } else {
         this.partItem = partItem;
+        if (this.partItem.parentId == "-1") {
+          this.childItem = false;
+        }
+        else {
+            this.childItem = true;
+        }
       }
     });
   }
@@ -91,10 +100,7 @@ export class PartDetailPage implements OnInit {
          partItem.nomenclature = "";
          partItem.category = "";
          partItem.componentType = "";
-         partItem.ipcReference = "";
-         partItem.ipcItemNumber = "";
          partItem.postModPN = "";
-         partItem.preModPositionIPC = "";
          partItem.location = "";
          partItem.ammRemovalTask = "";
          partItem.ammInstallTask = "";
@@ -102,6 +108,9 @@ export class PartDetailPage implements OnInit {
          partItem.intendedPurpose = "";
          partItem.installZoneRoom = "";
       */
+      partItem.preModPositionIPC = "";
+      partItem.ipcReference = "";
+      partItem.ipcItemNumber = "";
       partItem.preModPNAC = ""; // Writeable
       partItem.serialNo = ""; // Writeable
       partItem.preModWeight = ""; // Writeable
