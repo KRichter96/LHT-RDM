@@ -6,6 +6,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+
 import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network/ngx';
@@ -14,9 +15,12 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+
 import { PartsPageModule } from './pages/parts/parts.module';
 import { PartDetailPageModule } from './pages/part-detail/part-detail.module';
 import { PopoverPageModule } from './component/popover/popover.module';
+
+import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,7 +44,8 @@ import { PopoverPageModule } from './component/popover/popover.module';
     Camera,
     File,
     FilePath,
-    WebView
+    WebView,
+    PhotoViewer
   ],
   bootstrap: [AppComponent]
 })

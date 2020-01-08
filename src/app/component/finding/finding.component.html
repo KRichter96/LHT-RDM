@@ -6,9 +6,8 @@
         <ion-label>Add Photo</ion-label>
       </ion-button>
         <div class="images">
-          <div class="one-image" *ngFor="let img of images; index as pos" (press)="pressImage($event, pos)">
-        
-            <ion-img [src]="img.path"></ion-img>
+          <div class="one-image" *ngFor="let img of images; index as pos" (press)="deleteImage(img, pos)">
+            <ion-img [src]="img.path" (click)="openImage(img.filePath)"></ion-img>
           </div>
         </div>
   <!--  IN DIV   [style.background-image]="'url(' + img.path + ')'"-->

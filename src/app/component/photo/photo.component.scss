@@ -1,6 +1,26 @@
-.img-wrapper {
+.image-container {
     min-height: 200px;
-    width: 100%;
     background-size: cover;
-    background-repeat: no-repeat;
+}
+
+@media (min-width: 0px) {
+    .images {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 420px) {
+    .images {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 720px) {
+    .images {
+        column-count: 4;
+    }
+}
+
+.one-image {
+    margin: 2px;
 }

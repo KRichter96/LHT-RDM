@@ -26,12 +26,8 @@ export class OfflineService {
     return from(this.storage.get(STORAGE_REQ_KEY)).pipe(
       switchMap(storedOperations => {
         let storedObj = JSON.parse(storedOperations);
-        console.log("online");
+        //console.log("online");
         if (storedObj && storedObj.length > 0) {
-
-          // this.http.get('http://192.168.176.77:8081/api/projects').subscribe(response => {
-          //   console.log(response);
-        console.log("awef");
           return this.sendRequests(storedObj).pipe(
               finalize(() => {
                 let toast = this.toastController.create({
@@ -43,13 +39,8 @@ export class OfflineService {
                 this.storage.remove(STORAGE_REQ_KEY);
               })
             );
-          // }, error => {
-          //   console.log(error);
-          // });
-
-          
         } else {
-          console.log("no local events");
+          //console.log("no local events");
           return of(false);
         }
       })

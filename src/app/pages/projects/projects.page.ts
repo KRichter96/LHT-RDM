@@ -22,7 +22,7 @@ export class ProjectsPage implements OnInit {
   }
 
   loadData(refresh = false, refresher?) {
-    this.projectService.getProjects(refresh).subscribe(res => {
+    this.projectService.getProjects().subscribe(res => {
       this.projects = res;
       if (refresher) {
         refresher.targer.complete();

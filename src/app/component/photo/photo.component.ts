@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActionSheetController, Platform, ToastController } from '@ionic/angular';
+import { ActionSheetController, Platform, AlertController } from '@ionic/angular';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File } from '@ionic-native/file/ngx';
@@ -10,6 +10,7 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { ImageService } from 'src/app/services/image/image.service';
+import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 
 @Component({
   selector: 'app-photo',
@@ -23,7 +24,7 @@ export class PhotoComponent implements OnInit {
   partId: number;
   projectId: number;
 
-  constructor(private imageService: ImageService, private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
+  constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService, private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
     private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private partService: PartService) { }
 
   ngOnInit() {
@@ -32,6 +33,15 @@ export class PhotoComponent implements OnInit {
     this.imagePath = "image/" + this.projectId + "/" + this.partId;
     this.loadStoredImages();
     console.log(this.imagePath);
+  }
+
+  openImage(url: string): void {
+    this.photoViewer.show(url);
+  }
+
+  pressImage(event, pos) {
+    this.toastController.displayToast("Pressed");
+    console.log("HoldImage", event, pos);
   }
 
   loadStoredImages() {
@@ -135,20 +145,37 @@ export class PhotoComponent implements OnInit {
     });
   }
 
-  deleteImage(imgEntry, position) {
-    this.images.splice(position, 1);
+  async deleteImage(imgEntry, position) {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirm!',
+      message: 'Do you really want to delete this Image?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {
+            
+          }
+        }, {
+          text: 'Yes',
+          handler: () => {
+            this.images.splice(position, 1);
 
-    this.storage.get(this.imagePath).then(images => {
-      let arr = JSON.parse(images);
-      let filtered = arr.filter(name => name != imgEntry.name);
-      this.storage.set(this.imagePath, JSON.stringify(filtered));
+            this.storage.get(this.imagePath).then(images => {
+              let arr = JSON.parse(images);
+              let filtered = arr.filter(name => name != imgEntry.name);
+              this.storage.set(this.imagePath, JSON.stringify(filtered));
 
-      var correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
+              var correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
 
-      this.file.removeFile(correctPath, imgEntry.name).then(res => {
-          this.toastController.displayToast('File removed.');
-      });
+              this.file.removeFile(correctPath, imgEntry.name).then(res => {
+                this.toastController.displayToast('File removed.');
+              });
+            });
+          }
+        }
+      ]
     });
+    await alert.present();
   }
 
   pathForImage(img) {

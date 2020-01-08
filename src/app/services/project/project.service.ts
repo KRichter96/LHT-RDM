@@ -18,8 +18,8 @@ export class ProjectService {
 
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
-  public getProjects(forceRefresh: boolean = false): Observable<any>  {
-    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline || !forceRefresh) {
+  public getProjects(): Observable<any>  {
+    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       return from(this.getLocalData('projects'));
     } else {
       return this.http.get(`${PROJECT_URL}`).pipe(

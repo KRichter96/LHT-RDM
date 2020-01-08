@@ -31,7 +31,7 @@ export class PartDetailPage implements OnInit {
     }
     this.selectedSegment = "comment";
     this.plt.ready().then(() => {
-      this.loadData(true);
+      this.loadData();
     });
   }
 
@@ -40,9 +40,9 @@ export class PartDetailPage implements OnInit {
     this.id = Date.now();
   }
 
-  loadData(refresh = false) {
+  loadData() {
     let partItem: PartModel;
-    this.partService.getParts(refresh, this.projectId).subscribe(e => {
+    this.partService.getParts(this.projectId).subscribe(e => {
       partItem = e[this.id];
       console.log("id: load data: "+ this.id);
       partItem.statusEdit = "1";
@@ -53,7 +53,7 @@ export class PartDetailPage implements OnInit {
     this.partService.updatePart(this.partItem, this.id);
 
     if (+this.partItem.id === -1) { //check if partItem.id is filled else this.id
-      this.partService.setParts(false, this.partItem.id, this.partItem);
+      this.partService.setParts(this.partItem.id, this.partItem);
       this.partService.updatePart(this.partItem, this.partItem.id).subscribe(e => {
         this.partItem = e[this.partItem.id];
       });

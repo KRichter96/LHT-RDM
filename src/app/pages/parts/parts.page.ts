@@ -51,14 +51,14 @@ export class PartsPage implements OnInit {
       this.partService.filterItems(this.chips);
     }
     this.plt.ready().then(() => {
-      this.loadData(true);
+      this.loadData();
       this.setSearchedItems();
     })
   }
 
   doRefresh(event) {
     console.log('Begin async operation');
-    this.loadData(true);
+    this.loadData();
     setTimeout(() => {
       console.log('Async operation has ended');
       event.target.complete();
@@ -69,14 +69,10 @@ export class PartsPage implements OnInit {
     this.filterService.setChips(this.chips);
   }
 
-  loadData(refresh = false, refresher?) {
-    this.partService.getParts(refresh, this.id)
-    .subscribe(res => {
-      this.parts = res;
-      if (refresher) {
-        refresher.target.complete();
-      }
-    });
+  loadData() {
+    this.partService.getParts(this.id).subscribe(res => 
+      this.parts = res
+    );
   }
 
   onSync() {

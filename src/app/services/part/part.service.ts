@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, from, Subscriber } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { NetworkService, ConnectionStatus } from '../network/network.service';
 import { map, tap, catchError } from 'rxjs/operators';
 import { OfflineService } from '../offline/offline.service';
@@ -20,14 +20,16 @@ export class PartService {
 
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
-  public getParts(forceRefresh: boolean = false, projectId): Observable<any> {
-    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline || !forceRefresh) {
+  public getParts(projectId): Observable<any> {
+    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+      console.log("leer");
+      
       return from(this.getLocalData('parts'));
     } else {
       return this.http.get(`${PART_URL + projectId}`).pipe(
         map(res => res['parts']),
         tap(res => {
-          console.log('returns real live API data', PART_URL+projectId);
+          console.log('returns real live API data', PART_URL + projectId);
           this.setLocalData('parts', res);
           this.items = res;
         })
@@ -35,7 +37,7 @@ export class PartService {
     }
   }
   
-  public setParts(forceRefresh: boolean = false, partId, partItem) {
+  public setParts(partId, partItem) {
         console.log('sets partdetail');
         this.setLocalData('parts', partItem);
   }
@@ -56,11 +58,11 @@ export class PartService {
     else {
       this.http.put(url, data).subscribe(
         response => {
-        console.log(response);
+          console.log(response);
         },
         error => {
-                alert(error);
-                console.log(error);
+          alert(error);
+          console.log(error);
         });
       return this.http.put(url, data).pipe(catchError(err => {
           this.offlineManager.storeRequest(url, 'PUT', data);
@@ -71,70 +73,75 @@ export class PartService {
   }
 
   public filterItems(chips: Chip[]) :PartModel[] {
+    // var pm: PartModel[] = [];
+    // for (var item of this.items) {
+    //   if (this.filterObj(chips, item)) {
+    //     pm = [...pm, item];
+    //   }
+    // }
+    // return pm;
     return this.items.filter(item => this.filterObj(chips, item));
   }
 
   filterObj(chips: Chip[], item: PartModel): boolean {
-    let ret = true;
+    let ret = false;
     for (let chip of chips) {
       for (let term of chip.FilterTerm) {
-        //Helper
         switch(chip.FilterObj) { 
           case "Ident-Nr": { 
-            if (item.counterId.toString().toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
-              //if helper > 0 save last to variable and check for next
-              ret = false;
+            if (item.counterId.toString().toLowerCase().includes(term.toLowerCase())) {
+              console.log("yo", term, item.counterId)
+              ret = true;
             }
             break;
           } 
           case "P/N": { 
-            if(item.postModPN.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
-              ret = false;
+            if (item.postModPN.toString().toLowerCase().includes(term.toLowerCase())) {
+              ret = true;
             }
             break;
           } 
           case "Category": { 
-            if (item.componentType.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
-              ret = false;
+            if (item.componentType.toString().toLowerCase().includes(term.toLowerCase())) {
+              ret = true;
             }
             break;
           } 
-          case "componentType": {
-              if (item.componentType.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
-                ret = false;
+          case "ComponentType": {
+              if (item.componentType.toString().toLowerCase().includes(term.toLowerCase())) {
+                ret = true;
             }
             break;
           } 
           case "Status": { 
-            if (item.statusEdit.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
-              ret = false;
+            if (item.statusEdit.toString().toLowerCase().includes(term.toLowerCase())) {
+              ret = true;
             }
             break;
           } 
           case "Rack-Nr": { 
-            if (item.rackNo.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
-              ret = false;
+            if (item.rackNo.toString().toLowerCase().includes(term.toLowerCase())) {
+              ret = true;
             }
             break;
           } 
           case "Position": { 
-            if (item.postModPosition.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
-              ret = false;
+            if (item.postModPosition.toString().toLowerCase().includes(term.toLowerCase())) {
+              ret = true;
             }
             break;
             
           } 
           case "InstallationRoom": { 
-            if (item.installZoneRoom.toLowerCase().indexOf(term.toLowerCase()) > -1 == false) {
+            if (item.installZoneRoom.toString().toLowerCase().includes(term.toLowerCase())) {
               ret = false;
             }
             break;
           } 
         }
       }
-      if (!ret) {
-        return ret;
-      }
+      return ret;
+      
     }
     return ret;
   }
