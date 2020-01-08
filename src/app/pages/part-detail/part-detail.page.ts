@@ -65,6 +65,9 @@ export class PartDetailPage implements OnInit {
       partItem = e.filter(x => {return x.counterId == this.counterId})[0]; // Get only the partItem with same CounterId
       if(this.isNewItem) {
         this.partItem = this.prepareForChildItem(partItem);
+        this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
+        this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service
+        this.partItem.id = generateUUID();
       } else {
         this.partItem = partItem;
       }
@@ -84,9 +87,6 @@ export class PartDetailPage implements OnInit {
   }
 
   prepareForChildItem(partItem: PartModel): PartModel { // Keeps some properties for Child Item, deletes the rest
-      this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
-      this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service
-      this.partItem.id = generateUUID();
       /* taken from Parent PartItem
          partItem.nomenclature = "";
          partItem.category = "";
