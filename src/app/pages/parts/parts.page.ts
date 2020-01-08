@@ -114,7 +114,7 @@ export class PartsPage implements OnInit {
       this.barcodeScanner.scan().then(barcodeData => {
         for (let part of this.parts) {
           if (part.postModPN === barcodeData.text) {
-            this.router.navigate(['/part-detail/' + part.id]);
+            this.router.navigate(['/part-detail/' + part.id + "/false"]);
           }
           else {
             this.toastCtrl.displayToast("No Part found");

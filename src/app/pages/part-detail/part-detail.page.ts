@@ -16,10 +16,12 @@ import { generateUUID } from 'ionic/lib/utils/uuid';
 export class PartDetailPage implements OnInit {
   counterId: number;
   projectId: number;
+  strProjectId: string;
   partItem: PartModel;
   selectedSegment: string;
   existingItem: boolean;
   isNewItem: boolean;
+  disable: boolean;
   newId: any; //todo needed?
 
   constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute
@@ -27,12 +29,13 @@ export class PartDetailPage implements OnInit {
   }
 
   ngOnInit() {
+
+    this.projectId = this.projectService.getProjectId();
+    this.strProjectId = this.projectService.getProjectId().toString(); //needed for saves
     this.counterId = +this.route.snapshot.paramMap.get('id');
     let newItem = this.route.snapshot.paramMap.get('new');
     this.isNewItem = newItem && newItem.indexOf('true') != -1;
-
-    console.log("this.counterId: " + this.counterId);
-    this.projectId = this.projectService.getProjectId();
+    console.log("newitem: "+ this.isNewItem);
     this.selectedSegment = "comment";
 
     if (this.counterId == -1) {
@@ -47,90 +50,87 @@ export class PartDetailPage implements OnInit {
 
   createNewPartItem() {
     this.existingItem = false;
+    this.disable = true;
+    this.partItem.projectId = this.strProjectId;
+    this.partItem.id = generateUUID();
     this.partItem.counterId = this.randomInt();
-    console.log("id: " + this.counterId + ", current.counterId: " + this.partItem.counterId);
+    this.partItem.statusCreate = "New";
+    this.partItem.statusEdit = "Edited";
+    this.counterId = this.partItem.counterId;
   }
 
   loadData(refresh = false) {
     let partItem: PartModel;
     this.partService.getParts(refresh, this.projectId).subscribe(e => {
-      partItem = e[this.counterId];
+      partItem = e.filter(x => {return x.counterId == this.counterId})[0]; // Get only the partItem with same CounterId
       if(this.isNewItem) {
         this.partItem = this.prepareForChildItem(partItem);
       } else {
         this.partItem = partItem;
       }
-      //this.partItem.statusEdit = "1";
     });
   }
   onSave() {
-    console.log("counterId: " + this.counterId + ", current.counterId: " + this.partItem.counterId);
-    if (this.partItem.counterId == this.counterId) {
-      this.partService.updatePart(this.partItem, this.counterId);
-    }
-    else if (this.partItem.counterId > 9999){
-      console.log(this.partItem.id);
-      this.partItem.projectId = this.projectId.toString();
-      this.partItem.id = generateUUID();
+    if (this.partItem.counterId > 99999){
+      console.log(this.partItem);
       this.partService.createPart(this.partItem);
     }
     else {
-      this.partService.updatePart(this.partItem, this.counterId);
+      this.partService.updatePart(this.partItem, this.partItem.counterId);
     }
   }
   randomInt(){
-    return Math.floor(Math.random() * (2147483647 - 9999 + 1)) + 9999;
+    return Math.floor(Math.random() * (2147483647 - 99999 + 1)) + 99999;
   }
 
-  prepareForChildItem(partItem: PartModel): PartModel {
-      partItem.id = "";
-      partItem.projectId = "";
-      //partItem.counterId;
-      //partItem.nomenclature = "";
-      //partItem.category = "";
-      //partItem.componentType = "";
-      //partItem.ipcReference = "";
-      //partItem.ipcItemNumber = "";
-      partItem.preModPNIPC = "";
-      //partItem.preModPositionIPC = "";
-      //partItem.location = "";
-      //partItem.ammRemovalTask = "";
-      //partItem.ammInstallTask = "";
-      partItem.parentId = this.projectId.toString(); //todo is this right?
-      //partItem.reasonRemoval = "";
+  prepareForChildItem(partItem: PartModel): PartModel { // Keeps some properties for Child Item, deletes the rest
+      this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
+      this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service
+      this.partItem.id = generateUUID();
+      /* taken from Parent PartItem
+         partItem.nomenclature = "";
+         partItem.category = "";
+         partItem.componentType = "";
+         partItem.ipcReference = "";
+         partItem.ipcItemNumber = "";
+         partItem.postModPN = "";
+         partItem.preModPositionIPC = "";
+         partItem.location = "";
+         partItem.ammRemovalTask = "";
+         partItem.ammInstallTask = "";
+         partItem.reasonRemoval = "";
+         partItem.intendedPurpose = "";
+         partItem.installZoneRoom = "";
+      */
       partItem.preModPNAC = ""; // Writeable
-      //partItem.preModPositionAC = "";
       partItem.serialNo = ""; // Writeable
-      partItem.existingComponents = ""; // Writeable
       partItem.preModWeight = ""; // Writeable
       partItem.rackNo = ""; // Writeable
       partItem.rackLocation = ""; // Writeable
+      partItem.existingComponents = ""; // Writeable
       partItem.remarksRemoval = "";
-      partItem.intendedPurpose = "";
       partItem.aupa = "";
-      partItem.postModPN = "";
       partItem.postModPosition = "";
       partItem.modDWG = "";
-      partItem.panelPNAVI = "N/A";
-      partItem.integrCompPN = "N/A";
-      partItem.integrCompTypes = "N/A";
-      partItem.equipNo = "N/A";
-      partItem.integratedComponents = "N/A";
-      partItem.installZoneRoom = "TBD";
-      partItem.postModWeight = "TBD";
-      partItem.remarksMod = "N/A";
+      partItem.panelPNAVI = "";
+      partItem.integrCompPN = "";
+      partItem.integrCompTypes = "";
+      partItem.equipNo = "";
+      partItem.integratedComponents = "";
+      partItem.postModWeight = "";
+      partItem.remarksMod = "";
       partItem.cmmReference = "";
-      partItem.xxx = "TBD";
-      partItem.moC0 = "TBD";
-      partItem.moC1 = "TBD";
-      partItem.moC2 = "TBD";
-      partItem.testSample = "TBD";
-      partItem.moC4Flameability = "TBD";
-      partItem.moC7 = "TBD";
+      partItem.xxx = "";
+      partItem.moC0 = "";
+      partItem.moC1 = "";
+      partItem.moC2 = "";
+      partItem.testSample = "";
+      partItem.moC4Flameability = "";
+      partItem.moC7 = "";
       partItem.deleteReason = "";
       partItem.statusCreate = "New";
-      //partItem.statusEdit = "";
-
+      partItem.statusEdit = "Edited";
+      console.log("partItem: "+ partItem);
     return partItem;
   }
 
