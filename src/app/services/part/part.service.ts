@@ -8,8 +8,8 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
+const PART_URL = 'http://192.168.40.125:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.40.125:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -140,7 +140,6 @@ export class PartService {
         switch(chip.FilterObj) { 
           case "Ident-Nr": { 
             if (item.counterId.toString().toLowerCase().includes(term.toLowerCase())) {
-              console.log("yo", term, item.counterId)
               ret = true;
             }
             break;
@@ -164,8 +163,15 @@ export class PartService {
             break;
           } 
           case "Status": { 
-            if (item.statusEdit.toString().toLowerCase().includes(term.toLowerCase())) {
-              ret = true;
+            if (item.rackLocation && item.rackNo && item.preModWeight && item.preModWeight != "N/A" && item.rackLocation != "N/A" && item.rackNo != "N/A") {
+              if (term.toLowerCase() === "green" || term.toLowerCase() === "Done") {
+                ret = true;
+              } 
+            }
+            else {
+              if (term.toLowerCase() === "red" || term.toLowerCase() === "ToDo") {
+                ret = true;
+              }
             }
             break;
           } 
@@ -180,7 +186,6 @@ export class PartService {
               ret = true;
             }
             break;
-            
           } 
           case "InstallationRoom": { 
             if (item.installZoneRoom.toString().toLowerCase().includes(term.toLowerCase())) {
@@ -191,7 +196,6 @@ export class PartService {
         }
       }
       return ret;
-      
     }
     return ret;
   }

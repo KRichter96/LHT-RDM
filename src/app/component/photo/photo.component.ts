@@ -32,16 +32,10 @@ export class PhotoComponent implements OnInit {
     this.projectId = this.projectService.getProjectId();
     this.imagePath = "image/" + this.projectId + "/" + this.partId;
     this.loadStoredImages();
-    console.log(this.imagePath);
   }
 
   openImage(url: string): void {
     this.photoViewer.show(url);
-  }
-
-  pressImage(event, pos) {
-    this.toastController.displayToast("Pressed");
-    console.log("HoldImage", event, pos);
   }
 
   loadStoredImages() {
@@ -139,8 +133,7 @@ export class PhotoComponent implements OnInit {
 
       this.images = [newEntry, ...this.images];
       //this.partService.updatePart(this.images, this.partId);
-      console.log("partID", this.partDetail.getPartId())
-      this.imageService.uploadImage(this.images, this.partDetail.getPartId());
+      this.imageService.uploadImage(newEntry, this.partDetail.getPartId(), this.imagePath);
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }

@@ -3,9 +3,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
+import { ToastService } from '../toast/toast.service';
 
 export enum ConnectionStatus { Online, Offline }
-const PROJECT_URL = 'http://192.168.176.77:8081/api/projects';
+const PROJECT_URL = 'http://192.168.40.125:8081/api/projects';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +14,10 @@ const PROJECT_URL = 'http://192.168.176.77:8081/api/projects';
 export class NetworkService {
   private status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Online);
 
-  constructor(private network: Network, private plt: Platform, private http: HttpClient) { 
+  constructor(private network: Network, private plt: Platform, private http: HttpClient, private toastCtrl: ToastService) { 
     this.plt.ready().then(() => {
-      //let status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
-      //this.status.next(ConnectionStatus.Offline);
+      let status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
+      this.status.next(status);
       setInterval(() => { this.checkConnection() }, 3000);
     })
   }
@@ -30,10 +31,10 @@ export class NetworkService {
 
   private async updateNetworkStatus(status: ConnectionStatus, msg: any) {
     this.status.next(status);
-    //let connection = status == ConnectionStatus.Offline ? 'Offline' : 'Online';
   }
 
   public onNetworkChange(): Observable<ConnectionStatus> {
+    console.log(`You are now: ${ConnectionStatus}`);
     return this.status.asObservable();
   }
 

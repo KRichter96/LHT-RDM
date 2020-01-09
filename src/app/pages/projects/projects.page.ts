@@ -4,6 +4,7 @@ import { ProjectModel } from 'src/app/models/project/ProjectModel';
 import { Platform } from '@ionic/angular';
 import { ProjectService } from 'src/app/services/project/project.service';
 import {PartModel} from '../../models/part/partmodel';
+import { OfflineService } from 'src/app/services/offline/offline.service';
 
 @Component({
   selector: 'app-projects',
@@ -12,7 +13,7 @@ import {PartModel} from '../../models/part/partmodel';
 })
 export class ProjectsPage implements OnInit {
 
-  constructor(private plt: Platform, private projectService: ProjectService) { }
+  constructor(private plt: Platform, private projectService: ProjectService, private offlineManager: OfflineService, private storage: Storage) { }
 
   //projects: ProjectModel[] = [];
   projects: Observable<ProjectModel>;
@@ -20,20 +21,19 @@ export class ProjectsPage implements OnInit {
 
   ngOnInit() {
     this.plt.ready().then(() => {
-      this.loadData(true);
+      this.loadData();
     })
   }
 
-  loadData(refresh = false, refresher?) {
-    this.projectService.getProjects().subscribe(res => {
-      this.projects = res;
-      if (refresher) {
-        refresher.target.complete();
-      }
-    });
+  loadData() {
+    this.projectService.getProjects().subscribe(res => this.projects = res );
   }
 
   checkStatus(project) {
     return 50;
+  }
+
+  deleteData() {
+    //this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
   }
 }

@@ -12,6 +12,8 @@ import { ProjectService } from 'src/app/services/project/project.service';
 import { PopoverPage } from '../../component/popover/popover.page';
 import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
 import { OfflineService } from 'src/app/services/offline/offline.service';
+import { ImageService } from 'src/app/services/image/image.service';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-parts',
@@ -32,12 +34,13 @@ export class PartsPage implements OnInit {
   progressColor: string;
 
 
-  constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService,
+  constructor(private partService: PartService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
     private router: Router, private filterService: FilterService, private projectService: ProjectService,
-    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController) {
+    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController, private storage: Storage) {
       this.chips = new Array<Chip>();
       this.plt.ready().then(() => {
+        
         this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
           if (status == ConnectionStatus.Online) {
             this.offlineManager.checkForEvents().subscribe();
@@ -216,7 +219,7 @@ export class PartsPage implements OnInit {
     this.searchTerm = "";
   }
 
-  checkStatus(part) {
+  public checkStatus(part) {
     try {
       let p: PartModel = part;
       if (p.rackLocation && p.rackNo && p.preModWeight && p.preModWeight != "N/A" && p.rackLocation != "N/A" && p.rackNo != "N/A") {
@@ -231,6 +234,57 @@ export class PartsPage implements OnInit {
     }
   }
 
+  async  filterStatus() {
+    for (let chip of this.chips) {
+      if (chip.FilterObj == "Status") {
+        this.toastCtrl.displayToast("Please remove the status filter!");
+        break;
+      }
+    }
+
+    let alert = await this.alertCtrl.create({
+      header: 'Select the status you want to filter',
+      inputs: [
+        {
+          type: 'radio',
+          label: 'ToDo',
+          value: '0'
+        },
+        {
+          type: 'radio',
+          label: 'Done',
+          value: '1'
+        }
+    ],
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => { }
+      },
+      {
+        text: 'Ok',
+        handler: data => {
+          if (data == 0) {
+            if (this.chips.length == 0){
+              this.chips.push(new Chip("Status", "ToDo"));
+            } else {
+              this.chips = [...this.chips, new Chip("Status", "ToDo")];
+            }
+            this.parts = this.partService.filterItems(this.chips);
+          } else if (data == 1) {
+            if (this.chips.length == 0){
+              this.chips.push(new Chip("Status", "Done"));
+            } else {
+              this.chips = [...this.chips, new Chip("Status", "Done")];
+            }
+            this.parts = this.partService.filterItems(this.chips);
+          }
+        }
+      }]
+    });
+    await alert.present();
+  }
+
   async openPopover(ev: Event) {
     const popover = await this.popoverController.create({
       component: PopoverPage,
@@ -239,5 +293,9 @@ export class PartsPage implements OnInit {
       event: ev
     });
     await popover.present();
+  }
+
+  deleteData() {
+    //this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
   }
 }
