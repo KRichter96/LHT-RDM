@@ -17,6 +17,7 @@
   <!--      <ion-label><h1>No results found!</h1></ion-label>-->
   <!--    </div>-->
 
+  <!-- These 2 grids are for all partItems apart from ChildItems -->
   <ion-grid *ngIf="partItem" [hidden]=childItem>
     <ion-col>
       <ion-text color="primary"><h1 class="ion-margin-start header">General Information</h1></ion-text>
@@ -119,19 +120,19 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Pre-Mod P/N (A/C):</ion-label>
-          <ion-input [(ngModel)]="partItem.preModPNAC" required="false"></ion-input>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.preModPNAC" required="false"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Serial No.:</ion-label>
-          <ion-input [(ngModel)]="partItem.serialNo" required="false"></ion-input>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.serialNo" required="false"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item [ngStyle]="{'color': partItem.preModWeight? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
-          <ion-input id="pmw" type="number" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
+          <ion-input placeholder="(Required)" id="pmw" type="number" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -139,27 +140,28 @@
       <ion-col>
         <ion-item [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Rack Number:</ion-label>
-          <ion-input type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
+          <ion-input placeholder="(Required)" type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item [ngStyle]="{'color': partItem.rackLocation? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Rack Location:</ion-label>
-          <ion-input [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Existing Component:</ion-label>
-          <ion-input [(ngModel)]="partItem.existingComponents"></ion-input>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.existingComponents"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
 
+  <!-- These 2 grids are for ChildItem -->
   <ion-grid *ngIf="partItem" [hidden]=!childItem>
     <ion-col>
-      <ion-text color="primary"><h1 class="ion-margin-start header">Parent Information</h1></ion-text>
+      <ion-text color="primary"><h1 class="ion-margin-start header">Parent Part Information</h1></ion-text>
     </ion-col>
     <ion-row>
       <ion-col>
@@ -217,21 +219,21 @@
     </ion-col>
     <ion-row>
       <ion-col>
-        <ion-item>
+        <ion-item [ngStyle]="{'color': partItem.nomenclature? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Nomenclature:</ion-label>
-          <ion-input [(ngModel)]="partItem.nomenclature"></ion-input>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.nomenclature" required="true"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
-        <ion-item>
+        <ion-item [ngStyle]="{'color': partItem.preModPNAC? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Pre-Mod P/N (A/C):</ion-label>
-          <ion-input [(ngModel)]="partItem.preModPNAC" required="false"></ion-input>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.preModPNAC" required="true"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item [ngStyle]="{'color': partItem.preModWeight? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
-          <ion-input id="pmw" type="number" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
+          <ion-input placeholder="(Required)" id="pmw" type="number" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -239,19 +241,19 @@
       <ion-col>
         <ion-item [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Rack Number:</ion-label>
-          <ion-input type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
+          <ion-input placeholder="(Required)" type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item [ngStyle]="{'color': partItem.rackLocation? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Rack Location:</ion-label>
-          <ion-input [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Serial No.:</ion-label>
-          <ion-input [(ngModel)]="partItem.serialNo" required="false"></ion-input>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.serialNo" required="false"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
