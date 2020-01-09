@@ -25,6 +25,15 @@ export class ProjectsPage implements OnInit {
     })
   }
 
+  doRefresh(event) {
+    console.log('Begin async operation');
+    this.loadData();
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 2000);
+  }
+
   loadData() {
     this.projectService.getProjects().subscribe(res => this.projects = res );
   }
