@@ -95,7 +95,17 @@ export class PartsPage implements OnInit {
     this.partService.getParts(this.id).subscribe(res => {
       this.parts = res;
       this.updateProgressBar();
+      this.offline = this.checkOffline()
     });
+  }
+
+  checkOffline() {
+    let status = this.networkService.getCurrentNetworkStatus();
+    console.log("(0: Online, 1: Offline) status: " + status);
+    if (status == 0) { //status: 0: Online, 1: Offline
+      return false;
+    }
+    return true; // offline == true
   }
 
   onSync() {
@@ -154,11 +164,11 @@ export class PartsPage implements OnInit {
             this.parts[i].remarksRemoval = "true";
             this.parts[i].reasonRemoval = alertData.reason;
             this.parts[i].statusEdit = "Deleted";
-            if(this.parts[i].statusCreate == 'New' && this.offline == true) { //todo set real var
-                if (i > -1) {
-                    this.parts.splice(i, 1);
-                    this.partService.deletePart(this.parts[i]);
-                }
+            if(this.parts[i].statusCreate == 'New' && this.offline == true) {
+              if (i > -1) {
+                this.parts.splice(i, 1);
+                this.partService.deletePart(this.parts[i]);
+              }
             }
             return true;
           }
@@ -289,6 +299,7 @@ export class PartsPage implements OnInit {
     const popover = await this.popoverController.create({
       component: PopoverPage,
       componentProps: {
+        custom_id: this.id
       },
       event: ev
     });

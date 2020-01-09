@@ -28,7 +28,7 @@ export class ImageService {
         formData.append('description', image.name);
         if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
           return from(this.offlineManager.storeRequest(url, 'POST', formData));
-        } 
+        }
         else {
           this.http.post(url, formData).subscribe(
             response => {
@@ -60,7 +60,7 @@ export class ImageService {
           formData.append('description', image.name);
           if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
             return from(this.offlineManager.storeRequest(url, 'POST', formData));
-          } 
+          }
           else {
             this.http.post(url, formData).subscribe(
               response => {

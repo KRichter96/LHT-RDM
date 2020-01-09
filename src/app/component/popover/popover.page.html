@@ -9,8 +9,11 @@
       <ion-label>Child Part</ion-label>
       <ion-toggle [(ngModel)]="childItem"></ion-toggle>
     </ion-item>
-    <ion-item *ngIf="childItem == true">
-      <ion-input type="number" [(ngModel)]="parentId" placeholder="Enter Parent Id here..."></ion-input>
+    <br>
+    <ion-item *ngIf="childItem == true" >
+        <ion-select id=power [(ngModel)]="parentId" placeholder="Select Parent Id">
+            <ion-select-option value={{item.counterId}} *ngFor="let item of parts let i = index">{{item.counterId}} - {{ item.nomenclature}}</ion-select-option>
+        </ion-select>
     </ion-item>
   <ion-row>
     <ion-tab-button (click)="closePopover()">
