@@ -8,8 +8,15 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
+<<<<<<< HEAD
 const PART_URL = 'http://192.168.40.125:8081/api/parts/byProject/';
 const UPDATE_PART_URL = 'http://192.168.40.125:8081/api/parts';
+=======
+//const PART_URL = 'http://192.168.176.77:8081/api/parts/byProject/';
+//const UPDATE_PART_URL = 'http://192.168.176.77:8081/api/parts';
+const PART_URL = 'http://192.168.2.55:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.2.55:8081/api/parts';
+>>>>>>> e566163c2cb3ee63e14141473c99f750a5a14aec
 
 @Injectable({
   providedIn: 'root'
