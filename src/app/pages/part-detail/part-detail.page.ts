@@ -14,6 +14,7 @@ import { generateUUID } from 'ionic/lib/utils/uuid';
   styleUrls: ['./part-detail.page.scss'],
 })
 export class PartDetailPage implements OnInit {
+  parts: PartModel[] = [];
   counterId: number;
   projectId: number;
   strProjectId: string;
@@ -23,6 +24,7 @@ export class PartDetailPage implements OnInit {
   isNewItem: boolean;
   disable: boolean;
   childItem: boolean;
+  parentWeight: number;
   newId: any; //todo needed?
 
   constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute
@@ -64,6 +66,7 @@ export class PartDetailPage implements OnInit {
   loadData() {
     let partItem: PartModel;
     this.partService.getParts(this.projectId).subscribe(e => {
+      this.parts = e;
       partItem = e.filter(x => {return x.counterId == this.counterId})[0]; // Get only the partItem with same CounterId
       if(this.isNewItem) {
         this.partItem = this.prepareForChildItem(partItem);
@@ -108,6 +111,8 @@ export class PartDetailPage implements OnInit {
          partItem.intendedPurpose = "";
          partItem.installZoneRoom = "";
       */
+      this.parentWeight = +partItem.preModWeight;
+      console.log(this.parentWeight);
       partItem.preModPositionIPC = "";
       partItem.ipcReference = "";
       partItem.ipcItemNumber = "";
@@ -141,6 +146,14 @@ export class PartDetailPage implements OnInit {
       partItem.statusEdit = "Edited";
       console.log("partItem: "+ partItem);
     return partItem;
+  }
+
+  calculateWeight() {
+    if(this.childItem == true) {
+      var parentItem = this.parts.filter(x => {return x.id == this.partItem.parentId})[0];
+      parentItem.preModWeight = (+this.parentWeight - +this.partItem.preModWeight).toString();
+
+    }
   }
 
   getPartId(): string {

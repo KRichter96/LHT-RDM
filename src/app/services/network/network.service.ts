@@ -14,7 +14,7 @@ const PROJECT_URL = 'http://192.168.40.125:8081/api/projects';
 export class NetworkService {
   private status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Online);
 
-  constructor(private network: Network, private plt: Platform, private http: HttpClient, private toastCtrl: ToastService) { 
+  constructor(private network: Network, private plt: Platform, private http: HttpClient, private toastCtrl: ToastService) {
     this.plt.ready().then(() => {
       let status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
       this.status.next(status);
@@ -39,6 +39,6 @@ export class NetworkService {
   }
 
   public getCurrentNetworkStatus(): ConnectionStatus {
-    return this.status.getValue();
+    return this.status.getValue(); // status: 0: "Online", 1: "Offline"
   }
 }

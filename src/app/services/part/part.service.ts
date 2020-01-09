@@ -35,7 +35,12 @@ export class PartService {
       );
     }
   }
-  
+  public getOfflineParts(): Observable<any> {
+    if (1 == 1) {
+      return from(this.getLocalData('parts'));
+    }
+  }
+
   public setParts(partId, partItem) {
     console.log('sets partdetail');
     this.setLocalData('parts', partItem);
@@ -109,7 +114,8 @@ export class PartService {
       this.items = filtered;
       this.setLocalData('parts', this.items);
       return from(this.offlineManager.storeRequest(url, 'DELETE', data)); //todo Check if this works?
-    } else {
+    }
+    else {
       this.http.delete(url).subscribe(
           response => {
             console.log(response);
@@ -166,7 +172,7 @@ export class PartService {
             if (item.rackLocation && item.rackNo && item.preModWeight && item.preModWeight != "N/A" && item.rackLocation != "N/A" && item.rackNo != "N/A") {
               if (term.toLowerCase() === "green" || term.toLowerCase() === "Done") {
                 ret = true;
-              } 
+              }
             }
             else {
               if (term.toLowerCase() === "red" || term.toLowerCase() === "ToDo") {

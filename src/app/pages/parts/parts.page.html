@@ -98,7 +98,7 @@
       <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward" class="ion-no-padding">
         
         <ion-grid>
-          <ion-row *ngIf="part.statusEdit != 'Deleted' && offline == true">
+          <ion-row > <!-- TODO Adriel Delete hidden? *ngIf="part.statusEdit != 'Deleted' && offline == true" -->
             <ion-col size="1" [ngClass]="{greenClass: checkStatus(part), yellowClass: !checkStatus(part)}">
               <div class="stacked-group">
                 <ion-label>{{ part.counterId }}</ion-label>
