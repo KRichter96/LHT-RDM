@@ -66,9 +66,9 @@ export class PartsPage implements OnInit {
         || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" )) && (x.existingComponents !="" && x.preModPNAC !="" && x.serialNo !="")).length;
     let progress = percent / cento;
     if(progress != cento) {
-      this.progressColor = "red";
+      this.progressColor = "danger";
     } else {
-      this.progressColor = "green";
+      this.progressColor = "success";
     }
     return progress;
   }
