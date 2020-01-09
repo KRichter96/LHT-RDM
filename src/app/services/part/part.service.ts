@@ -35,9 +35,10 @@ export class PartService {
       );
     }
   }
-  public getOfflineParts(): Observable<any> {
+
+  public getOfflineParts() {
     if (1 == 1) {
-      return from(this.getLocalData('parts'));
+      return this.getLocalData('parts');
     }
   }
 
