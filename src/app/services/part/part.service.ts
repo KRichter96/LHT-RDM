@@ -17,12 +17,14 @@ const UPDATE_PART_URL = 'http://192.168.43.11:8081/api/parts';
 export class PartService {
 
   public items: PartModel[] = [];
+  public projectid: string;
 
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
   public getParts(projectId): Observable<any> {
+    this.projectid = projectId;
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      return from(this.getLocalData('parts'));
+      return from(this.getLocalData('parts'+this.projectid));
     } 
     else {
       return this.http.get(`${PART_URL + projectId}`).pipe(
@@ -38,7 +40,7 @@ export class PartService {
 
   public getOfflineParts() {
     if (1 == 1) {
-      return this.getLocalData('parts');
+      return this.getLocalData('parts'+this.projectid);
     }
   }
 
@@ -53,7 +55,7 @@ export class PartService {
     this.items = [...this.items, data];
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       console.log(this.items);
-      this.setLocalData('parts', this.items); //something went wrong here
+      this.setLocalData('parts'+this.projectid, this.items); //something went wrong here
       return from(this.offlineManager.storeRequest(url, 'POST', data));
     }
     else {
@@ -82,7 +84,7 @@ export class PartService {
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       this.items[this.getDimensionsByFind(data.counterId).counterId -1] = data;
-      this.setLocalData('parts', this.items); //something went wrong here
+      this.setLocalData('parts'+this.projectid, this.items); //something went wrong here
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
     } 
     else {
@@ -113,7 +115,7 @@ export class PartService {
       console.log("old List", this.items);
       console.log("new List", filtered);
       this.items = filtered;
-      this.setLocalData('parts', this.items);
+      this.setLocalData('parts'+this.projectid, this.items);
       return from(this.offlineManager.storeRequest(url, 'DELETE', data)); //todo Check if this works?
     }
     else {
