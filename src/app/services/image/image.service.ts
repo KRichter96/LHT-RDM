@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
 
-const UPLOAD_IMAGE_URL = 'http://192.168.43.11:8081/api/parts/';
+const UPLOAD_IMAGE_URL = 'http://rlx-v388.ham.dlh.de:17081/api/parts/';
 
 @Injectable({
   providedIn: 'root'

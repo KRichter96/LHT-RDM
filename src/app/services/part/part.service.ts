@@ -8,8 +8,8 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const PART_URL = 'http://192.168.43.11:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.43.11:8081/api/parts';
+const PART_URL = 'http://rlx-v388.ham.dlh.de:17081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://rlx-v388.ham.dlh.de:17081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -81,7 +81,6 @@ export class PartService {
   //TODO
   public updatePart(data, partId): Observable<any> {
     let url = `${UPDATE_PART_URL}`;
-
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       this.items[this.getDimensionsByFind(data.counterId).counterId -1] = data;
       this.setLocalData('parts'+this.projectid, this.items); //something went wrong here

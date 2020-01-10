@@ -143,7 +143,7 @@
               </div>
               <ion-icon *ngIf="part.statusCreate == 'New' else elseBlock" name="add"></ion-icon>
                 <ng-template #elseBlock><ion-icon name="document"></ion-icon></ng-template> <!-- Initial (from backend) -->
-              <ion-icon *ngIf="part.statusEdit == 'Edited'" name="create"></ion-icon>
+              <ion-icon *ngIf="part.statusEdit == 'appEdited'" name="create"></ion-icon>
               <ion-icon *ngIf="part.statusEdit == 'Acknowledged'" name="checkmark"></ion-icon>
                 <!-- No Icon for local deleted OR Not Edited -->
             </ion-col>

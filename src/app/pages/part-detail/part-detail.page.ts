@@ -62,7 +62,7 @@ export class PartDetailPage implements OnInit {
     this.partItem.id = generateUUID();
     this.partItem.counterId = this.randomInt();
     this.partItem.statusCreate = "New";
-    this.partItem.statusEdit = "Edited";
+    this.partItem.statusEdit = "appEdited";
     this.counterId = this.partItem.counterId;
   }
 
@@ -149,7 +149,7 @@ export class PartDetailPage implements OnInit {
       partItem.moC7 = "";
       partItem.deleteReason = "";
       partItem.statusCreate = "New";
-      partItem.statusEdit = "Edited";
+      partItem.statusEdit = "appEdited";
       console.log("partItem: "+ partItem);
     return partItem;
   }

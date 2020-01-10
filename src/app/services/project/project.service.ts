@@ -7,7 +7,7 @@ import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
 
 const API_STORAGE_KEY = 'projects';
-const PROJECT_URL = 'http://192.168.43.11:8081/api/projects';
+const PROJECT_URL = 'http://rlx-v388.ham.dlh.de:17081/api/projects';
 
 @Injectable({
   providedIn: 'root'
