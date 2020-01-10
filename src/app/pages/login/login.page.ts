@@ -5,8 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { TokenService } from 'src/app/services/token/token.service';
 
 
-const PART_URL = 'http://192.168.40.125:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.40.125:8081/api/parts';
+const PART_URL = 'http://192.168.43.11:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.43.11:8081/api/parts';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
 
   login() {
     let credentials = {username: this.usField, password: this.pwField};
-    this.http.post('http://192.168.40.125:8081/api/auth/login', credentials).subscribe(
+    this.http.post('http://192.168.43.11:8081/api/auth/login', credentials).subscribe(
       (data:any) => {
         this.tokensSrvice.setToken(data.token);
         console.log(data.token)

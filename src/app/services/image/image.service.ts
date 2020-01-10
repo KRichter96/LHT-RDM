@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
 
-const UPLOAD_IMAGE_URL = 'http://192.168.40.125:8081/api/parts/';
+const UPLOAD_IMAGE_URL = 'http://192.168.43.11:8081/api/parts/';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,7 @@ export class ImageService {
         else {
           this.http.post(url, formData).subscribe(
             response => {
-              this.storage.remove(imagepath);
+              //this.storage.remove(imagepath);
               console.log(response);
             },
             error => {

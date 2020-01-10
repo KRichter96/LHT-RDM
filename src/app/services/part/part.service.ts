@@ -8,8 +8,8 @@ import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
 
-const PART_URL = 'http://192.168.40.125:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.40.125:8081/api/parts';
+const PART_URL = 'http://192.168.43.11:8081/api/parts/byProject/';
+const UPDATE_PART_URL = 'http://192.168.43.11:8081/api/parts';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,7 @@ export class PartService {
         map(res => res['parts']),
         tap(res => {
           console.log('returns real live API data', PART_URL + projectId);
-          this.setLocalData('parts', res);
+          this.setLocalData('parts'+projectId, res);
           this.items = res;
         })
       );

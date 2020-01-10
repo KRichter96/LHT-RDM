@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../toast/toast.service';
 
 export enum ConnectionStatus { Online, Offline }
-const PROJECT_URL = 'http://192.168.40.125:8081/api/projects';
+const PROJECT_URL = 'http://192.168.43.11:8081/api/projects';
 
 @Injectable({
   providedIn: 'root'
