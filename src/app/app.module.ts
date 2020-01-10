@@ -7,7 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { Network } from '@ionic-native/network/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
@@ -21,6 +21,7 @@ import { PartDetailPageModule } from './pages/part-detail/part-detail.module';
 import { PopoverPageModule } from './component/popover/popover.module';
 
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
+import { TokenInterceptor } from './services/token/tokeninterceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -39,6 +40,7 @@ import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     Network,
     BarcodeScanner,
     Camera,

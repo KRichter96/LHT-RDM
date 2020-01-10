@@ -14,6 +14,7 @@ import { NetworkService, ConnectionStatus } from 'src/app/services/network/netwo
 import { OfflineService } from 'src/app/services/offline/offline.service';
 import { ImageService } from 'src/app/services/image/image.service';
 import { Storage } from '@ionic/storage';
+import { TokenService } from 'src/app/services/token/token.service';
 
 @Component({
   selector: 'app-parts',
@@ -37,7 +38,7 @@ export class PartsPage implements OnInit {
   constructor(private partService: PartService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
     private router: Router, private filterService: FilterService, private projectService: ProjectService,
-    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController, private storage: Storage) {
+    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController, private token: TokenService) {
       this.chips = new Array<Chip>();
       this.plt.ready().then(() => {
         
@@ -309,6 +310,7 @@ export class PartsPage implements OnInit {
   }
 
   deleteData() {
+    this.token.setToken("");
     //this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
   }
 }
