@@ -99,7 +99,7 @@ export class PartDetailPage implements OnInit {
       //this.calculateWeight();
     }
     else {
-      this.partService.updatePart(this.partItem);
+      this.partService.updatePart(this.partItem, this.partItem.counterId);
     }
   }
   randomInt(){

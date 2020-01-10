@@ -112,7 +112,7 @@ export class PartsPage implements OnInit {
   }
 
   onSync() {
-    this.partService.updatePart('Parts').subscribe();
+    this.partService.updatePart('Parts', this.id).subscribe();
   }
 
   setSearchedItems() {

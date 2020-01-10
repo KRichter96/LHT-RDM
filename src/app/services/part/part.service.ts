@@ -77,7 +77,7 @@ export class PartService {
   }
 
   //TODO
-  public updatePart(data): Observable<any> {
+  public updatePart(data, partId): Observable<any> {
     let url = `${UPDATE_PART_URL}`;
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
