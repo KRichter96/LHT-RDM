@@ -165,7 +165,7 @@
 <ion-footer>
   <ion-progress-bar [value]="updateProgressBar()" color = {{this.progressColor}} mode="ios"></ion-progress-bar>
   <br>
-  <ion-toolbar>
+  <ion-toolbar style="height: 65px;" color="primary">
     <ion-tabs>
       <ion-tab-bar slot="bottom" color="primary">
         <ion-tab-button (click)="openPopover($event)">
@@ -173,9 +173,8 @@
           <ion-label color="light">Add</ion-label>
         </ion-tab-button>
 
-
-        <ion-tab-button routerLink="/help" routerLinkActive="router-link-active" routerDirection="forward" >
-          <ion-icon size="large" name="md-help"></ion-icon>
+        <ion-tab-button routerLink="/help" routerLinkActive="router-link-active" routerDirection="forward">
+          <ion-icon size="large" name="md-help" class="iconSizeClass"></ion-icon>
           <ion-label color="light">Help</ion-label>
         </ion-tab-button>
       </ion-tab-bar>

@@ -30,11 +30,16 @@ export class NetworkService {
   }
 
   private async updateNetworkStatus(status: ConnectionStatus, msg: any) {
+    if (this.status.getValue() === ConnectionStatus.Online && status == ConnectionStatus.Offline) {
+      this.toastCtrl.displayToast("You are now Offline");
+    }
+    else if (this.status.getValue() == ConnectionStatus.Offline && status == ConnectionStatus.Online) {
+      this.toastCtrl.displayToast("You are now Online");
+    }
     this.status.next(status);
   }
 
   public onNetworkChange(): Observable<ConnectionStatus> {
-    console.log(`You are now: ${ConnectionStatus}`);
     return this.status.asObservable();
   }
 

@@ -171,12 +171,12 @@ export class PartService {
           } 
           case "Status": { 
             if (item.rackLocation && item.rackNo && item.preModWeight && item.preModWeight != "N/A" && item.rackLocation != "N/A" && item.rackNo != "N/A") {
-              if (term.toLowerCase() === "green" || term.toLowerCase() === "Done") {
+              if (term === "Done") {
                 ret = true;
               }
             }
             else {
-              if (term.toLowerCase() === "red" || term.toLowerCase() === "ToDo") {
+              if (term === "ToDo") {
                 ret = true;
               }
             }

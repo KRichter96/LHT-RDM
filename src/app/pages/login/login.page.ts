@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/services/auth/authentication.service';
-import { ToastController } from '@ionic/angular';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -12,20 +11,19 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 export class LoginPage implements OnInit {
 
   pwField: string;
+  usField: string;
+  
 
-  constructor(private router: Router, private authService: AuthenticationService, private toastCtrl: ToastController,
-    private toastService: ToastService) { }
+  constructor(private router: Router, private http: HttpClient, private toastService: ToastService) { }
 
   ngOnInit() {
   }
 
   login() {
-    this.authService.login();
-    if (this.pwField == "vmod") {
-       this.router.navigate(["projects"]);
-    }
-    else {
-      this.toastService.displayToast("Wrong password, please try again!")
-    }
+    let credentials = {username: this.usField, password: this.pwField};
+    this.http.post('http://192.168.40.125:8081/api/auth/login', credentials).subscribe(
+      data =>  this.router.navigate(["projects"]) ,
+      error =>  this.toastService.displayToast("Wrong password, please try again!")
+    );
   }
 }

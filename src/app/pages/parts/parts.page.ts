@@ -80,6 +80,8 @@ export class PartsPage implements OnInit {
   doRefresh(event) {
     console.log('Begin async operation');
     this.loadData();
+    if (this.chips.length > 0)
+      this.parts = this.partService.filterItems(this.chips);
     setTimeout(() => {
       console.log('Async operation has ended');
       event.target.complete();
