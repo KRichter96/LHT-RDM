@@ -47,7 +47,7 @@ export class PartService {
     this.setLocalData('parts', partItem);
   }
 
-  public createPart(data): Observable<any> {
+  public createPart(data) {
     let url = `${UPDATE_PART_URL}`;
     console.log(data);
     this.items = [...this.items, data];
@@ -77,7 +77,7 @@ export class PartService {
   }
 
   //TODO
-  public updatePart(data, partId): Observable<any> {
+  public updatePart(data): Observable<any> {
     let url = `${UPDATE_PART_URL}`;
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {

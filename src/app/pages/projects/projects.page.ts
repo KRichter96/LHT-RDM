@@ -5,8 +5,13 @@ import { Platform } from '@ionic/angular';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { PartModel } from '../../models/part/partmodel';
 import { OfflineService } from 'src/app/services/offline/offline.service';
+<<<<<<< Updated upstream
 import { PartService } from '../../services/part/part.service';
 import { Storage } from '@ionic/storage';
+=======
+import {PartService} from '../../services/part/part.service';
+import {Storage} from '@ionic/storage';
+>>>>>>> Stashed changes
 
 @Component({
   selector: 'app-projects',

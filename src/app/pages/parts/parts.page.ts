@@ -66,9 +66,9 @@ export class PartsPage implements OnInit {
   updateProgressBar() {
     let cento = this.parts.length;
     let percent = this.parts.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
-        || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" )) && (x.existingComponents !="" && x.preModPNAC !="" && x.serialNo !="")).length;
+        || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" )) && (x.existingComponents !="" && x.preModPNAC !="" && x.serialNo !="")).length; //todo Adriel what is missing
     let progress = percent / cento;
-    if(progress != cento) {
+    if(progress != 1) {
       this.progressColor = "danger";
     } else {
       this.progressColor = "success";
@@ -111,7 +111,7 @@ export class PartsPage implements OnInit {
   }
 
   onSync() {
-    this.partService.updatePart('Parts', this.id).subscribe();
+    this.partService.updatePart('Parts').subscribe();
   }
 
   setSearchedItems() {
