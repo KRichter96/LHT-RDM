@@ -32,8 +32,8 @@ export class LoginPage implements OnInit {
     this.http.post('http://192.168.43.11:8081/api/auth/login', credentials).subscribe(
       (data:any) => {
         this.tokensSrvice.setToken(data.token);
-        console.log(data.token)
-        this.router.navigate(["projects"]) 
+        console.log(data.token);
+        this.router.navigate(["projects"]);
       },
       error =>  this.toastService.displayToast("Wrong password, please try again!")
     );
