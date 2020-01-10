@@ -15,6 +15,7 @@ import { generateUUID } from 'ionic/lib/utils/uuid';
 })
 export class PartDetailPage implements OnInit {
   parts: PartModel[] = [];
+  parentItem: PartModel[] = []
   counterId: number;
   projectId: number;
   strProjectId: string;
@@ -24,15 +25,17 @@ export class PartDetailPage implements OnInit {
   isNewItem: boolean;
   disable: boolean;
   childItem: boolean;
-  parentWeight: number;
+  parentWeight: string;
+  childWeight: string;
   newId: any; //todo needed?
+
+
 
   constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute
               , private partService: PartService, private plt: Platform) {
   }
 
   ngOnInit() {
-
     this.projectId = this.projectService.getProjectId();
     this.strProjectId = this.projectService.getProjectId().toString(); //needed for saves
     this.counterId = +this.route.snapshot.paramMap.get('id');
@@ -70,6 +73,8 @@ export class PartDetailPage implements OnInit {
       partItem = e.filter(x => {return x.counterId == this.counterId})[0]; // Get only the partItem with same CounterId
       if(this.isNewItem) {
         this.partItem = this.prepareForChildItem(partItem);
+        this.parentWeight = this.partItem.preModWeight.replace(/,/i,".");
+        this.partItem.preModWeight = "";
         this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
         this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service
         this.partItem.id = generateUUID();
@@ -87,11 +92,14 @@ export class PartDetailPage implements OnInit {
   }
   onSave() {
     if (this.partItem.counterId > 99999){
-      console.log(this.partItem);
+      this.childWeight = this.partItem.preModWeight.replace(/,/i,".");
+      this.partItem.preModWeight.replace(/./i,","); // set child weight back to ,
       this.partService.createPart(this.partItem);
+      console.log("calc");
+      //this.calculateWeight();
     }
     else {
-      this.partService.updatePart(this.partItem, this.partItem.counterId);
+      this.partService.updatePart(this.partItem);
     }
   }
   randomInt(){
@@ -111,14 +119,12 @@ export class PartDetailPage implements OnInit {
          partItem.intendedPurpose = "";
          partItem.installZoneRoom = "";
       */
-      this.parentWeight = +partItem.preModWeight;
-      console.log(this.parentWeight);
       partItem.preModPositionIPC = "";
       partItem.ipcReference = "";
       partItem.ipcItemNumber = "";
       partItem.preModPNAC = ""; // Writeable
       partItem.serialNo = ""; // Writeable
-      partItem.preModWeight = ""; // Writeable
+      //partItem.preModWeight = ""; // Writeable
       partItem.rackNo = ""; // Writeable
       partItem.rackLocation = ""; // Writeable
       partItem.existingComponents = ""; // Writeable
@@ -148,13 +154,17 @@ export class PartDetailPage implements OnInit {
     return partItem;
   }
 
-  calculateWeight() {
-    if(this.childItem == true) {
-      var parentItem = this.parts.filter(x => {return x.id == this.partItem.parentId})[0];
-      parentItem.preModWeight = (+this.parentWeight - +this.partItem.preModWeight).toString();
-
-    }
-  }
+  // calculateWeight() {
+  //   if(this.childItem == true) {
+  //     var parentItem: PartModel = this.parts.filter(x => {return x.id == this.partItem.parentId})[0];
+  //     console.log("old " + parentItem.preModWeight);
+  //     var calculatedWorth = (+this.parentWeight - +this.childWeight).toString(); //parentItem.preModWeight
+  //       parentItem.preModWeight = calculatedWorth.replace(/./i,","); // set parent weight back to ,
+  //       console.log("new " + parentItem.preModWeight);
+  //       this.partService.updatePart(parentItem);
+  //       console.log(parentItem);
+  //   }
+  // }
 
   getPartId(): string {
     return this.partItem.id;
