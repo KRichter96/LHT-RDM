@@ -141,68 +141,69 @@ export class PartService {
   }
 
   filterObj(chips: Chip[], item: PartModel): boolean {
-    let ret = false;
+    let ret = true;
     for (let chip of chips) {
+      let chipMatched = false;
       for (let term of chip.FilterTerm) {
         switch(chip.FilterObj) { 
           case "Ident-Nr": { 
             if (item.counterId.toString().toLowerCase().includes(term.toLowerCase())) {
-              ret = true;
+              chipMatched = true;
             }
             break;
           } 
           case "P/N": { 
             if (item.postModPN.toString().toLowerCase().includes(term.toLowerCase())) {
-              ret = true;
+              chipMatched = true;
             }
             break;
           } 
           case "Category": { 
             if (item.componentType.toString().toLowerCase().includes(term.toLowerCase())) {
-              ret = true;
+              chipMatched = true;
             }
             break;
           } 
           case "ComponentType": {
               if (item.componentType.toString().toLowerCase().includes(term.toLowerCase())) {
-                ret = true;
+                chipMatched = true;
             }
             break;
           } 
           case "Status": { 
             if (item.rackLocation && item.rackNo && item.preModWeight && item.preModWeight != "N/A" && item.rackLocation != "N/A" && item.rackNo != "N/A") {
               if (term === "Done") {
-                ret = true;
+                chipMatched = true;
               }
             }
             else {
               if (term === "ToDo") {
-                ret = true;
+                chipMatched = true;
               }
             }
             break;
           } 
           case "Rack-Nr": { 
             if (item.rackNo.toString().toLowerCase().includes(term.toLowerCase())) {
-              ret = true;
+              chipMatched = true;
             }
             break;
           } 
           case "Position": { 
             if (item.postModPosition.toString().toLowerCase().includes(term.toLowerCase())) {
-              ret = true;
+              chipMatched = true;
             }
             break;
           } 
           case "InstallationRoom": { 
             if (item.installZoneRoom.toString().toLowerCase().includes(term.toLowerCase())) {
-              ret = false;
+              chipMatched = true;
             }
             break;
           } 
         }
       }
-      return ret;
+      ret = ret && chipMatched;
     }
     return ret;
   }
