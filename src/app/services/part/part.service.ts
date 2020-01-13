@@ -82,7 +82,6 @@ export class PartService {
   //TODO
   public updatePart(data, partId): Observable<any> {
     let url = `${UPDATE_PART_URL}`;
-
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       this.items[this.getDimensionsByFind(data.counterId).counterId -1] = data;
       this.setLocalData('parts'+this.projectid, this.items); //something went wrong here
