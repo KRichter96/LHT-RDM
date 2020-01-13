@@ -7,9 +7,10 @@ import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
 import { Chip } from '../../pages/parts/Chip';
 import { PartModel } from 'src/app/models/part/partmodel';
+import { API_IP } from './../../../environments/environment';
 
-const PART_URL = 'http://192.168.43.11:8081/api/parts/byProject/';
-const UPDATE_PART_URL = 'http://192.168.43.11:8081/api/parts';
+const PART_URL = API_IP + 'parts/byProject/';
+const UPDATE_PART_URL = API_IP + 'parts';
 
 @Injectable({
   providedIn: 'root'

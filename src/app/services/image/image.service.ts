@@ -3,11 +3,11 @@ import { NetworkService, ConnectionStatus } from '../network/network.service';
 import { OfflineService } from '../offline/offline.service';
 import { HttpClient } from '@angular/common/http';
 import { from } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
+import { API_IP } from './../../../environments/environment';
 
-const UPLOAD_IMAGE_URL = 'http://192.168.43.11:8081/api/parts/';
+const UPLOAD_IMAGE_URL = API_IP + 'parts/';
 
 @Injectable({
   providedIn: 'root'

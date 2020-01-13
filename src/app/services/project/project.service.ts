@@ -5,9 +5,10 @@ import { NetworkService, ConnectionStatus } from '../network/network.service';
 import { map, tap, catchError } from 'rxjs/operators';
 import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
+import { API_IP } from '../../../environments/environment';
 
 const API_STORAGE_KEY = 'projects';
-const PROJECT_URL = 'http://192.168.43.11:8081/api/projects';
+const PROJECT_URL = API_IP + 'projects';
 
 @Injectable({
   providedIn: 'root'
