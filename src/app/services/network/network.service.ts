@@ -4,9 +4,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../toast/toast.service';
+import { API_IP } from '../../../environments/environment';
 
 export enum ConnectionStatus { Online, Offline }
-const PROJECT_URL = 'http://rlx-v388.ham.dlh.de:17081/api/projects';
+const PROJECT_URL = API_IP + 'projects';
 
 @Injectable({
   providedIn: 'root'

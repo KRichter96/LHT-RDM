@@ -298,6 +298,10 @@ export class PartsPage implements OnInit {
     await alert.present();
   }
 
+  showStatus() {
+    
+  }
+
   async openPopover(ev: Event) {
     const popover = await this.popoverController.create({
       component: PopoverPage,

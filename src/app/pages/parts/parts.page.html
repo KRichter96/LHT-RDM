@@ -13,7 +13,6 @@
         <ion-select-option value="P/N">P/N</ion-select-option>
         <ion-select-option value="Category">Category</ion-select-option>
         <ion-select-option value="ComponentType">Component Type</ion-select-option>
-        <!-- <ion-select-option value="Status">Status</ion-select-option> -->
         <ion-select-option value="Rack-Nr">Rack-Nr.</ion-select-option>
         <ion-select-option value="Position">Position</ion-select-option>
         <ion-select-option value="InstallationRoom">Installation Room</ion-select-option>
@@ -32,6 +31,55 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+
+  <ion-list-header class="ion-no-padding" style="position: sticky;">
+    <ion-grid style="padding-right: 3em;">
+      <ion-row>
+          <ion-col size="1">
+            <div class="stacked-group">
+              <ion-label (click)="filterStatus()">Ident</ion-label>
+              <ion-icon icon name="funnel" ></ion-icon>
+            </div>
+          </ion-col>
+        <ion-col size="1">
+          <div class="stacked-group">
+            <ion-label>P/N</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="2">
+            <div class="stacked-group">
+              <ion-label>Nomenclature</ion-label>
+            </div>
+          </ion-col>
+        <ion-col size="2">
+          <div class="stacked-group">
+            <ion-label>Category</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="2">
+          <div class="stacked-group">
+            <ion-label>Component Type</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="1">
+          <div class="stacked-group">
+            <ion-label>Position</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="2">
+          <div class="stacked-group">
+            <ion-label>Arrangement</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="1">
+          <div class="stacked-group">
+            <ion-label (click)="showStatus()">Status</ion-label>
+            <ion-icon icon name="funnel"></ion-icon>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-list-header>
 </ion-header>
 
 <ion-content class="has-header">
@@ -45,54 +93,6 @@
   </ion-chip>
 
   <ion-list #slidingList>
-    <ion-list-header class="ion-no-padding">
-      <ion-grid style="padding-right: 3em;">
-        <ion-row>
-            <ion-col size="1">
-              <div class="stacked-group">
-                <ion-label (click)="filterStatus()">Ident</ion-label>
-              </div>
-            </ion-col>
-          <ion-col size="1">
-            <div class="stacked-group">
-              <ion-label>P/N</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="2">
-              <div class="stacked-group">
-                <ion-label>Nomenclature</ion-label>
-              </div>
-            </ion-col>
-          <ion-col size="2">
-            <div class="stacked-group">
-              <ion-label>Category</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="2">
-            <div class="stacked-group">
-              <ion-label>Component Type</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="1">
-            <div class="stacked-group">
-              <ion-label>Position</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="2">
-            <div class="stacked-group">
-              <ion-label>Arrangement</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="1">
-            <div class="stacked-group">
-              <ion-label>Status</ion-label>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-list-header>
-
-    
     <ion-item-sliding *ngFor="let part of parts; let i = index">
       <ion-label *ngIf="part?.length">No results found :(</ion-label>
       <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward" class="ion-no-padding">
