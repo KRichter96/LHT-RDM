@@ -8,7 +8,7 @@ export class PartModel {
   ipcItemNumber: string;
   preModPNIPC: string;
   preModPositionIPC: string;
-  location: string;
+  arrangement: string;
   ammRemovalTask: string;
   ammInstallTask: string;
   intendedPurpose: string;

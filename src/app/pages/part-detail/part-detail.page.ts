@@ -15,18 +15,19 @@ import { generateUUID } from 'ionic/lib/utils/uuid';
 })
 export class PartDetailPage implements OnInit {
   parts: PartModel[] = [];
-  parentItem: PartModel[] = []
   counterId: number;
   projectId: number;
   strProjectId: string;
   partItem: PartModel;
   selectedSegment: string;
   existingItem: boolean;
-  isNewItem: boolean;
+  isNewChildItem: boolean;
   disable: boolean;
-  childItem: boolean;
+  childItem: boolean; // used to filter html grids
+  parentCounterId: number;
   parentWeight: string;
   childWeight: string;
+
   newId: any; //todo needed?
 
 
@@ -40,15 +41,14 @@ export class PartDetailPage implements OnInit {
     this.strProjectId = this.projectService.getProjectId().toString(); //needed for saves
     this.counterId = +this.route.snapshot.paramMap.get('id');
     let newItem = this.route.snapshot.paramMap.get('new');
-    this.isNewItem = newItem && newItem.indexOf('true') != -1;
-    console.log("newitem: "+ this.isNewItem);
+    this.isNewChildItem = newItem && newItem.indexOf('true') != -1; //bool
     this.selectedSegment = "comment";
 
     this.childItem = false;
 
-    if (this.counterId == -1) {
+    if (this.counterId == -1) { // If CounterId doesn't exist
       this.partItem = new PartModel();
-      this.createNewPartItem();
+      this.createNewPartItem(); // Completely New Item
     } else {
       this.plt.ready().then(() => {
         this.loadData();
@@ -62,30 +62,35 @@ export class PartDetailPage implements OnInit {
     this.partItem.id = generateUUID();
     this.partItem.counterId = this.randomInt();
     this.partItem.statusCreate = "New";
-    this.partItem.statusEdit = "appEdited";
+    this.partItem.statusEdit = "Edited";
     this.counterId = this.partItem.counterId;
   }
 
   loadData() {
     let partItem: PartModel;
+    let parentItem: PartModel;
     this.partService.getParts(this.projectId).subscribe(e => {
       this.parts = e;
       partItem = e.filter(x => {return x.counterId == this.counterId})[0]; // Get only the partItem with same CounterId
-      if(this.isNewItem) {
+
+      if(this.isNewChildItem) { // Only goes in when completely new  child item
         this.partItem = this.prepareForChildItem(partItem);
+        this.parentCounterId = this.counterId; // sets ParentId in html
         this.parentWeight = this.partItem.preModWeight.replace(/,/i,".");
         this.partItem.preModWeight = "";
         this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
-        this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service
+        this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service ((IF ONLINE))
         this.partItem.id = generateUUID();
         this.childItem = true;
       } else {
         this.partItem = partItem;
-        if (this.partItem.parentId == "-1") {
+        if (this.partItem.parentId == "-1") { // if new Item
           this.childItem = false;
         }
-        else {
-            this.childItem = true;
+        else { // is Existing Child Item
+          this.childItem = true; // sets child grid
+          parentItem = e.filter(x => {return x.id == this.partItem.parentId})[0];
+          this.parentCounterId = parentItem.counterId; // sets ParentId in html
         }
       }
     });
@@ -107,50 +112,49 @@ export class PartDetailPage implements OnInit {
   }
 
   prepareForChildItem(partItem: PartModel): PartModel { // Keeps some properties for Child Item, deletes the rest
-      /* taken from Parent PartItem
-         partItem.nomenclature = "";
-         partItem.category = "";
-         partItem.componentType = "";
-         partItem.postModPN = "";
-         partItem.location = "";
-         partItem.ammRemovalTask = "";
-         partItem.ammInstallTask = "";
-         partItem.reasonRemoval = "";
-         partItem.intendedPurpose = "";
-         partItem.installZoneRoom = "";
-      */
-      partItem.preModPositionIPC = "";
-      partItem.ipcReference = "";
-      partItem.ipcItemNumber = "";
-      partItem.preModPNAC = ""; // Writeable
-      partItem.serialNo = ""; // Writeable
-      //partItem.preModWeight = ""; // Writeable
-      partItem.rackNo = ""; // Writeable
-      partItem.rackLocation = ""; // Writeable
-      partItem.existingComponents = ""; // Writeable
-      partItem.remarksRemoval = "";
-      partItem.aupa = "";
-      partItem.postModPosition = "";
-      partItem.modDWG = "";
-      partItem.panelPNAVI = "";
-      partItem.integrCompPN = "";
-      partItem.integrCompTypes = "";
-      partItem.equipNo = "";
-      partItem.integratedComponents = "";
-      partItem.postModWeight = "";
-      partItem.remarksMod = "";
-      partItem.cmmReference = "";
-      partItem.xxx = "";
-      partItem.moC0 = "";
-      partItem.moC1 = "";
-      partItem.moC2 = "";
-      partItem.testSample = "";
-      partItem.moC4Flameability = "";
-      partItem.moC7 = "";
-      partItem.deleteReason = "";
-      partItem.statusCreate = "New";
-      partItem.statusEdit = "appEdited";
-      console.log("partItem: "+ partItem);
+    /* taken from Parent PartItem
+       partItem.category = "";
+       partItem.componentType = "";
+       partItem.postModPN = "";
+       partItem.arrangement = "";
+       partItem.ammRemovalTask = "";
+       partItem.ammInstallTask = "";
+       partItem.reasonRemoval = "";
+       partItem.intendedPurpose = "";
+       partItem.installZoneRoom = "";
+    */
+    partItem.nomenclature = "";
+    partItem.preModPositionIPC = "";
+    partItem.ipcReference = "";
+    partItem.ipcItemNumber = "";
+    partItem.preModPNAC = ""; // Writeable
+    partItem.serialNo = ""; // Writeable
+    //partItem.preModWeight = ""; // Writeable
+    partItem.rackNo = ""; // Writeable
+    partItem.rackLocation = ""; // Writeable
+    partItem.existingComponents = ""; // Writeable
+    partItem.remarksRemoval = "";
+    partItem.aupa = "";
+    partItem.postModPosition = "";
+    partItem.modDWG = "";
+    partItem.panelPNAVI = "";
+    partItem.integrCompPN = "";
+    partItem.integrCompTypes = "";
+    partItem.equipNo = "";
+    partItem.integratedComponents = "";
+    partItem.postModWeight = "";
+    partItem.remarksMod = "";
+    partItem.cmmReference = "";
+    partItem.xxx = "";
+    partItem.moC0 = "";
+    partItem.moC1 = "";
+    partItem.moC2 = "";
+    partItem.testSample = "";
+    partItem.moC4Flameability = "";
+    partItem.moC7 = "";
+    partItem.deleteReason = "";
+    partItem.statusCreate = "New";
+    partItem.statusEdit = "Edited";
     return partItem;
   }
 

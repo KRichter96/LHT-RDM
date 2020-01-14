@@ -305,6 +305,7 @@ export class PartsPage implements OnInit {
   async openPopover(ev: Event) {
     const popover = await this.popoverController.create({
       component: PopoverPage,
+      cssClass: 'child-pop-over-style',
       componentProps: {
         custom_id: this.id
       },
