@@ -133,18 +133,17 @@
             </ion-col>
             <ion-col size="2">
               <div class="stacked-group">
-                <ion-label>{{ part.location }}</ion-label> <!--TBD-->
+                <ion-label>{{ part.arrangement }}</ion-label> <!--TBD-->
               </div>
             </ion-col>
             <ion-col size="1">
-              <div *ngIf="offline == true" > <!--TODO fix with real variable-->
+              <div *ngIf="offline == true && part.statusEdit == 'Deleted'">
                 <ion-icon name="cloud-upload"></ion-icon>
-                <ion-icon *ngIf="part.statusEdit == 'Deleted'" name="trash"></ion-icon>
+                <ion-icon name="trash"></ion-icon>
               </div>
               <ion-icon *ngIf="part.statusCreate == 'New' else elseBlock" name="add"></ion-icon>
                 <ng-template #elseBlock><ion-icon name="document"></ion-icon></ng-template> <!-- Initial (from backend) -->
-              <ion-icon *ngIf="part.statusEdit == 'appEdited'" name="create"></ion-icon>
-              <ion-icon *ngIf="part.statusEdit == 'Acknowledged'" name="checkmark"></ion-icon>
+              <ion-icon *ngIf="part.statusEdit == 'Edited'" name="create"></ion-icon>
                 <!-- No Icon for local deleted OR Not Edited -->
             </ion-col>
           </ion-row>
