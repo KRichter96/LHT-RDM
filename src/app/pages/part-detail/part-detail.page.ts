@@ -6,6 +6,7 @@ import { PartService } from 'src/app/services/part/part.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { generateUUID } from 'ionic/lib/utils/uuid';
+import { PartsPage } from '../parts/parts.page';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class PartDetailPage implements OnInit {
   parentWeight: string;
   childWeight: string;
 
-  newId: any; //todo needed?
+  newId: string; //todo needed?
 
 
 
@@ -95,18 +96,21 @@ export class PartDetailPage implements OnInit {
       }
     });
   }
+
   onSave() {
     if (this.partItem.counterId > 99999){
-      this.childWeight = this.partItem.preModWeight.replace(/,/i,".");
-      this.partItem.preModWeight.replace(/./i,","); // set child weight back to ,
+      if (this.partItem.preModWeight) {
+        this.childWeight = this.partItem.preModWeight.replace(/,/i,".");
+        this.partItem.preModWeight.replace(/./i,",");
+      } // set child weight back to ,
       this.partService.createPart(this.partItem);
-      console.log("calc");
       //this.calculateWeight();
     }
     else {
       this.partService.updatePart(this.partItem, this.partItem.counterId);
     }
   }
+
   randomInt(){
     return Math.floor(Math.random() * (2147483647 - 99999 + 1)) + 99999;
   }

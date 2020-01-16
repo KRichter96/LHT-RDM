@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { PartModel } from 'src/app/models/part/partmodel';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
@@ -15,6 +15,7 @@ import { OfflineService } from 'src/app/services/offline/offline.service';
 import { ImageService } from 'src/app/services/image/image.service';
 import { Storage } from '@ionic/storage';
 import { TokenService } from 'src/app/services/token/token.service';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-parts',
@@ -34,14 +35,17 @@ export class PartsPage implements OnInit {
   offline: boolean = true;
   progressColor: string;
 
-
   constructor(private partService: PartService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
     private router: Router, private filterService: FilterService, private projectService: ProjectService,
     private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController, private token: TokenService) {
       this.chips = new Array<Chip>();
       this.plt.ready().then(() => {
-        
+        this.router.events.subscribe((event) => {
+          if (event instanceof NavigationEnd) {
+            this.loadData();
+          }
+        })
         this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
           if (status == ConnectionStatus.Online) {
             this.offlineManager.checkForEvents().subscribe();
@@ -52,7 +56,6 @@ export class PartsPage implements OnInit {
   
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
-    console.log(this.id)
     this.projectService.setProjectId(this.id);
 
     if (this.filterService.getChips().length > 0) {
@@ -74,7 +77,6 @@ export class PartsPage implements OnInit {
       event.target.complete();
     }, 2000);
   }
-
 
   openDetail() {
     this.filterService.setChips(this.chips);

@@ -1,3 +1,15 @@
+
+.ion-thumbnail
+{
+    width:100px;
+    height:100px;
+    ion-img
+    {
+        width:auto !important;
+        height:auto !important;
+    }
+}
+
 .image-container {
         min-height: 200px;
         background-size: cover;

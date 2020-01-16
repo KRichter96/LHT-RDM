@@ -10,7 +10,7 @@ import {PartModel} from '../../models/part/partmodel';
 })
 export class PopoverPage implements OnInit {
   childItem: false;
-  id: number;
+  id: string;
   parentId: -1;
   parts: PartModel[] = [];
 

@@ -52,10 +52,8 @@ export class PartService {
 
   public createPart(data) {
     let url = `${UPDATE_PART_URL}`;
-    console.log(data);
     this.items = [...this.items, data];
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      console.log(this.items);
       this.setLocalData('parts'+this.projectid, this.items); //something went wrong here
       return from(this.offlineManager.storeRequest(url, 'POST', data));
     }
