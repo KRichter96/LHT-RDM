@@ -6,7 +6,7 @@ export const environment = {
   production: false
 };
 
-export const API_IP = 'http://192.168.40.125:8081/api/'; 
+export const API_IP = 'http://192.168.43.11:8081/api/'; 
 
 /*
  * For easier debugging in development mode, you can import the following file

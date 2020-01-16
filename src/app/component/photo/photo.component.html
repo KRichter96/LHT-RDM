@@ -1,11 +1,17 @@
-<ion-button (click)="selectImage()" class="img-wrapper" expand="full" size="large">
+<ion-button (click)="selectImage()" class="img-wrapper" expand="full" size="large" style="display: block;">
   <ion-icon name="add" size="large"></ion-icon>
   <ion-label>Add Photo</ion-label>
 </ion-button>
-<ion-grid>
-  <!--  IN DIV   [style.background-image]="'url(' + img.path + ')'"-->
-  <!-- [ngStyle]="{'background-image': 'url(' + img.pat + ')'}" -->
 
+<ion-grid>
+  <ion-row>
+    <ion-col col-6 col-md-4 col-xl-3 *ngFor="let img of images; index as pos">
+      <ion-img [src]="img.path" (click)="openImage(img.filePath)" (press)="deleteImage(img, pos)"></ion-img>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<!-- 
+<ion-grid>
   <ion-row style="height: 300px;">
     <div class="images">
       <div class="one-image" *ngFor="let img of images; index as pos" (press)="deleteImage(img, pos)">
@@ -13,41 +19,7 @@
       </div>
     </div>
   </ion-row>
-</ion-grid>
+</ion-grid> -->
 
 
 
-
-<!--
-
-<ion-button (click)="selectImage()">
-  <ion-icon name="add" size="large"></ion-icon>
-  <ion-label>Add Photo</ion-label>
-</ion-button>
-<ion-list>
-  <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
-    <ion-thumbnail slot="start">
-      <ion-img [src]="img.path" (click)="openImage(img.path)"></ion-img>
-    </ion-thumbnail>
-    <ion-label>
-      {{ img.name }}
-    </ion-label>
-    <ion-button slot="end" fill="clear" (click)="deleteImage(img, pos)">
-      <ion-icon slot="icon-only" name="trash"></ion-icon>
-    </ion-button>
-  </ion-item>
-</ion-list>
-
-<ion-grid>
-  <ion-row>
-    <ion-col size="12">
-      <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
-        <div class="img-wrapper" [style.background-image]="'url(' + img.path + ')'"></div>
-        ODER
-<ion-img [src]="img.path"></ion-img> IN DIV
-        ODER
-[ngStyle]="{'background-image': 'url(' + your url + ')'}"
-      </ion-item>
-    </ion-col>
-  </ion-row>
-</ion-grid>-->
