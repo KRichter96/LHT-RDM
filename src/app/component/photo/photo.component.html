@@ -1,19 +1,17 @@
+<ion-button (click)="selectImage()" class="img-wrapper" expand="full" size="large">
+  <ion-icon name="add" size="large"></ion-icon>
+  <ion-label>Add Photo</ion-label>
+</ion-button>
 <ion-grid>
-  <ion-row style="height: 300px;">
-    <ion-col size="12">
-      <ion-button (click)="selectImage()" class="img-wrapper">
-        <ion-icon name="add" size="large"></ion-icon>
-        <ion-label>Add Photo</ion-label>
-      </ion-button>
-        <div class="images">
-          <div class="one-image" *ngFor="let img of images; index as pos" (press)="deleteImage(img, pos)">
-            <ion-img [src]="img.path" (click)="openImage(img.filePath)"></ion-img>
-          </div>
-        </div>
   <!--  IN DIV   [style.background-image]="'url(' + img.path + ')'"-->
   <!-- [ngStyle]="{'background-image': 'url(' + img.pat + ')'}" -->
-      
-    </ion-col>
+
+  <ion-row style="height: 300px;">
+    <div class="images">
+      <div class="one-image" *ngFor="let img of images; index as pos" (press)="deleteImage(img, pos)">
+        <ion-img [src]="img.path" (click)="openImage(img.filePath)"></ion-img>
+      </div>
+    </div>
   </ion-row>
 </ion-grid>
 
