@@ -221,8 +221,7 @@ export class PartsPage implements OnInit {
 
   updateProgressBar() {
     let cento = this.parts.length;
-    let percent = this.parts.filter(x => (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" && x.preModPNAC !="" && x.nomenclature != "")
-    && (x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")).length; // percent of parts not completed
+    let percent = this.parts.filter(x => (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" && x.preModPNAC !="" && x.nomenclature != "" && x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")).length; // percent of parts not completed
     let progress = percent / cento;
     if(progress != 1) {
       this.progressColor = "danger";
