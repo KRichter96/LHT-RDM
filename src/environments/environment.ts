@@ -5,7 +5,7 @@
 export const environment = {
   production: false
 };
-
+//http://rlx-v388.ham.dlh.de:17081
 export const API_IP = 'http://192.168.43.11:8081/api/'; 
 
 /*

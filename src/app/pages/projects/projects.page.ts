@@ -62,6 +62,7 @@ export class ProjectsPage implements OnInit {
           let percent = res.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
           || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "")) && (x.existingComponents != "" && x.preModPNAC != "" && x.serialNo != "")).length;    
           this.status[p.id].status = (percent / cento) * 100;
+          console.log((percent / cento) * 100);
         }
       })
     }
