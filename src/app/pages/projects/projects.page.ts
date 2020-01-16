@@ -7,6 +7,7 @@ import { PartModel } from '../../models/part/partmodel';
 import { OfflineService } from 'src/app/services/offline/offline.service';
 import { PartService } from '../../services/part/part.service';
 import { Storage } from '@ionic/storage';
+import { ProgressHolder } from './progress.holder';
 
 
 @Component({
@@ -16,12 +17,10 @@ import { Storage } from '@ionic/storage';
 })
 export class ProjectsPage implements OnInit {
 
-  constructor(private plt: Platform, private projectService: ProjectService, private offlineManager: OfflineService, private storage: Storage, private partService: PartService) { }
+  status = {};
+  projects: ProjectModel[] = [];
 
-  //projects: ProjectModel[] = [];
-  parts: PartModel[] = [];
-  projects: Observable<ProjectModel>;
-  projectTitle: Observable<String>;
+  constructor(private plt: Platform, private projectService: ProjectService, private offlineManager: OfflineService, private storage: Storage, private partService: PartService) { }
 
   ngOnInit() {
     this.plt.ready().then(() => {
@@ -39,24 +38,35 @@ export class ProjectsPage implements OnInit {
   }
 
   loadData() {
-    this.projectService.getProjects().subscribe(res => this.projects = res );
-  }
-
-  loadParts(projectID) {
-    this.partService.getParts(projectID).subscribe(res => {
-      this.parts = res;
+    this.projectService.getProjects().subscribe(res => {
+      this.projects = res;
+      this.checkStatus();
     });
   }
 
-  deleteData() {
-    //this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
-  }
-
   checkStatus() {
-    // let cento = this.parts.length;
-    // let percent = this.parts.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
-    //     || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "")) && (x.existingComponents != "" && x.preModPNAC != "" && x.serialNo != "")).length;
-    // let progress = percent / cento;
-    // return progress;
+    let counter = 0;
+    for (let i = 0; i < this.projects.length; i++) {
+      let p = this.projects[i];
+      this.partService.getParts(p.id).subscribe((res) => {
+        //console.log(res);
+        if (res.length == 0) {
+          if (!this.status[p.id]) {
+            this.status[p.id] = new ProgressHolder();
+          }
+          this.status[p.id].status = 0;
+        } else {
+          if (!this.status[p.id]) {
+            this.status[p.id] = new ProgressHolder();
+          }
+          let cento = res.length;
+          let percent = res.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
+          || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "")) && (x.existingComponents != "" && x.preModPNAC != "" && x.serialNo != "")).length;    
+          this.status[p.id].status = (percent / cento) * 100;
+        }
+      })
+      console.log(this.status[p.id])
+      counter++;
+    }
   }
 }
