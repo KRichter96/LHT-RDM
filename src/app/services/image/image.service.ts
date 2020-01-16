@@ -18,6 +18,7 @@ export class ImageService {
 
   uploadImage(image: any, partId, imagepath) {
     let url = `${UPLOAD_IMAGE_URL + partId + "/photos"}`;
+    
     let a = image.filePath.substring(0, image.filePath.lastIndexOf('/'));
     let b = image.filePath.substring(image.filePath.lastIndexOf('/')+1);
     this.file.readAsArrayBuffer(a, b).then((res) => {
@@ -46,7 +47,7 @@ export class ImageService {
     })
   }
 
-  uploadFinding(data: any[], partId) {
+  uploadFinding(data: any, partId, imagepath) {
     let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
 
     for (let image of data) {

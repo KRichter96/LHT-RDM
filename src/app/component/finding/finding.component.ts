@@ -20,16 +20,15 @@ export class FindingComponent implements OnInit {
 
   images = [];
   imagePath = "";
-  partId: number;
   projectId: string;
 
   constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService, private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
     private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.partId = this.partDetail.counterId + 1;
+    let partId = this.partDetail.counterId + 1;
     this.projectId = this.projectService.getProjectId();
-    this.imagePath = "finding/" + this.projectId + "/" + this.partId;
+    this.imagePath = "finding/" + this.projectId + "/" + partId;
     this.loadStoredImages();
     console.log(this.imagePath);
   }
@@ -137,7 +136,8 @@ export class FindingComponent implements OnInit {
 
       this.images = [newEntry, ...this.images];
       //this.partService.updatePart(this.images, this.partId);
-      this.imageService.uploadFinding(this.images, this.partId)
+      //this.imageService.uploadFinding(this.images, this.partId)
+      this.imageService.uploadFinding(newEntry, this.partDetail.getPartId(), this.imagePath);
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }
