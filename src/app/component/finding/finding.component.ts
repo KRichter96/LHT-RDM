@@ -21,7 +21,7 @@ export class FindingComponent implements OnInit {
   images = [];
   imagePath = "";
   partId: number;
-  projectId: number;
+  projectId: string;
 
   constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService, private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
     private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }

@@ -16,7 +16,7 @@ import { generateUUID } from 'ionic/lib/utils/uuid';
 export class PartDetailPage implements OnInit {
   parts: PartModel[] = [];
   counterId: number;
-  projectId: number;
+  projectId: string;
   strProjectId: string;
   partItem: PartModel;
   selectedSegment: string;

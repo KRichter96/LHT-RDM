@@ -12,7 +12,7 @@ import {PartService} from '../../services/part/part.service';
 export class CommentComponent implements OnInit {
 
   comment: string;
-  projectId: number;
+  projectId: string;
 
   constructor(private projectService: ProjectService, private partService: PartService, private partDetail: PartDetailPage) { }
 

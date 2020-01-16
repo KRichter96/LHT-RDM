@@ -45,7 +45,6 @@ export class ProjectsPage implements OnInit {
   }
 
   checkStatus() {
-    let counter = 0;
     for (let i = 0; i < this.projects.length; i++) {
       let p = this.projects[i];
       this.partService.getParts(p.id).subscribe((res) => {
@@ -65,8 +64,6 @@ export class ProjectsPage implements OnInit {
           this.status[p.id].status = (percent / cento) * 100;
         }
       })
-      console.log(this.status[p.id])
-      counter++;
     }
   }
 }

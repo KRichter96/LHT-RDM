@@ -15,7 +15,7 @@ const PROJECT_URL = API_IP + 'projects';
 })
 export class ProjectService {
 
-  projectId: number;
+  projectId: string;
 
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
@@ -59,11 +59,11 @@ export class ProjectService {
     return this.storage.get(`${API_STORAGE_KEY}-${key}`);
   }
 
-  public setProjectId(projectId: number) {
+  public setProjectId(projectId: string) {
     this.projectId = projectId;
   }
 
-  public getProjectId(): number {
+  public getProjectId(): string {
     return this.projectId;
   }
 }

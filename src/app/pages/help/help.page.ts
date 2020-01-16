@@ -7,7 +7,7 @@ import {ProjectService} from '../../services/project/project.service';
   styleUrls: ['./help.page.scss'],
 })
 export class HelpPage implements OnInit {
-  projectId: number;
+  projectId: string;
 
   constructor(private projectService: ProjectService) { }
 

@@ -29,7 +29,7 @@ export class PartsPage implements OnInit {
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm: string = "";
-  id: number;
+  id: string;
   progress: number = 0;
   offline: boolean = true;
   progressColor: string;
@@ -51,7 +51,8 @@ export class PartsPage implements OnInit {
   }
   
   ngOnInit() {
-    this.id = +this.route.snapshot.paramMap.get('id');
+    this.id = this.route.snapshot.paramMap.get('id');
+    console.log(this.id)
     this.projectService.setProjectId(this.id);
 
     if (this.filterService.getChips().length > 0) {
