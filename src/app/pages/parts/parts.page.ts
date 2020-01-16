@@ -68,8 +68,7 @@ export class PartsPage implements OnInit {
   doRefresh(event) {
     console.log('Begin async operation');
     this.loadData();
-    if (this.chips.length > 0)
-      this.parts = this.partService.filterItems(this.chips);
+    
     setTimeout(() => {
       console.log('Async operation has ended');
       event.target.complete();
@@ -86,6 +85,9 @@ export class PartsPage implements OnInit {
       this.parts = res;
       this.updateProgressBar();
       this.offline = this.checkOffline()
+      if (this.chips.length > 0) {
+        this.parts = this.partService.filterItems(this.chips);
+      }
     });
   }
 
@@ -234,7 +236,7 @@ export class PartsPage implements OnInit {
   public checkStatus(part) {
     try {
       let p: PartModel = part;
-      if (p.rackLocation && p.rackNo && p.preModWeight && p.nomenclature && p.preModPNAC && p.preModWeight != "N/A" && p.rackLocation != "N/A" && p.rackNo != "N/A") {
+      if (p.rackLocation && p.rackNo && p.preModWeight && p.preModWeight != "N/A" && p.rackLocation != "N/A" && p.rackNo != "N/A") {
         return true;
       }
       else {

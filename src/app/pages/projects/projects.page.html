@@ -14,10 +14,10 @@
   </ion-refresher>
   <ion-list>
     <ion-item-sliding *ngFor="let project of projects; let i = index">
-      <ion-item [routerLink]="'/parts/' + project.id" routerLinkActive="router-link-active" routerDirection="forward">
-        <ion-label><pre><b>{{ project.title }}</b>              {{ project.acType }}</pre></ion-label>
+      <ion-item [routerLink]="'/parts/' + project.id" routerLinkActive="router-link-active" routerDirection="forward" *ngIf="!project.projectTitle" >
+        <ion-label><b>{{ project.title }}</b><pre>     {{ project.acType }}</pre></ion-label>
+        <ion-label>{{ project.msn }}</ion-label>
         <app-progress style="display: inline-block; width: 300px;" [progress]="status[project.id]"></app-progress>
-        <ion-label><pre>              {{ project.msn }}</pre></ion-label>
       </ion-item>
     </ion-item-sliding>
   </ion-list>

@@ -59,8 +59,8 @@ export class ProjectsPage implements OnInit {
             this.status[p.id] = new ProgressHolder();
           }
           let cento = res.length;
-          let percent = res.filter(x => ((x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")
-          || (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "")) && (x.existingComponents != "" && x.preModPNAC != "" && x.serialNo != "")).length;    
+          let percent = res.filter(x => (x.rackLocation && x.rackNo && x.preModWeight && x.preModWeight != "N/A" && 
+            x.rackLocation != "N/A" && x.rackNo != "N/A")).length;    
           this.status[p.id].status = (percent / cento) * 100;
           console.log((percent / cento) * 100);
         }
