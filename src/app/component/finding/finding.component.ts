@@ -41,6 +41,10 @@ export class FindingComponent implements OnInit {
     console.log("HoldImage", event, pos);
   }
 
+  descriptionChanged(term, pos) {
+    this.imageService.uploadFinding(this.images[pos], this.partDetail.getPartId(), this.images[pos].imagePath, term);
+  }
+
   loadStoredImages() {
     this.storage.get(this.imagePath).then(images => {
       if (images) {
@@ -137,7 +141,7 @@ export class FindingComponent implements OnInit {
       this.images = [newEntry, ...this.images];
       //this.partService.updatePart(this.images, this.partId);
       //this.imageService.uploadFinding(this.images, this.partId)
-      this.imageService.uploadFinding(newEntry, this.partDetail.getPartId(), this.imagePath);
+      this.imageService.uploadFinding(newEntry, this.partDetail.getPartId(), this.imagePath, "No Description");
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }

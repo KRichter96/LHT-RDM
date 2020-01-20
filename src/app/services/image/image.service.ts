@@ -47,7 +47,7 @@ export class ImageService {
     })
   }
 
-  uploadFinding(data: any, partId, imagepath) {
+  uploadFinding(data: any, partId, imagepath, term) {
     let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
 
     for (let image of data) {
@@ -58,7 +58,7 @@ export class ImageService {
           let blob = new Blob([res], {type: "image/png"});
           var formData = new FormData();
           formData.append('image', blob);
-          formData.append('description', image.name);
+          formData.append('description', term);
           if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
             return from(this.offlineManager.storeRequest(url, 'POST', formData));
           }

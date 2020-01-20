@@ -159,7 +159,7 @@ export class PartService {
             break;
           } 
           case "Category": { 
-            if (item.componentType.toString().toLowerCase().includes(term.toLowerCase())) {
+            if (item.category.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;

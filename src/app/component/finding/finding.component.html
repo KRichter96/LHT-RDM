@@ -7,7 +7,7 @@
     <ion-thumbnail slot="start" size="large">
       <ion-img [src]="img.path" (click)="openImage(img.filePath)" (press)="deleteImage(img, pos)"></ion-img>
     </ion-thumbnail>
-    <ion-input placeholder="Enter your description"></ion-input>
+    <ion-input (ionInput)="descriptionChanged(term, pos)" placeholder="Enter your description"></ion-input>
   </ion-item>
 </ion-list>
 <!---
