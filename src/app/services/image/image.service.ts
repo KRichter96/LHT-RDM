@@ -47,6 +47,11 @@ export class ImageService {
     })
   }
 
+  updateFinding(partId, term) {
+    let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
+    
+  }
+
   uploadFinding(data: any, partId, imagepath, term) {
     let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
 

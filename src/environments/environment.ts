@@ -5,8 +5,8 @@
 export const environment = {
   production: false
 };
-//http://rlx-v388.ham.dlh.de:17081
-export const API_IP = 'http://192.168.1.199:8081/api/';
+//https://plm4.ham.dlh.de:17081
+export const API_IP = 'https://plm4.ham.dlh.de:17081/api/';
 
 /*
  * For easier debugging in development mode, you can import the following file

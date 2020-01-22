@@ -42,7 +42,8 @@ export class FindingComponent implements OnInit {
   }
 
   descriptionChanged(term, pos) {
-    this.imageService.uploadFinding(this.images[pos], this.partDetail.getPartId(), this.images[pos].imagePath, term);
+    this.imageService.updateFinding(this.partDetail.getPartId(), term);
+    this.storage.set(this.imagePath + "/term", term);
   }
 
   loadStoredImages() {
@@ -53,7 +54,8 @@ export class FindingComponent implements OnInit {
         for (let img of arr) {
           let filePath = this.file.dataDirectory + img;
           let resPath = this.pathForImage(filePath);
-          this.images.push({ name: img, path: resPath, filePath: filePath });
+          let term = this.storage.get(this.imagePath + "/term");
+          this.images.push({ name: img, path: resPath, filePath: filePath , description: term});
         }
       }
     });
@@ -135,7 +137,8 @@ export class FindingComponent implements OnInit {
       let newEntry = {
         name: name,
         path: resPath,
-        filePath: filePath
+        filePath: filePath,
+        description: this.storage.get(this.imagePath + "/term")
       };
 
       this.images = [newEntry, ...this.images];
