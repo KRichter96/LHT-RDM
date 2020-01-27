@@ -42,7 +42,7 @@ export class FindingComponent implements OnInit {
   }
 
   descriptionChanged(term, pos) {
-    this.imageService.updateFinding(this.partDetail.getPartId(), term);
+    this.imageService.uploadFinding(this.images[pos], this.partDetail.getPartId(), this.imagePath, term);
     this.storage.set(this.imagePath + "/term", term);
   }
 
