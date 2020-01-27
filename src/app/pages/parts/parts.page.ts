@@ -154,19 +154,20 @@ export class PartsPage implements OnInit {
         text: 'Ok',
         handler: (alertData) => {
           if (alertData.reason) {
-            this.parts[i].remarksRemoval = "true";
-            this.parts[i].reasonRemoval = alertData.reason;
-            this.parts[i].statusEdit = "Deleted";
-            if(this.parts[i].statusCreate == 'New' && this.offline == true) {
-              if (i > -1) {
-                this.parts.splice(i, 1);
-                this.partService.deletePart(this.parts[i]);
-              }
+            if (this.parts[i].statusCreate === 'New' && i > -1) {
+              this.parts[i].remarksRemoval = 'true';
+              this.parts[i].reasonRemoval = alertData.reason;
+              this.parts[i].statusEdit = 'Deleted';
+              const partToDelete = {...this.parts[i]};
+              this.parts.splice(i, 1);
+              this.partService.deletePart(partToDelete);
+            } else {
+              this.toastCtrl.displayToast('You can only delete parts created in the app.');
             }
             return true;
           }
           else {
-            this.toastCtrl.displayToast("Please enter a reason for deletion!");
+            this.toastCtrl.displayToast('Please enter a reason for deletion!');
           }
         }
       }]

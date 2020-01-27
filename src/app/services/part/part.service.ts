@@ -30,6 +30,7 @@ export class PartService {
     else {
       return this.http.get(`${PART_URL + projectId}`).pipe(
         map(res => res['parts']),
+        map(res => res.filter(part => part.statusEdit !== 'Deleted')),
         tap(res => {
           this.setLocalData('parts'+projectId, res);
           this.items = res;
@@ -103,28 +104,33 @@ export class PartService {
 
 
   public deletePart(data): Observable<any>  {
-    let url = `${UPDATE_PART_URL + "/" + data.id}`;
-    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      //this.removeLocalData(); //something went wrong here
-      let filtered = this.items.filter(x => {
-        return x != data;
-      });
+
+    const url = UPDATE_PART_URL;
+    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+      const filtered = this.items.filter(x => x.id !== data.id);
+
       this.items = filtered;
-      this.setLocalData('parts'+this.projectid, this.items);
-      return from(this.offlineManager.storeRequest(url, 'DELETE', data)); //todo Check if this works?
+      this.setLocalData('parts' + this.projectid, this.items);
+      return from(this.offlineManager.storeRequest(url, 'PUT', data));
     }
     else {
-      this.http.delete(url).subscribe(
+      this.http.put(url, data).subscribe(
           response => {
+            const filtered = this.items.filter(x => x.id !== data.id);
+            this.items = filtered;
+            this.setLocalData('parts' + this.projectid, this.items);
             console.log(response);
           },
           error => {
             alert(error);
             console.log(error);
           });
-      return this.http.delete(url).pipe(catchError(err => {
-            this.offlineManager.storeRequest(url, 'DELETE', data);
-            throw new Error(err);
+      return this.http.put(url, data).pipe(catchError(err => {
+          const filtered = this.items.filter(x => x.id !== data.id);
+          this.items = filtered;
+          this.setLocalData('parts' + this.projectid, this.items);
+          this.offlineManager.storeRequest(url, 'DELETE', data);
+          throw new Error(err);
           })
       );
     }
