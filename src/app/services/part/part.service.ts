@@ -186,8 +186,8 @@ export class PartService {
             }
             break;
           } 
-          case "Position": { 
-            if (item.postModPosition.toString().toLowerCase().includes(term.toLowerCase())) {
+          case "Position": {
+            if (item.preModPositionIPC.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
