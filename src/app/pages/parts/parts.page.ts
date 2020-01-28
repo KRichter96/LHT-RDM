@@ -110,7 +110,7 @@ export class PartsPage implements OnInit {
   }
 
   scanPartIdentTag() {
-    if (this.plt.is('android') || this.plt.is('ios') || this.plt.is('cordova')) {  // FIX HERE
+    // if (this.plt.is('android') || this.plt.is('ios') || this.plt.is('cordova')) {  // FIX HERE
       this.barcodeScanner.scan().then(barcodeData => {
         let partFound = false;
         if (barcodeData.cancelled) {
@@ -118,9 +118,9 @@ export class PartsPage implements OnInit {
         }
 
         for (const part of this.parts) {
-          if (part.postModPN === barcodeData.text) {
+          if (part.counterId + '' === barcodeData.text) {
             partFound = true;
-            this.router.navigate(['/part-detail/' + part.id + '/false']);
+            this.router.navigate(['/part-detail/' + part.counterId]);
             break;
           }
         }
@@ -128,9 +128,9 @@ export class PartsPage implements OnInit {
           this.toastCtrl.displayToast('No Part found');
         }
       });
-    } else {
+    /*} else {
       this.toastCtrl.displayToast('Works only on a device!');
-    }
+    }*/
   }
 
   deleteChip(i, event) {

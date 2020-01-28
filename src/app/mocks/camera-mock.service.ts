@@ -13,7 +13,7 @@ export class CameraMock extends Camera {
 export class BarcodeScannerMock extends BarcodeScanner {
     scan(options?): Promise<BarcodeScanResult> {
         return new Promise((resolve, reject) => {
-            resolve({format: 'MSI', cancelled: true, text: 'w8efhwe'} as BarcodeScanResult);
+            resolve({format: 'MSI', cancelled: false, text: '1001'} as BarcodeScanResult);
         });
     }
 }
