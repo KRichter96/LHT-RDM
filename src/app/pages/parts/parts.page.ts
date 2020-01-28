@@ -159,7 +159,7 @@ export class PartsPage implements OnInit {
         text: 'Ok',
         handler: (alertData) => {
           if (alertData.reason) {
-            if (this.parts[i].statusCreate === 'New' && i > -1) {
+            if (i > -1) {
               this.parts[i].remarksRemoval = 'true';
               this.parts[i].reasonRemoval = alertData.reason;
               this.parts[i].statusEdit = 'Deleted';
