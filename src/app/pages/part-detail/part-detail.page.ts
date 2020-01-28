@@ -63,7 +63,7 @@ export class PartDetailPage implements OnInit {
     this.partItem.id = generateUUID();
     this.partItem.counterId = this.randomInt();
     this.partItem.statusCreate = "New";
-    this.partItem.statusEdit = "Edited";
+    this.partItem.statusEdit = "";
     this.counterId = this.partItem.counterId;
   }
 
@@ -104,7 +104,7 @@ export class PartDetailPage implements OnInit {
         this.partItem.preModWeight.replace(/./i,",");
       } // set child weight back to ,
       this.partService.createPart(this.partItem);
-      //this.calculateWeight();
+      //this.calculateWeight(); TODO Kai hier rein
     }
     else {
       this.partService.updatePart(this.partItem, this.partItem.counterId);
@@ -162,7 +162,7 @@ export class PartDetailPage implements OnInit {
     return partItem;
   }
 
-  // calculateWeight() {
+  // calculateWeight() { TODO Kai hier
   //   if(this.childItem == true) {
   //     var parentItem: PartModel = this.parts.filter(x => {return x.id == this.partItem.parentId})[0];
   //     console.log("old " + parentItem.preModWeight);
