@@ -126,9 +126,9 @@ export class PartDetailPage implements OnInit {
        partItem.reasonRemoval = "";
        partItem.intendedPurpose = "";
        partItem.installZoneRoom = "";
+      partItem.preModPositionIPC = "";
     */
     partItem.nomenclature = "";
-    partItem.preModPositionIPC = "";
     partItem.ipcReference = "";
     partItem.ipcItemNumber = "";
     partItem.preModPNAC = ""; // Writeable
