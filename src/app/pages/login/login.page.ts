@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProjectsPage } from '../projects/projects.page';
-import { AuthenticationService } from 'src/app/services/auth/authentication.service';
-import { ToastController } from '@ionic/angular';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { HttpClient } from '@angular/common/http';
+import { TokenService } from 'src/app/services/token/token.service';
+import { API_IP } from './../../../environments/environment';
+
+
+const PART_URL = API_IP + 'parts/byProject/';
+const UPDATE_PART_URL = API_IP + 'parts';
 
 @Component({
   selector: 'app-login',
@@ -13,20 +17,26 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 export class LoginPage implements OnInit {
 
   pwField: string;
-
-  constructor(private router: Router, private authService: AuthenticationService, private toastCtrl: ToastController,
-    private toastService: ToastService) { }
+  usField: string;
+  
+  constructor(private router: Router, private http: HttpClient, private toastService: ToastService, private tokensSrvice: TokenService) { }
 
   ngOnInit() {
+    this.tokensSrvice.setToken("");
+    this.http.get(`${PART_URL + "1"}`).subscribe((res) =>
+      console.log(res)
+    )
   }
 
   login() {
-    //this.authService.login();
-    if (this.pwField == "Rm2020") {
-      this.router.navigate(["projects"]);
-    }
-    else {
-      this.toastService.displayToast("Wrong password, please try again!")
-    }
+    let credentials = {username: this.usField, password: this.pwField};
+    this.http.post(API_IP + 'auth/login', credentials).subscribe(
+      (data:any) => {
+        this.tokensSrvice.setToken(data.token);
+        console.log(data.token);
+        this.router.navigate(["projects"]);
+      },
+      error =>  this.toastService.displayToast("Wrong password, please try again!")
+    );
   }
 }

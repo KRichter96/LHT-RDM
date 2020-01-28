@@ -1,3 +1,4 @@
-<p>
-  comment works!
-</p>
+<ion-item>
+  <ion-label position="floating">Comment:</ion-label>
+    <ion-input placeholder="Enter more information here..." debounce="300"  [(ngModel)]="comment" (ionChange)="notify()"></ion-input>
+</ion-item>

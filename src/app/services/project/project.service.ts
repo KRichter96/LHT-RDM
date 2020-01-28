@@ -5,33 +5,36 @@ import { NetworkService, ConnectionStatus } from '../network/network.service';
 import { map, tap, catchError } from 'rxjs/operators';
 import { OfflineService } from '../offline/offline.service';
 import { Storage } from '@ionic/storage';
+import { API_IP } from '../../../environments/environment';
 
-const API_STORAGE_KEY = 'specialkey';
-const PROJECT_URL = '../../../assets/projects.json';
+const API_STORAGE_KEY = 'projects';
+const PROJECT_URL = API_IP + 'projects';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
 
+  projectId: string;
+
   constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
 
-  public getProjects(forceRefresh: boolean = false): Observable<any>  {
-    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline || !forceRefresh) {
+  public getProjects(): Observable<any>  {
+    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       return from(this.getLocalData('projects'));
     } else {
       return this.http.get(`${PROJECT_URL}`).pipe(
         map(res => res['projects']),
         tap(res => {
-          console.log('returns real live API data');
+          console.log('returns real live API data', PROJECT_URL);
           this.setLocalData('projects', res);
         })
       );
     }
   }
-
+  //Evt löschen, da nichts geändert wird
   public updateProjects(projectid, data): Observable<any> {
-    let url = `${PROJECT_URL}/projects/${projectid}`;
+    let url = `${PROJECT_URL}/${projectid}`;
 
     if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
@@ -54,5 +57,13 @@ export class ProjectService {
   private getLocalData(key) {
     console.log("return local data");
     return this.storage.get(`${API_STORAGE_KEY}-${key}`);
+  }
+
+  public setProjectId(projectId: string) {
+    this.projectId = projectId;
+  }
+
+  public getProjectId(): string {
+    return this.projectId;
   }
 }

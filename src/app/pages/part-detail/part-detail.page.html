@@ -1,14 +1,24 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>part-detail</ion-title>
+    <ion-title>Part-Detail</ion-title>
+    <ion-buttons slot="start">
+      <ion-button [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="back">Cancel</ion-button>
+    </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="onSave()" href="parts/:id">Done</ion-button>
+      <ion-button (click)="onSave()" [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="forward">Done</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid *ngIf="partItem">
+
+  <!--TODO Uncomment and fix-->
+  <!--    <div *ngIf="partItem.counterId != -1 && !partItem" class="errorMsg">-->
+  <!--      <ion-label><h1>No results found!</h1></ion-label>-->
+  <!--    </div>-->
+
+  <!-- These 2 grids are for all partItems apart from ChildItems -->
+  <ion-grid *ngIf="partItem" [hidden]=childItem>
     <ion-col>
       <ion-text color="primary"><h1 class="ion-margin-start header">General Information</h1></ion-text>
     </ion-col>
@@ -16,19 +26,19 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Nomenclature:</ion-label>
-          <ion-input> {{partItem.nomenclature}}</ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.nomenclature"> </ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Category:</ion-label>
-          <ion-input [(ngModel)]="partItem.category"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.category"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Component Type:</ion-label>
-          <ion-input [(ngModel)]="partItem.componentType"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.componentType"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -36,19 +46,19 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">IPC Reference:</ion-label>
-          <ion-input [(ngModel)]="partItem.ipcReference"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.ipcReference"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">IPC Item-Number:</ion-label>
-          <ion-input [(ngModel)]="partItem.ipcItemNumber"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.ipcItemNumber"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Pre-Mod P/N (IPC):</ion-label>
-          <ion-input [(ngModel)]="partItem.postModPN"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.postModPN"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -56,19 +66,19 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Pre Mod Position (IPC):</ion-label>
-          <ion-input [(ngModel)]="partItem.preModPositionIPC"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.preModPositionIPC"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Arrangement:</ion-label>
-          <ion-input>TBD??</ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.arrangement"></ion-input> <!--TBD-->
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">AMM Removal Task:</ion-label>
-          <ion-input [(ngModel)]="partItem.ammRemovalTask"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.ammRemovalTask"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -76,19 +86,19 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">AMM Installation Task:</ion-label>
-          <ion-input [(ngModel)]="partItem.ammInstallTask"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.ammInstallTask"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Reason For Removal:</ion-label>
-          <ion-input [(ngModel)]="partItem.reasonRemoval"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.reasonRemoval"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Intended Purpose:</ion-label>
-          <ion-input [(ngModel)]="partItem.intendedPurpose"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.intendedPurpose"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -96,76 +106,178 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Install Room/Zone:</ion-label>
-          <ion-input [(ngModel)]="partItem.installZoneRoom"></ion-input>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.installZoneRoom"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <<ion-grid *ngIf="partItem">
-  <ion-col>
-    <ion-text color="primary">
-      <h1 class="ion-margin-start header">Removal Related Information</h1></ion-text>
-  </ion-col>
-  <ion-row>
+  <ion-grid *ngIf="partItem" [hidden]=childItem>
     <ion-col>
-      <ion-item>
-        <ion-label position="floating" color="dark">Pre-Mod P/N (A/C):</ion-label>
-        <ion-input [(ngModel)]="partItem.preModPNAC"></ion-input>
-      </ion-item>
+      <ion-text color="primary">
+        <h1 class="ion-margin-start header">Removal Related Information</h1></ion-text>
     </ion-col>
-    <ion-col>
-      <ion-item>
-        <ion-label position="floating" color="dark">Serial No.:</ion-label>
-        <ion-input [(ngModel)]="partItem.serialNo"></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col>
-      <ion-item>
-        <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
-        <ion-input [(ngModel)]="partItem.preModWeight"></ion-input>
-      </ion-item>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-item>
-        <ion-label position="floating" color="dark">Rack Number:</ion-label>
-        <ion-input [(ngModel)]="partItem.rackNo"></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col>
-      <ion-item>
-        <ion-label position="floating" color="dark">Rack Location:</ion-label>
-        <ion-input [(ngModel)]="partItem.rackLocation"></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col>
-      <ion-item>
-        <ion-label position="floating" color="dark">Remarks Removal:</ion-label>
-        <ion-input>TBD??? remarksMod??</ion-input>
-      </ion-item>
-    </ion-col>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Pre-Mod P/N (A/C):</ion-label>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.preModPNAC" required="false"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Serial No.:</ion-label>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.serialNo" required="false"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.preModWeight? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
+          <ion-input placeholder="(Required)" id="pmw" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Rack Number:</ion-label>
+          <ion-input placeholder="(Required)" type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.rackLocation? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Rack Location:</ion-label>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Existing Component:</ion-label>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.existingComponents"></ion-input>
+        </ion-item>
+      </ion-col>
     </ion-row>
   </ion-grid>
 
-  <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)">
-    <!-- (ionChange)="onSegmentChange($event.detail.value)"-->
-    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="comment">
-      <ion-icon name="chatbubbles"></ion-icon>
-      <ion-label>Comment</ion-label>
-    </ion-segment-button>
-    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="photos">
-      <ion-icon name="images"></ion-icon>
-      <ion-label>Photos</ion-label>
-    </ion-segment-button>
-    <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="findings">
-      <ion-icon name="flash"></ion-icon>
-      <ion-label>Findings</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+  <!-- These 2 grids are for ChildItem -->
+  <ion-grid *ngIf="partItem" [hidden]=!childItem>
+    <ion-col>
+      <ion-text color="primary"><h1 class="ion-margin-start header">Parent Part Information</h1></ion-text>
+    </ion-col>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Parent Id:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="parentCounterId"> </ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Category:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.category"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Component Type:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.componentType"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Parent Part Pos:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.preModPositionIPC"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Arrangement:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.arrangement"></ion-input> <!--TBD-->
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Install Room/Zone:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.installZoneRoom"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Reason For Removal:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.reasonRemoval"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="partItem" [hidden]=!childItem>
+    <ion-col>
+      <ion-text color="primary">
+        <h1 class="ion-margin-start header">Child Part Information</h1></ion-text>
+    </ion-col>
+    <ion-row>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.nomenclature? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Nomenclature:</ion-label>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.nomenclature" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.preModPNAC? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Pre-Mod P/N (A/C):</ion-label>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.preModPNAC" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.preModWeight? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
+          <ion-input placeholder="(Required)" id="pmw" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Rack Number:</ion-label>
+          <ion-input placeholder="(Required)" type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.rackLocation? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Rack Location:</ion-label>
+          <ion-input placeholder="(Required)" [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Serial No.:</ion-label>
+          <ion-input placeholder="(Optional)" [(ngModel)]="partItem.serialNo" required="false"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-  <app-comment *ngIf="selectedSegment === 'comment'"></app-comment>
-  <app-photo *ngIf="selectedSegment === 'photos'"></app-photo>
-  <app-finding *ngIf="selectedSegment === 'findings'"></app-finding>
+  <div *ngIf="partItem">
+    <ion-segment #segment class="lht-tab-segment" value="comment" (ionChange)="segmentChanged($event)" style="padding-top: 2em;">
+      <!-- (ionChange)="onSegmentChange($event.detail.value)"-->
+      <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="comment">
+        <ion-icon name="chatbubbles"></ion-icon>
+        <ion-label>Comment</ion-label>
+      </ion-segment-button>
+      <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="photos">
+        <ion-icon name="images"></ion-icon>
+        <ion-label>Photos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button class="lht-tab-segment-button" (click)="onSave()" value="findings">
+        <ion-icon name="flash"></ion-icon>
+        <ion-label>Findings</ion-label>
+      </ion-segment-button>
+    </ion-segment>
 
+    <app-comment *ngIf="selectedSegment === 'comment'"></app-comment>
+    <app-photo *ngIf="selectedSegment === 'photos'"></app-photo>
+    <app-finding *ngIf="selectedSegment === 'findings'"></app-finding>
+  </div>
 </ion-content>

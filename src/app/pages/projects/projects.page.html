@@ -2,17 +2,23 @@
   <ion-toolbar color="primary">
     <ion-title>Projects</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/login" routerDirection="root">
+      <ion-button (click)="deleteData()" routerLink="/login" routerDirection="root">
         <ion-icon slot="icon-only" name="log-out"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-list>
-    <ion-item-sliding *ngFor="let project of projects">
-      <ion-item [routerLink]="'/parts/' + project.id" routerLinkActive="router-link-active" routerDirection="forward">
-        <ion-label><pre><b>{{ project.id }}</b>    {{ project.title }}</pre></ion-label>
+    <ion-item-sliding *ngFor="let project of projects; let i = index">
+      <ion-item [routerLink]="'/parts/' + project.id" routerLinkActive="router-link-active" routerDirection="forward" *ngIf="project.title" >
+        <ion-label style="display: block;"><b>{{ project.title }}</b></ion-label>
+        <ion-label> A/C Type: {{ project.acType }}</ion-label>
+        <ion-label>MSN: {{ project.msn }}</ion-label>
+        <app-progress style="display: inline-block; width: 300px;" [progress]="status[project.id]"></app-progress>
       </ion-item>
     </ion-item-sliding>
   </ion-list>

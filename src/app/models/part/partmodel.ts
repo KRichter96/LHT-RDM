@@ -8,7 +8,7 @@ export class PartModel {
   ipcItemNumber: string;
   preModPNIPC: string;
   preModPositionIPC: string;
-  location: string;
+  arrangement: string;
   ammRemovalTask: string;
   ammInstallTask: string;
   intendedPurpose: string;
@@ -41,6 +41,7 @@ export class PartModel {
   testSample: string;
   moC4Flameability: string;
   moC7: string;
+  deleteReason: string;
   statusCreate: string;
   statusEdit: string;
   id: string;

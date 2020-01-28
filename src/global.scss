@@ -24,3 +24,16 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+.child-pop-over-style .popover-content {
+  --min-width: 270px !important;
+  --min-height: 100px !important;
+
+}
+
+.child-pop-over-style ion-title {
+
+}
+.child-pop-over-style ion-select {
+
+}

@@ -1,24 +1,22 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="projects"></ion-back-button>
+      <ion-back-button (click)="deleteData()" [routerLink]="['/projects']" routerLinkActive="router-link-active"></ion-back-button>
     </ion-buttons>
 
     <ion-searchbar slot="start" placeholder="Search/Filter" style="width: 550px" [(ngModel)]="searchTerm"></ion-searchbar>
 <!-- (ionChange)="setSearchedItems()"-->
     <ion-button slot="end">
       <ion-icon icon name="funnel" ></ion-icon>
-      <ion-select name="filter" (ionChange)="onChangeFilter($event)" >
-        <ion-select-option value="Ident-Nr">Ident-Nr.</ion-select-option>
+      <ion-select name="filter" interface="popover" (ionChange)="onChangeFilter($event)">
+        <ion-select-option value="Ident-Nr">Ident-Nr</ion-select-option>
         <ion-select-option value="P/N">P/N</ion-select-option>
         <ion-select-option value="Category">Category</ion-select-option>
-        <ion-select-option value="componentType">Component Type</ion-select-option>
-        <ion-select-option value="Status">Status</ion-select-option>
+        <ion-select-option value="ComponentType">Component Type</ion-select-option>
         <ion-select-option value="Rack-Nr">Rack-Nr.</ion-select-option>
         <ion-select-option value="Position">Position</ion-select-option>
         <ion-select-option value="InstallationRoom">Installation Room</ion-select-option>
       </ion-select>
-
     </ion-button>
     
     <ion-buttons class="barcode-buttons" slot="end">
@@ -33,56 +31,79 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+
+  <ion-list-header class="ion-no-padding" style="position: sticky;">
+    <ion-grid style="padding-right: 3em;">
+      <ion-row>
+          <ion-col size="1">
+            <div class="stacked-group">
+              <ion-label (click)="filterStatus()">Ident</ion-label>
+              <ion-icon icon name="funnel" ></ion-icon>
+            </div>
+          </ion-col>
+        <ion-col size="1">
+          <div class="stacked-group">
+            <ion-label>P/N</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="2">
+            <div class="stacked-group">
+              <ion-label>Nomenclature</ion-label>
+            </div>
+          </ion-col>
+        <ion-col size="2">
+          <div class="stacked-group">
+            <ion-label>Category</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="2">
+          <div class="stacked-group">
+            <ion-label>Component Type</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="1">
+          <div class="stacked-group">
+            <ion-label>Position</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="2">
+          <div class="stacked-group">
+            <ion-label>Arrangement</ion-label>
+          </div>
+        </ion-col>
+        <ion-col size="1">
+          <div class="stacked-group">
+            <ion-label>Status</ion-label>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-list-header>
 </ion-header>
 
 <ion-content class="has-header">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   
   <ion-chip *ngFor="let chip of chips; let i = index" color="primary">
     <ion-label>{{ chip.FilterObj }}: {{chip.FilterTerm }}</ion-label>
     <ion-icon name="close-circle" (click)="deleteChip(i, $event)"></ion-icon>
   </ion-chip>
 
-  <ion-list>
-    <ion-list-header>
-      <ion-grid>
-        <ion-row>
-          <ion-col size="2">
-            <div class="stacked-group">
-              <ion-label>P/N</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="2">
-              <div class="stacked-group">
-                <ion-label>Nomenclature</ion-label>
-              </div>
-            </ion-col>
-          <ion-col size="2">
-            <div class="stacked-group">
-              <ion-label>Category</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="2">
-            <div class="stacked-group">
-              <ion-label>Component</ion-label>
-            </div>
-          </ion-col>
-          <ion-col size="2">
-            <div class="stacked-group">
-              <ion-label>Status</ion-label>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-list-header>
-
-    
+  <ion-list #slidingList>
     <ion-item-sliding *ngFor="let part of parts; let i = index">
       <ion-label *ngIf="part?.length">No results found :(</ion-label>
-      <ion-item (click)="openDetail" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward">
+      <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward" class="ion-no-padding">
         
         <ion-grid>
-          <ion-row>
-            <ion-col size="2">
+          <ion-row > <!-- TODO Adriel Delete hidden? *ngIf="part.statusEdit != 'Deleted' && offline == true" -->
+            <ion-col size="1" [ngClass]="{greenClass: checkStatus(part), yellowClass: !checkStatus(part)}">
+              <div class="stacked-group">
+                <ion-label>{{ part.counterId }}</ion-label>
+              </div>
+            </ion-col>
+            <ion-col size="1">
               <div class="stacked-group">
                 <ion-label>{{ part.postModPN }}</ion-label>
               </div>
@@ -104,11 +125,25 @@
                 <ion-label>{{ part.componentType }}</ion-label>
               </div>
             </ion-col>
+            <ion-col size="1">
+              <div class="stacked-group">
+                <ion-label>{{ part.preModPositionIPC }}</ion-label>
+              </div>
+            </ion-col>
             <ion-col size="2">
-              <ion-label *ngIf="!part.remarksRemoval && !part.statusEdit && !part.statusCreate">-</ion-label>
-              <ion-icon *ngIf="part.remarksRemoval" name="remove-circle"></ion-icon>
-              <ion-icon *ngIf="part.statusEdit === '1'" name="refresh-circle"></ion-icon>
-              <ion-icon *ngIf="part.statusCreate" name="add-circle"></ion-icon>
+              <div class="stacked-group">
+                <ion-label>{{ part.arrangement }}</ion-label> <!--TBD-->
+              </div>
+            </ion-col>
+            <ion-col size="1">
+              <div *ngIf="offline == true && part.statusEdit == 'Deleted'">
+                <ion-icon name="cloud-upload"></ion-icon>
+                <ion-icon name="trash"></ion-icon>
+              </div>
+              <ion-icon *ngIf="part.statusCreate == 'New' else elseBlock" name="add"></ion-icon>
+                <ng-template #elseBlock><ion-icon name="document"></ion-icon></ng-template> <!-- Initial (from backend) -->
+              <ion-icon *ngIf="part.statusEdit == 'Edited'" name="create"></ion-icon>
+                <!-- No Icon for local deleted OR Not Edited -->
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -125,19 +160,20 @@
 
 </ion-content>
 
-<ion-footer> 
-  <ion-toolbar>
+<ion-footer>
+  <ion-progress-bar [value]="updateProgressBar()" color = {{this.progressColor}} mode="ios"></ion-progress-bar>
+  <br>
+  <ion-toolbar style="height: 65px;" color="primary">
     <ion-tabs>
       <ion-tab-bar slot="bottom" color="primary">
-
-        <ion-tab-button (click)="onAddItem()" class="footer-button" [routerLink]="'/part-detail/-1'" routerLinkActive="router-link-active" routerDirection="forward">
+        <ion-tab-button (click)="openPopover($event)">
           <ion-icon size="large" name="md-add"></ion-icon>
           <ion-label color="light">Add</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button (click)="onSync()" class="footer-button">
-          <ion-icon size="large" name="cloud-upload"></ion-icon>
-          <ion-label color="light">Synchronize</ion-label>
+        <ion-tab-button routerLink="/help" routerLinkActive="router-link-active" routerDirection="forward">
+          <ion-icon size="large" name="md-help" class="iconSizeClass"></ion-icon>
+          <ion-label color="light">Help</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>

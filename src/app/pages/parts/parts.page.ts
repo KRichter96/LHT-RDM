@@ -1,65 +1,110 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router'
-import { Observable } from 'rxjs';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { Platform, AlertController, ToastController } from '@ionic/angular';
+import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { BarcodeService } from 'src/app/services/barcode/barcode.service';
 import { PartService } from 'src/app/services/part/part.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { filter } from 'rxjs/operators';
 import { Chip } from './Chip';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { FilterService } from 'src/app/services/filter/filter.service';
+import { ProjectService } from 'src/app/services/project/project.service';
+import { PopoverPage } from '../../component/popover/popover.page';
+import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
+import { OfflineService } from 'src/app/services/offline/offline.service';
+import { ImageService } from 'src/app/services/image/image.service';
+import { Storage } from '@ionic/storage';
+import { TokenService } from 'src/app/services/token/token.service';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-parts',
   templateUrl: './parts.page.html',
   styleUrls: ['./parts.page.scss'],
+  styles: [ ".greenClass { background-color: green } .yellowClass {background-color: red }"]
 })
 export class PartsPage implements OnInit {
+
+  @ViewChild('slidingList', null) slidingList: any;
 
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm: string = "";
-  id: any;
+  id: string;
+  progress: number = 0;
+  offline: boolean = true;
+  progressColor: string;
 
-  constructor(private partService: PartService, private barcodeService: BarcodeService, private toastCtrl: ToastService, 
+  constructor(private partService: PartService, private toastCtrl: ToastService,
     private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
-    private router: Router) { 
+    private router: Router, private filterService: FilterService, private projectService: ProjectService,
+    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController, private token: TokenService) {
       this.chips = new Array<Chip>();
-  
+      this.plt.ready().then(() => {
+        this.router.events.subscribe((event) => {
+          if (event instanceof NavigationEnd) {
+            this.loadData();
+          }
+        })
+        this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
+          if (status == ConnectionStatus.Online) {
+            this.offlineManager.checkForEvents().subscribe();
+          }
+        });
+      });
   }
   
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
+    this.projectService.setProjectId(this.id);
+
+    if (this.filterService.getChips().length > 0) {
+      this.chips = this.filterService.getChips();
+      this.partService.filterItems(this.chips);
+    }
     this.plt.ready().then(() => {
-      this.loadData(true);
+      this.loadData();
       this.setSearchedItems();
-    })
+    });
   }
-  
-  loadData(refresh = false, refresher?) {
-    this.partService.getParts(refresh, this.id)
-    .subscribe(res => {
+
+  doRefresh(event) {
+    console.log('Begin async operation');
+    this.loadData();
+    
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 2000);
+  }
+
+  openDetail() {
+    this.filterService.setChips(this.chips);
+  }
+
+  loadData() {
+    this.partService.getParts(this.id).subscribe(res => {
       this.parts = res;
-      console.log(this.parts);
-      if (refresher) {
-        refresher.target.complete();
+      this.updateProgressBar();
+      this.offline = this.checkOffline()
+      if (this.chips.length > 0) {
+        this.parts = this.partService.filterItems(this.chips);
       }
     });
   }
-  
+
+  checkOffline() {
+    let status = this.networkService.getCurrentNetworkStatus();
+    console.log("(0: Online, 1: Offline) status: " + status);
+    if (status == 0) { //status: 0: Online, 1: Offline
+      return false;
+    }
+    return true; // offline == true
+  }
+
   onSync() {
     this.partService.updatePart('Parts', this.id).subscribe();
   }
-
-//FILTER
-/*
-1. Filter umbauen das neue terms nur angehängt werden und der typ nur 1x vorhanden ist
--- innerhalb und & außerhalb oder
-2. filtered parts sind immer die current, gefiltert + suche (suche am ende)
-
-anstatt 2 suche & filter, nur eine die jeweils beides prüft
-*/
 
   setSearchedItems() {
     //this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
@@ -69,8 +114,14 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
     //this.searchTerm = this.barcodeService.scanPartIdentTag();
     if (this.plt.is("android") || this.plt.is("ios") || this.plt.is("cordova")) {  // FIX HERE
       this.barcodeScanner.scan().then(barcodeData => {
-        this.router.navigate(['/part-detail/' + barcodeData.text]);
-        //this.searchTerm = barcodeData.text;
+        for (let part of this.parts) {
+          if (part.postModPN === barcodeData.text) {
+            this.router.navigate(['/part-detail/' + part.id + "/false"]);
+          }
+          else {
+            this.toastCtrl.displayToast("No Part found");
+          }
+        }
       })
     }
     else {
@@ -103,9 +154,16 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
       {
         text: 'Ok',
         handler: (alertData) => {
-          if (alertData.reason) {  
+          if (alertData.reason) {
             this.parts[i].remarksRemoval = "true";
             this.parts[i].reasonRemoval = alertData.reason;
+            this.parts[i].statusEdit = "Deleted";
+            if(this.parts[i].statusCreate == 'New' && this.offline == true) {
+              if (i > -1) {
+                this.parts.splice(i, 1);
+                this.partService.deletePart(this.parts[i]);
+              }
+            }
             return true;
           }
           else {
@@ -115,6 +173,7 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
       }]
     });
     await alert.present();
+    await this.slidingList.closeSlidingItems();
   }
 
   onChangeFilter(event) {
@@ -133,12 +192,18 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
     else {
       var filterTerm = this.searchTerm;
       var filterObj = event.target.value;
+      
       if (this.chips.length == 0) { //Wenn kein Filter gesetzt
         this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
         this.parts = this.partService.filterItems(this.chips); //Wende Filter an
       }
       else { //Wenn Filter bereits gesetzt
-        for (let chip of this.chips) {
+        let tempChips = this.chips.filter(x => x.FilterObj == filterObj);
+        for (let chip of tempChips) {
+          if (!(chip.FilterTerm.filter(x => x == filterTerm).length > 0)) {
+            chip.FilterTerm = [...chip.FilterTerm, filterTerm];
+            break;
+          }       
           for (let term of chip.FilterTerm) {
             if (term == filterTerm) {
               this.toastCtrl.displayToast("Already have this filter!");
@@ -148,24 +213,112 @@ anstatt 2 suche & filter, nur eine die jeweils beides prüft
             }
           }
         }
-        for (let chip of this.chips) {
-          if (chip.FilterObj == filterObj && chip.FilterTerm.filter(x => {x == filterTerm}).length == 0) {
-            console.log(filterTerm);
-            chip.FilterTerm.push(filterTerm);
-          }
-          else {
-            this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
+        if (tempChips.length == 0) {
+          this.chips = [...this.chips, new Chip(filterObj, filterTerm)];
+        }
+        this.parts = this.partService.filterItems(this.chips);
+      }
+      event.target.value = null;
+    }
+    this.searchTerm = "";
+  }
+
+  updateProgressBar() {
+    let cento = this.parts.length;
+    let percent = this.parts.filter(x => (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" && x.preModPNAC !="" && x.nomenclature != "" && x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")).length; // percent of parts not completed
+    let progress = percent / cento;
+    if(progress != 1) {
+      this.progressColor = "danger";
+    } else {
+      this.progressColor = "success";
+    }
+    return progress;
+  }
+
+  public checkStatus(part) {
+    try {
+      let p: PartModel = part;
+      if (p.rackLocation && p.rackNo && p.preModWeight && p.preModWeight != "N/A" && p.rackLocation != "N/A" && p.rackNo != "N/A") {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    catch (Exception) {
+      return false;
+    }
+  }
+
+  async  filterStatus() {
+    for (let chip of this.chips) {
+      if (chip.FilterObj == "Status") {
+        this.toastCtrl.displayToast("Please remove the status filter!");
+        break;
+      }
+    }
+
+    let alert = await this.alertCtrl.create({
+      header: 'Select the status you want to filter',
+      inputs: [
+        {
+          type: 'radio',
+          label: 'ToDo',
+          value: '0'
+        },
+        {
+          type: 'radio',
+          label: 'Done',
+          value: '1'
+        }
+    ],
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => { }
+      },
+      {
+        text: 'Ok',
+        handler: data => {
+          if (data == 0) {
+            if (this.chips.length == 0){
+              this.chips.push(new Chip("Status", "ToDo"));
+            } else {
+              this.chips = [...this.chips, new Chip("Status", "ToDo")];
+            }
+            this.parts = this.partService.filterItems(this.chips);
+          } else if (data == 1) {
+            if (this.chips.length == 0){
+              this.chips.push(new Chip("Status", "Done"));
+            } else {
+              this.chips = [...this.chips, new Chip("Status", "Done")];
+            }
+            this.parts = this.partService.filterItems(this.chips);
           }
         }
-        this.parts = this.partService.filterItems(this.chips); //Wende Filter an
+      }]
+    });
+    await alert.present();
+  }
 
-        console.log(this.chips);
-      }
-      event.target.value = null; //leere Filterfeld (Select), evt bessere Methode als ion-select?
-    }
-    this.searchTerm = ""; //leere Suchfeld
+  showStatus() {
+    
+  }
+
+  async openPopover(ev: Event) {
+    const popover = await this.popoverController.create({
+      component: PopoverPage,
+      cssClass: 'child-pop-over-style',
+      componentProps: {
+        custom_id: this.id
+      },
+      event: ev
+    });
+    await popover.present();
+  }
+
+  deleteData() {
+    this.token.setToken("");
+    //this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
   }
 }
-
-
-

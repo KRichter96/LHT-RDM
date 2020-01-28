@@ -1,0 +1,13 @@
+.errorMsg {
+    ion-label {
+        color: red;
+        text-align: center;
+        h1 {
+            padding-top: 20px;
+        }
+    }
+}
+
+ion-input[id="pmw"]:after {
+  content: "kg"
+}

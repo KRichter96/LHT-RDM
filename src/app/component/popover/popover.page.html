@@ -1,0 +1,30 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-title>Part-Detail</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label>Child Part</ion-label>
+    <ion-toggle [(ngModel)]="childItem"></ion-toggle>
+  </ion-item>
+  <br>
+  <ion-item *ngIf="childItem == true" >
+      <ion-label>Select Parent</ion-label>
+      <ion-select id=power [(ngModel)]="parentId" placeholder="Select">
+          <ion-select-option value={{item.counterId}} *ngFor="let item of parts let i = index">{{item.counterId}} - {{ item.nomenclature}}</ion-select-option>
+      </ion-select>
+  </ion-item>
+  <br>
+  <ion-item>
+      <ion-tab-button (click)="closePopover()">
+        <ion-icon name="md-close"></ion-icon>
+          Cancel
+      </ion-tab-button>
+      <ion-tab-button (click)="closePopover()" [routerLink]="'/part-detail/'+ parentId +'/' + childItem" routerLinkActive="router-link-active" routerDirection="forward">
+        <ion-icon name="md-add"></ion-icon>
+          Add
+      </ion-tab-button>
+  </ion-item>
+</ion-content>

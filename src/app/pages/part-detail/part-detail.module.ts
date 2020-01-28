@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { PartDetailPage } from './part-detail.page';
 
-
 import { PhotoComponent } from '../../component/photo/photo.component';
 import { CommentComponent } from '../../component/comment/comment.component';
 import { FindingComponent } from '../../component/finding/finding.component';
