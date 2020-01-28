@@ -95,7 +95,6 @@ export class PartsPage implements OnInit {
 
   checkOffline() {
     let status = this.networkService.getCurrentNetworkStatus();
-    console.log("(0: Online, 1: Offline) status: " + status);
     if (status == 0) { //status: 0: Online, 1: Offline
       return false;
     }

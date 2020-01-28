@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, NgModule } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActionSheetController, Platform, AlertController } from '@ionic/angular';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
@@ -30,7 +30,6 @@ export class FindingComponent implements OnInit {
     this.projectId = this.projectService.getProjectId();
     this.imagePath = "finding/" + this.projectId + "/" + partId;
     this.loadStoredImages();
-    console.log(this.imagePath);
   }
 
   openImage(url: string): void {
@@ -42,8 +41,9 @@ export class FindingComponent implements OnInit {
   }
 
   descriptionChanged(term, pos) {
-    this.imageService.uploadFinding(this.images[pos], this.partDetail.getPartId(), this.imagePath, term);
-    this.storage.set(this.imagePath + "/term", term);
+    this.storage.set(this.imagePath + "/term" + pos, term);
+    console.log("index", pos, term, "imgPath", this.imagePath)
+    this.imageService.updateFinding(this.images[pos], this.partDetail.getPartId(), this.imagePath);
   }
 
   loadStoredImages() {
@@ -51,11 +51,14 @@ export class FindingComponent implements OnInit {
       if (images) {
         let arr = JSON.parse(images);
         this.images = [];
+        
         for (let img of arr) {
           let filePath = this.file.dataDirectory + img;
           let resPath = this.pathForImage(filePath);
-          let term = this.storage.get(this.imagePath + "/term");
-          this.images.push({ name: img, path: resPath, filePath: filePath , description: term});
+          console.log("test3", arr.indexOf(img), "imgPath", this.imagePath);
+          this.storage.get(this.imagePath + "/term" + arr.indexOf(img)).then(res => { 
+            this.images.push({ name: img, path: resPath, filePath: filePath , description: res});
+          })
         }
       }
     });
@@ -138,13 +141,13 @@ export class FindingComponent implements OnInit {
         name: name,
         path: resPath,
         filePath: filePath,
-        description: this.storage.get(this.imagePath + "/term")
+        description: "No Description"
       };
 
-      this.images = [newEntry, ...this.images];
+      this.images = [...this.images, newEntry];
       //this.partService.updatePart(this.images, this.partId);
       //this.imageService.uploadFinding(this.images, this.partId)
-      this.imageService.uploadFinding(newEntry, this.partDetail.getPartId(), this.imagePath, "No Description");
+      this.imageService.uploadFinding(newEntry, this.partDetail.getPartId(), this.imagePath);
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }

@@ -31,7 +31,6 @@ export class PartService {
       return this.http.get(`${PART_URL + projectId}`).pipe(
         map(res => res['parts']),
         tap(res => {
-          console.log('returns real live API data', PART_URL + projectId);
           this.setLocalData('parts'+projectId, res);
           this.items = res;
         })
@@ -110,8 +109,6 @@ export class PartService {
       let filtered = this.items.filter(x => {
         return x != data;
       });
-      console.log("old List", this.items);
-      console.log("new List", filtered);
       this.items = filtered;
       this.setLocalData('parts'+this.projectid, this.items);
       return from(this.offlineManager.storeRequest(url, 'DELETE', data)); //todo Check if this works?

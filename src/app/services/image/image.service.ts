@@ -14,6 +14,8 @@ const UPLOAD_IMAGE_URL = API_IP + 'parts/';
 })
 export class ImageService {
 
+  images: any[] = [];
+
   constructor(private http: HttpClient, private networkService: NetworkService, private offlineManager: OfflineService, private file: File, private storage: Storage) { }
 
   uploadImage(image: any, partId, imagepath) {
@@ -47,12 +49,12 @@ export class ImageService {
     })
   }
 
-  updateFinding(partId, term) {
+  updateFinding(partId, photoid, term) {
     let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
-    
+
   }
 
-  uploadFinding(data: any, partId, imagepath, term) {
+  uploadFinding(data: any, partId, imagepath) {
     let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
 
     for (let image of data) {
@@ -63,14 +65,15 @@ export class ImageService {
           let blob = new Blob([res], {type: "image/png"});
           var formData = new FormData();
           formData.append('image', blob);
-          formData.append('description', term);
+          formData.append('description', image.description);
           if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
             return from(this.offlineManager.storeRequest(url, 'POST', formData));
           }
           else {
             this.http.post(url, formData).subscribe(
               response => {
-              console.log(response);
+                this.images.push(response["id"], data)
+                console.log(response["id"], " asdasdasd");
               },
               error => {
                 this.offlineManager.storeRequest(url, 'POST', formData);
