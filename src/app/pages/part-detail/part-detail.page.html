@@ -25,6 +25,12 @@
     <ion-row>
       <ion-col>
         <ion-item>
+          <ion-label position="floating" color="dark">Ident.-Nr.:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.counterId"> </ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
           <ion-label position="floating" color="dark">Nomenclature:</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.nomenclature"> </ion-input>
         </ion-item>
@@ -35,14 +41,14 @@
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.category"></ion-input>
         </ion-item>
       </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Component Type:</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.componentType"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">IPC Reference:</ion-label>
@@ -55,14 +61,14 @@
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.ipcItemNumber"></ion-input>
         </ion-item>
       </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Pre-Mod P/N (IPC):</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.preModPNIPC"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Pre Mod Position (IPC):</ion-label>
@@ -75,14 +81,14 @@
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.arrangement"></ion-input> <!--TBD-->
         </ion-item>
       </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">AMM Removal Task:</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.ammRemovalTask"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">AMM Installation Task:</ion-label>
@@ -95,14 +101,14 @@
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.reasonRemoval"></ion-input>
         </ion-item>
       </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Intended Purpose:</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.intendedPurpose"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Install Room/Zone:</ion-label>
@@ -166,6 +172,12 @@
     <ion-row>
       <ion-col>
         <ion-item>
+          <ion-label position="floating" color="dark">Ident.-Nr.:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.counterId"> </ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
           <ion-label position="floating" color="dark">Parent Id:</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="parentCounterId"> </ion-input>
         </ion-item>
@@ -176,14 +188,14 @@
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.category"></ion-input>
         </ion-item>
       </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Component Type:</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.componentType"></ion-input>
         </ion-item>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Parent Part Pos:</ion-label>
@@ -196,18 +208,18 @@
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.arrangement"></ion-input> <!--TBD-->
         </ion-item>
       </ion-col>
-      <ion-col>
-        <ion-item>
-          <ion-label position="floating" color="dark">Install Room/Zone:</ion-label>
-          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.installZoneRoom"></ion-input>
-        </ion-item>
-      </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Reason For Removal:</ion-label>
           <ion-input disabled={{existingItem}} [(ngModel)]="partItem.reasonRemoval"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating" color="dark">Install Room/Zone:</ion-label>
+          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.installZoneRoom"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
