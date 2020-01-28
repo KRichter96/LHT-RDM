@@ -28,14 +28,13 @@ export class ImageService {
         let blob = new Blob([res], {type: "image/png"});
         var formData = new FormData();
         formData.append('image', blob);
-        formData.append('description', image.name);
-        if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+        formData.append('description', '');
+        if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
           return from(this.offlineManager.storeRequest(url, 'POST', formData));
         }
         else {
           this.http.post(url, formData).subscribe(
             response => {
-              //this.storage.remove(imagepath);
               console.log(response);
             },
             error => {
