@@ -15,7 +15,7 @@ export class TokenInterceptor implements HttpInterceptor {
       return from(this.tokenService.getToken()).pipe(
         mergeMap(token => {
           // Add auth header and token
-          const modified = req.clone({setHeaders: {'Authorization': 'Bearer ' + token}});
+          const modified = req.clone({setHeaders: {Authorization: 'Bearer ' + token}});
           // send modified request
           return next.handle(modified);
         }
@@ -24,5 +24,5 @@ export class TokenInterceptor implements HttpInterceptor {
       // Retrieve token
       return next.handle(req);
     }
-  }  
+  }
 }

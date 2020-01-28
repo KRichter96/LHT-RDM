@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { PartModel } from 'src/app/models/part/partmodel';
 import { ActivatedRoute } from '@angular/router';
@@ -28,13 +29,14 @@ export class PartDetailPage implements OnInit {
   parentCounterId: number;
   parentWeight: string;
   childWeight: string;
+  saved = false;
 
-  newId: string; //todo needed?
+  newId: string; // todo needed?
 
 
 
-  constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute
-              , private partService: PartService, private plt: Platform) {
+  constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute,
+              private partService: PartService, private plt: Platform, private authService: AuthService) {
   }
 
   ngOnInit() {
@@ -97,13 +99,19 @@ export class PartDetailPage implements OnInit {
   }
 
   onSave() {
-    if (this.counterId === -1 || this.isNewChildItem) {
+    if (!this.canWrite()) {
+      this.toastCtrl.displayToast('Not allowed to make any changes.');
+      return;
+    }
+
+    if ((this.counterId === -1 || this.isNewChildItem) && !this.saved) {
       if (this.partItem.preModWeight) {
         this.childWeight = this.partItem.preModWeight.replace(/,/i, '.');
         this.partItem.preModWeight.replace(/./i, ',');
       } // set child weight back to ,
       this.partService.createPart(this.partItem);
       // this.calculateWeight(); TODO Kai hier rein
+      this.saved = true;
     } else {
       this.partService.updatePart(this.partItem, this.partItem.counterId);
     }
@@ -174,5 +182,9 @@ export class PartDetailPage implements OnInit {
 
   async segmentChanged(event) {
     this.selectedSegment = event.detail.value;
+  }
+
+  canWrite(): boolean {
+    return this.authService.canWrite();
   }
 }

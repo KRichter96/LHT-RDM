@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { PartModel } from 'src/app/models/part/partmodel';
@@ -36,9 +37,12 @@ export class PartsPage implements OnInit {
   progressColor: string;
 
   constructor(private partService: PartService, private toastCtrl: ToastService,
-    private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform, private barcodeScanner: BarcodeScanner,
-    private router: Router, private filterService: FilterService, private projectService: ProjectService,
-    private networkService: NetworkService, private offlineManager: OfflineService, private popoverController: PopoverController, private token: TokenService) {
+              private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform,
+              private barcodeScanner: BarcodeScanner, private router: Router, private filterService: FilterService,
+              private projectService: ProjectService, private networkService: NetworkService,
+              private offlineManager: OfflineService, private popoverController: PopoverController,
+              private token: TokenService, private authService: AuthService) {
+
       this.chips = new Array<Chip>();
       this.plt.ready().then(() => {
         this.router.events.subscribe((event) => {
@@ -311,6 +315,11 @@ export class PartsPage implements OnInit {
   }
 
   async openPopover(ev: Event) {
+    if (!this.canWrite()) {
+      this.toastCtrl.displayToast('Not allowed to make any changes.');
+      return;
+    }
+
     const popover = await this.popoverController.create({
       component: PopoverPage,
       cssClass: 'child-pop-over-style',
@@ -325,5 +334,9 @@ export class PartsPage implements OnInit {
   deleteData() {
     this.token.setToken("");
     //this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
+  }
+
+  canWrite(): boolean {
+    return this.authService.canWrite();
   }
 }

@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActionSheetController, Platform, AlertController } from '@ionic/angular';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
@@ -19,16 +20,20 @@ import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 export class FindingComponent implements OnInit {
 
   images = [];
-  imagePath = "";
+  imagePath = '';
   projectId: string;
 
-  constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService, private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
-    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef) { }
+  constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService,
+              private projectService: ProjectService, private partDetail: PartDetailPage,
+              private actionSheetController: ActionSheetController, private camera: Camera,
+              private plt: Platform, private filePath: FilePath, private file: File,
+              private toastController: ToastService, private webview: WebView, private storage: Storage,
+              private ref: ChangeDetectorRef, private authService: AuthService) { }
 
   ngOnInit() {
     let partId = this.partDetail.counterId + 1;
     this.projectId = this.projectService.getProjectId();
-    this.imagePath = "finding/" + this.projectId + "/" + partId;
+    this.imagePath = 'finding/' + this.projectId + '/' + partId;
     this.loadStoredImages();
   }
 
@@ -65,6 +70,11 @@ export class FindingComponent implements OnInit {
   }
 
   async selectImage() {
+    if (!this.canWrite()) {
+      this.toastController.displayToast('Not allowed to make any changes.');
+      return;
+    }
+
     this.partDetail.onSave(); // Speicher zwischen
     const actionSheet = await this.actionSheetController.create({
       header: "Select Image source",
@@ -196,6 +206,10 @@ export class FindingComponent implements OnInit {
 
   createFileName() {
     return new Date().getTime() + ".png";
+  }
+
+  canWrite(): boolean {
+    return this.authService.canWrite();
   }
 
 }

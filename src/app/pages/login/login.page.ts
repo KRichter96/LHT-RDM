@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/services/toast/toast.service';
@@ -18,25 +19,26 @@ export class LoginPage implements OnInit {
 
   pwField: string;
   usField: string;
-  
-  constructor(private router: Router, private http: HttpClient, private toastService: ToastService, private tokensSrvice: TokenService) { }
+
+  constructor(private router: Router, private http: HttpClient, private toastService: ToastService,
+              private tokensSrvice: TokenService, private authService: AuthService) { }
 
   ngOnInit() {
-    this.tokensSrvice.setToken("");
-    this.http.get(`${PART_URL + "1"}`).subscribe((res) =>
+    this.tokensSrvice.setToken('');
+    this.http.get(`${PART_URL + '1'}`).subscribe((res) =>
       console.log(res)
-    )
+    );
   }
 
   login() {
-    let credentials = {username: this.usField, password: this.pwField};
+    const credentials = {username: this.usField, password: this.pwField};
     this.http.post(API_IP + 'auth/login', credentials).subscribe(
-      (data:any) => {
+      (data: any) => {
         this.tokensSrvice.setToken(data.token);
-        console.log(data.token);
-        this.router.navigate(["projects"]);
+        this.authService.setScope(data.token);
+        this.router.navigate(['projects']);
       },
-      error =>  this.toastService.displayToast("Wrong password, please try again!")
+      error =>  this.toastService.displayToast('Wrong password, please try again!')
     );
   }
 }

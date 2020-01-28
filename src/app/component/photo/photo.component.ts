@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActionSheetController, Platform, AlertController } from '@ionic/angular';
 import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx';
@@ -26,9 +27,10 @@ export class PhotoComponent implements OnInit {
   constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService,
               private projectService: ProjectService, private partDetail: PartDetailPage,
               private actionSheetController: ActionSheetController, private camera: Camera,
-              private plt: Platform, private filePath: FilePath, private file: File, 
+              private plt: Platform, private filePath: FilePath, private file: File,
               private toastController: ToastService, private webview: WebView, private storage: Storage,
-              private ref: ChangeDetectorRef, private partService: PartService) { }
+              private ref: ChangeDetectorRef, private partService: PartService,
+              private authService: AuthService) { }
 
   ngOnInit() {
     let partId = this.partDetail.counterId + 1;
@@ -56,9 +58,14 @@ export class PhotoComponent implements OnInit {
   }
 
   async selectImage() {
+    if (!this.canWrite()) {
+      this.toastController.displayToast('Not allowed to make any changes.');
+      return;
+    }
+
     this.partDetail.onSave(); // Speicher zwischen
     const actionSheet = await this.actionSheetController.create({
-      header: "Select Image source",
+      header: 'Select Image source',
       buttons: [{
         text: 'Load from Library',
         handler: () => {
@@ -149,7 +156,6 @@ export class PhotoComponent implements OnInit {
         {
           text: 'Cancel',
           handler: () => {
-            
           }
         }, {
           text: 'Yes',
@@ -185,6 +191,10 @@ export class PhotoComponent implements OnInit {
 
   createFileName() {
     return new Date().getTime() + ".png";
+  }
+
+  canWrite(): boolean {
+    return this.authService.canWrite();
   }
 
 }
