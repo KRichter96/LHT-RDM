@@ -148,19 +148,25 @@ export class PartService {
     for (let chip of chips) {
       let chipMatched = false;
       for (let term of chip.FilterTerm) {
-        switch(chip.FilterObj) { 
-          case "Ident-Nr": { 
+        switch(chip.FilterObj) {
+          case 'Ident.-Nr.': {
             if (item.counterId.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
-          } 
-          case "P/N": { 
+          }
+          case 'P/N': {
             if (item.postModPN.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
-          } 
+          }
+          case "Nomenclature": { 
+            if (item.nomenclature.toString().toLowerCase().includes(term.toLowerCase())) {
+              chipMatched = true;
+            }
+            break;
+          }
           case "Category": { 
             if (item.category.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
@@ -185,25 +191,31 @@ export class PartService {
               }
             }
             break;
-          } 
-          case "Rack-Nr": { 
+          }
+          case 'Rack-Nr': {
             if (item.rackNo.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
-          } 
-          case "Position": {
+          }
+          case 'Position': {
             if (item.preModPositionIPC.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
-          } 
-          case "InstallationRoom": { 
+          }
+          case 'Arrangement': {
+            if (item.arrangement.toString().toLowerCase().includes(term.toLowerCase())) {
+              chipMatched = true;
+            }
+            break;
+          }
+          case 'InstallationRoom': {
             if (item.installZoneRoom.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
-          } 
+          }
         }
       }
       ret = ret && chipMatched;
