@@ -110,21 +110,26 @@ export class PartsPage implements OnInit {
   }
 
   scanPartIdentTag() {
-    //this.searchTerm = this.barcodeService.scanPartIdentTag();
-    if (this.plt.is("android") || this.plt.is("ios") || this.plt.is("cordova")) {  // FIX HERE
+    if (this.plt.is('android') || this.plt.is('ios') || this.plt.is('cordova')) {  // FIX HERE
       this.barcodeScanner.scan().then(barcodeData => {
-        for (let part of this.parts) {
+        let partFound = false;
+        if (barcodeData.cancelled) {
+          return;
+        }
+
+        for (const part of this.parts) {
           if (part.postModPN === barcodeData.text) {
-            this.router.navigate(['/part-detail/' + part.id + "/false"]);
-          }
-          else {
-            this.toastCtrl.displayToast("No Part found");
+            partFound = true;
+            this.router.navigate(['/part-detail/' + part.id + '/false']);
+            break;
           }
         }
-      })
-    }
-    else {
-      this.toastCtrl.displayToast("Works only on a device!");
+        if (!partFound) {
+          this.toastCtrl.displayToast('No Part found');
+        }
+      });
+    } else {
+      this.toastCtrl.displayToast('Works only on a device!');
     }
   }
 

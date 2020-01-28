@@ -23,8 +23,12 @@ export class PhotoComponent implements OnInit {
   imagePath = "";
   projectId: string;
 
-  constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService, private projectService: ProjectService, private partDetail: PartDetailPage, private actionSheetController: ActionSheetController, private camera: Camera, private plt: Platform, private filePath: FilePath, private file: File, 
-    private toastController: ToastService, private webview: WebView, private storage: Storage, private ref: ChangeDetectorRef, private partService: PartService) { }
+  constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService,
+              private projectService: ProjectService, private partDetail: PartDetailPage,
+              private actionSheetController: ActionSheetController, private camera: Camera,
+              private plt: Platform, private filePath: FilePath, private file: File, 
+              private toastController: ToastService, private webview: WebView, private storage: Storage,
+              private ref: ChangeDetectorRef, private partService: PartService) { }
 
   ngOnInit() {
     let partId = this.partDetail.counterId + 1;

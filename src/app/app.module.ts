@@ -23,6 +23,8 @@ import { PopoverPageModule } from './component/popover/popover.module';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { TokenInterceptor } from './services/token/tokeninterceptor';
 
+import { CameraMock, BarcodeScannerMock } from './mocks/camera-mock.service';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -42,8 +44,8 @@ import { TokenInterceptor } from './services/token/tokeninterceptor';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     Network,
-    BarcodeScanner,
-    Camera,
+    BarcodeScanner, // { provide: BarcodeScanner, useClass: BarcodeScannerMock}, // BarcodeScanner,
+    Camera, // { provide: Camera, useClass: CameraMock }, // Camera,
     File,
     FilePath,
     WebView,
