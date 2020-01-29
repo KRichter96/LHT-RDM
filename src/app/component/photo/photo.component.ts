@@ -196,5 +196,4 @@ export class PhotoComponent implements OnInit {
   canWrite(): boolean {
     return this.authService.canWrite();
   }
-
 }
