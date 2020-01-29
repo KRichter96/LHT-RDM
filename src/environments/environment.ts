@@ -7,7 +7,7 @@ export const environment = {
 };
 
 // https://plm4.ham.dlh.de:17081
-export const API_IP = 'https://plm4.ham.dlh.de:17081/api/';
+// export const API_IP = 'http://192.168.43.203:8081/api/';
 
 /*
  * For easier debugging in development mode, you can import the following file

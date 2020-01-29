@@ -1,7 +1,6 @@
-import { PartModel } from '../part/partmodel';
 export class ProjectModel {
-    projectTitle: string;
-    projectMSN: string;
-    projectACType: string;
+    title: string;
+    msn: string;
+    acType: string;
     id: number;
 }

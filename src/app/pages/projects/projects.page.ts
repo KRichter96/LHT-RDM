@@ -1,13 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ProjectModel } from 'src/app/models/project/ProjectModel';
-import { Platform } from '@ionic/angular';
-import { ProjectService } from 'src/app/services/project/project.service';
-import { PartModel } from '../../models/part/partmodel';
-import { OfflineService } from 'src/app/services/offline/offline.service';
-import { PartService } from '../../services/part/part.service';
-import { Storage } from '@ionic/storage';
-import { ProgressHolder } from './progress.holder';
+import {Component, OnInit} from '@angular/core';
+import {ProjectModel} from 'src/app/models/project/ProjectModel';
+import {Platform} from '@ionic/angular';
+import {ProjectService} from 'src/app/services/project/project.service';
+import {OfflineService} from 'src/app/services/offline/offline.service';
+import {PartService} from '../../services/part/part.service';
+import {Storage} from '@ionic/storage';
+import {ProgressHolder} from './progress.holder';
 
 
 @Component({
@@ -20,12 +18,14 @@ export class ProjectsPage implements OnInit {
   status = {};
   projects: ProjectModel[] = [];
 
-  constructor(private plt: Platform, private projectService: ProjectService, private offlineManager: OfflineService, private storage: Storage, private partService: PartService) { }
+  constructor(private plt: Platform, private projectService: ProjectService,
+              private offlineManager: OfflineService, private storage: Storage,
+              private partService: PartService) { }
 
   ngOnInit() {
     this.plt.ready().then(() => {
       this.loadData();
-    })
+    });
   }
 
   doRefresh(event) {
@@ -45,11 +45,11 @@ export class ProjectsPage implements OnInit {
   }
 
   checkStatus() {
-    for (let i = 0; i < this.projects.length; i++) {
-      let p = this.projects[i];
+    for (let i = 0; i < this.projects.length; i++) { // tslint:disable-line
+      const p = this.projects[i];
       this.partService.getParts(p.id).subscribe((res) => {
         // console.log(res);
-        if (res.length == 0) {
+        if (res.length === 0) {
           if (!this.status[p.id]) {
             this.status[p.id] = new ProgressHolder();
           }
@@ -58,12 +58,12 @@ export class ProjectsPage implements OnInit {
           if (!this.status[p.id]) {
             this.status[p.id] = new ProgressHolder();
           }
-          let cento = res.length;
-          let percent = res.filter(x => (x.rackLocation && x.rackNo && x.preModWeight && x.preModWeight != "N/A" && 
-            x.rackLocation != "N/A" && x.rackNo != "N/A")).length;    
+          const cento = res.length;
+          const percent = res.filter(x => (x.rackLocation && x.rackNo && x.preModWeight && x.preModWeight !== 'N/A' &&
+            x.rackLocation !== 'N/A' && x.rackNo !== 'N/A')).length;
           this.status[p.id].status = Math.floor((percent / cento) * 100);
         }
-      })
+      });
     }
   }
 }

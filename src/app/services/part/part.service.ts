@@ -1,16 +1,13 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, from } from 'rxjs';
-import { NetworkService, ConnectionStatus } from '../network/network.service';
-import { map, tap, catchError } from 'rxjs/operators';
-import { OfflineService } from '../offline/offline.service';
-import { Storage } from '@ionic/storage';
-import { Chip } from '../../pages/parts/Chip';
-import { PartModel } from 'src/app/models/part/partmodel';
-import { API_IP } from './../../../environments/environment';
-
-const PART_URL = API_IP + 'parts/byProject/';
-const UPDATE_PART_URL = API_IP + 'parts';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {from, Observable} from 'rxjs';
+import {ConnectionStatus, NetworkService} from '../network/network.service';
+import {catchError, map, tap} from 'rxjs/operators';
+import {OfflineService} from '../offline/offline.service';
+import {Storage} from '@ionic/storage';
+import {Chip} from '../../pages/parts/Chip';
+import {PartModel} from 'src/app/models/part/partmodel';
+import {BackendUrlProviderService} from '../backend-url-provider/backend-url-provider.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,19 +17,26 @@ export class PartService {
   public items: PartModel[] = [];
   public projectid: string;
 
-  constructor(private http: HttpClient, private networkService: NetworkService, private storage: Storage, private offlineManager: OfflineService) { }
+  partUrl: string;
+  updatePartUrl: string;
+
+  constructor(private http: HttpClient, private networkService: NetworkService,
+              private storage: Storage, private offlineManager: OfflineService,
+              private backendUrlProviderService: BackendUrlProviderService) {
+    this.partUrl = this.backendUrlProviderService.getUrl() + 'parts/byProject/';
+    this.updatePartUrl = this.backendUrlProviderService.getUrl() + 'parts';
+  }
 
   public getParts(projectId): Observable<any> {
     this.projectid = projectId;
-    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      return from(this.getLocalData('parts'+this.projectid));
-    } 
-    else {
-      return this.http.get(`${PART_URL + projectId}`).pipe(
+    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+      return from(this.getLocalData('parts' + this.projectid));
+    } else {
+      return this.http.get(`${this.partUrl + projectId}`).pipe(
         map(res => res['parts']),
         map(res => res.filter(part => part.statusEdit !== 'Deleted')),
         tap(res => {
-          this.setLocalData('parts'+projectId, res);
+          this.setLocalData('parts' + projectId, res);
           this.items = res;
         })
       );
@@ -40,8 +44,8 @@ export class PartService {
   }
 
   public getOfflineParts() {
-    if (1 == 1) {
-      return this.getLocalData('parts'+this.projectid);
+    if (1 === 1) {
+      return this.getLocalData('parts' + this.projectid);
     }
   }
 
@@ -50,13 +54,12 @@ export class PartService {
   }
 
   public createPart(data) {
-    let url = `${UPDATE_PART_URL}`;
+    const url = `${this.updatePartUrl}`;
     this.items = [...this.items, data];
-    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      this.setLocalData('parts'+this.projectid, this.items); //something went wrong here
+    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+      this.setLocalData('parts' + this.projectid, this.items); // something went wrong here
       return from(this.offlineManager.storeRequest(url, 'POST', data));
-    }
-    else {
+    } else {
       this.http.post(url, data).subscribe(response => {
           // console.log(response);
         },
@@ -76,15 +79,14 @@ export class PartService {
     return this.items.find(x => x.counterId === id);
   }
 
-  //TODO
+  // TODO
   public updatePart(data, partId): Observable<any> {
-    let url = `${UPDATE_PART_URL}`;
-    if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-      this.items[this.getDimensionsByFind(data.counterId).counterId -1] = data;
-      this.setLocalData('parts'+this.projectid, this.items); //something went wrong here
+    const url = `${this.updatePartUrl}`;
+    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+      this.items[this.getDimensionsByFind(data.counterId).counterId - 1] = data;
+      this.setLocalData('parts' + this.projectid, this.items); // something went wrong here
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
-    } 
-    else {
+    } else {
       this.http.put(url, data).subscribe(
         response => {
           // console.log(response);
@@ -104,15 +106,14 @@ export class PartService {
 
   public deletePart(data): Observable<any>  {
 
-    const url = UPDATE_PART_URL;
+    const url = this.updatePartUrl;
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
       const filtered = this.items.filter(x => x.id !== data.id);
 
       this.items = filtered;
       this.setLocalData('parts' + this.projectid, this.items);
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
-    }
-    else {
+    } else {
       this.http.put(url, data).subscribe(
           response => {
             const filtered = this.items.filter(x => x.id !== data.id);
@@ -136,18 +137,19 @@ export class PartService {
 
   }
 
-  public filterItems(chips: Chip[]) :PartModel[] {
-    if (chips.length > 0) 
+  public filterItems(chips: Chip[]): PartModel[] {
+    if (chips.length > 0) {
       return this.items.filter(item => this.filterObj(chips, item));
+    }
     return this.items;
   }
 
   filterObj(chips: Chip[], item: PartModel): boolean {
     let ret = true;
-    for (let chip of chips) {
+    for (const chip of chips) {
       let chipMatched = false;
-      for (let term of chip.FilterTerm) {
-        switch(chip.FilterObj) {
+      for (const term of chip.FilterTerm) {
+        switch (chip.FilterObj) {
           case 'Ident.-Nr.': {
             if (item.counterId.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
@@ -160,32 +162,31 @@ export class PartService {
             }
             break;
           }
-          case "Nomenclature": { 
+          case 'Nomenclature': {
             if (item.nomenclature.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
           }
-          case "Category": { 
+          case 'Category': {
             if (item.category.toString().toLowerCase().includes(term.toLowerCase())) {
               chipMatched = true;
             }
             break;
-          } 
-          case "ComponentType": {
+          }
+          case 'ComponentType': {
               if (item.componentType.toString().toLowerCase().includes(term.toLowerCase())) {
                 chipMatched = true;
             }
-            break;
-          } 
-          case "Status": { 
-            if (item.rackLocation && item.rackNo && item.preModWeight && item.preModWeight != "N/A" && item.rackLocation != "N/A" && item.rackNo != "N/A") {
-              if (term === "Done") {
+              break;
+          }
+          case 'Status': {
+            if (item.rackLocation && item.rackNo && item.preModWeight && item.preModWeight !== 'N/A' && item.rackLocation !== 'N/A' && item.rackNo !== 'N/A') { // tslint:disable-line
+              if (term === 'Done') {
                 chipMatched = true;
               }
-            }
-            else {
-              if (term === "ToDo") {
+            } else {
+              if (term === 'ToDo') {
                 chipMatched = true;
               }
             }
@@ -224,23 +225,23 @@ export class PartService {
 
   public searchItems(searchTerm) {
     return this.items.filter(item => {
-      return item.category.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 || item.componentType.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+      return item.category.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 || item.componentType.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1; // tslint:disable-line
     });
   }
 
-  //Save result of API requests
+  // Save result of API requests
   private setLocalData(key, data) {
     this.storage.set(`${key}`, data);
   }
 
-  //Get cached API result
+  // Get cached API result
   private getLocalData(key) {
     return this.storage.get(`${key}`);
   }
 
-  //delete
-  private removeLocalData(){
-    this.storage.remove('parts').then(()=>{
+  // delete
+  private removeLocalData() {
+    this.storage.remove('parts').then(() => {
       // console.log('part is removed');
     });
   }

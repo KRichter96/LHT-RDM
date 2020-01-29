@@ -1,14 +1,10 @@
-import { AuthService } from './../../services/auth/auth.service';
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ToastService } from 'src/app/services/toast/toast.service';
-import { HttpClient } from '@angular/common/http';
-import { TokenService } from 'src/app/services/token/token.service';
-import { API_IP } from './../../../environments/environment';
-
-
-const PART_URL = API_IP + 'parts/byProject/';
-const UPDATE_PART_URL = API_IP + 'parts';
+import {AuthService} from './../../services/auth/auth.service';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {ToastService} from 'src/app/services/toast/toast.service';
+import {HttpClient} from '@angular/common/http';
+import {TokenService} from 'src/app/services/token/token.service';
+import {BackendUrlProviderService} from '../../services/backend-url-provider/backend-url-provider.service';
 
 @Component({
   selector: 'app-login',
@@ -19,20 +15,24 @@ export class LoginPage implements OnInit {
 
   pwField: string;
   usField: string;
+  urlField: string;
+
+  showUrl = false;
 
   constructor(private router: Router, private http: HttpClient, private toastService: ToastService,
-              private tokensSrvice: TokenService, private authService: AuthService) { }
+              private tokensSrvice: TokenService, private authService: AuthService,
+              private backendUrlProviderService: BackendUrlProviderService) {
+    this.urlField = this.backendUrlProviderService.getUrl();
+  }
 
   ngOnInit() {
     this.tokensSrvice.setToken('');
-    this.http.get(`${PART_URL + '1'}`).subscribe((res) => {}
-      // console.log(res)
-    );
   }
 
   login() {
     const credentials = {username: this.usField, password: this.pwField};
-    this.http.post(API_IP + 'auth/login', credentials).subscribe(
+    this.backendUrlProviderService.setUrl(this.urlField);
+    this.http.post(this.backendUrlProviderService.getUrl() + 'auth/login', credentials).subscribe(
       (data: any) => {
         this.tokensSrvice.setToken(data.token);
         this.authService.setScope(data.token);
@@ -40,5 +40,13 @@ export class LoginPage implements OnInit {
       },
       error =>  this.toastService.displayToast('Wrong password, please try again!')
     );
+  }
+
+  triggerUrl(): void {
+    this.showUrl = !this.showUrl;
+    if (!this.showUrl) {
+      this.backendUrlProviderService.resetUrl();
+      this.urlField = this.backendUrlProviderService.getUrl();
+    }
   }
 }
