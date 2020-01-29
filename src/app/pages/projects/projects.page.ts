@@ -29,10 +29,10 @@ export class ProjectsPage implements OnInit {
   }
 
   doRefresh(event) {
-    console.log('Begin async operation');
+    // console.log('Begin async operation');
     this.loadData();
     setTimeout(() => {
-      console.log('Async operation has ended');
+      // console.log('Async operation has ended');
       event.target.complete();
     }, 2000);
   }
@@ -48,7 +48,7 @@ export class ProjectsPage implements OnInit {
     for (let i = 0; i < this.projects.length; i++) {
       let p = this.projects[i];
       this.partService.getParts(p.id).subscribe((res) => {
-        //console.log(res);
+        // console.log(res);
         if (res.length == 0) {
           if (!this.status[p.id]) {
             this.status[p.id] = new ProgressHolder();

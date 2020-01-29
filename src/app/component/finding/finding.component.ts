@@ -31,7 +31,7 @@ export class FindingComponent implements OnInit {
               private ref: ChangeDetectorRef, private authService: AuthService) { }
 
   ngOnInit() {
-    let partId = this.partDetail.counterId + 1;
+    const partId = this.partDetail.counterId + 1;
     this.projectId = this.projectService.getProjectId();
     this.imagePath = 'finding/' + this.projectId + '/' + partId;
     this.loadStoredImages();
@@ -42,28 +42,30 @@ export class FindingComponent implements OnInit {
   }
 
   pressImage(event, pos) {
-    console.log("HoldImage", event, pos);
   }
 
-  descriptionChanged(term, pos) {
-    this.storage.set(this.imagePath + "/term" + pos, term);
-    console.log("index", pos, term, "imgPath", this.imagePath)
-    this.imageService.updateFinding(this.images[pos], this.partDetail.getPartId(), this.imagePath);
-  }
+  // <!--(change)="descriptionChanged($event.target.value, pos)" placeholder="Enter your description"-->
+  // does not work because the image id is not saved
+  /* descriptionChanged(term, pos) {
+    this.storage.set(this.imagePath + '/term' + pos, term);
+    console.log('index', pos, term, 'imgPath', this.imagePath);
+    this.imageService.updateFinding(this.images[pos], this.partDetail.getPartId(), term);
+  }*/
 
   loadStoredImages() {
     this.storage.get(this.imagePath).then(images => {
       if (images) {
-        let arr = JSON.parse(images);
+        const arr = JSON.parse(images);
         this.images = [];
-        
-        for (let img of arr) {
-          let filePath = this.file.dataDirectory + img;
-          let resPath = this.pathForImage(filePath);
-          console.log("test3", arr.indexOf(img), "imgPath", this.imagePath);
-          this.storage.get(this.imagePath + "/term" + arr.indexOf(img)).then(res => { 
-            this.images.push({ name: img, path: resPath, filePath: filePath , description: res});
-          })
+
+        for (const img of arr) {
+          const filePath = this.file.dataDirectory + img;
+          const resPath = this.pathForImage(filePath);
+          this.storage.get(this.imagePath + '/term' + arr.indexOf(img)).then(res => {
+            if (res) {
+              this.images.push({ name: img, path: resPath, filePath , description: res});
+            }
+          });
         }
       }
     });
@@ -77,7 +79,7 @@ export class FindingComponent implements OnInit {
 
     this.partDetail.onSave(); // Speicher zwischen
     const actionSheet = await this.actionSheetController.create({
-      header: "Select Image source",
+      header: 'Select Image source',
       buttons: [{
         text: 'Load from Library',
         handler: () => {
@@ -99,9 +101,9 @@ export class FindingComponent implements OnInit {
   }
 
   takePicture(sourceType: PictureSourceType) {
-    var options: CameraOptions = {
+    const options: CameraOptions = {
       quality: 100,
-      sourceType: sourceType,
+      sourceType,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
@@ -113,13 +115,13 @@ export class FindingComponent implements OnInit {
       if (this.plt.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
         this.filePath.resolveNativePath(imagePath)
           .then(filePath => {
-            let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
-            let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
+            const correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
+            const currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
             this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
           });
       } else {
-        var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
-        var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+        const currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+        const correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
         this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
       }
     });
@@ -135,30 +137,19 @@ export class FindingComponent implements OnInit {
 
   updateStoredImages(name) {
     this.storage.get(this.imagePath).then(images => {
-      let arr = JSON.parse(images);
+      const arr = JSON.parse(images);
       if (!arr) {
-        let newImages = [name];
+        const newImages = [name];
         this.storage.set(this.imagePath, JSON.stringify(newImages));
       } else {
         arr.push(name);
         this.storage.set(this.imagePath, JSON.stringify(arr));
       }
 
-      let filePath = this.file.dataDirectory + name;
-      let resPath = this.pathForImage(filePath);
+      const filePath = this.file.dataDirectory + name;
+      const resPath = this.pathForImage(filePath);
 
-      let newEntry = {
-        name: name,
-        path: resPath,
-        filePath: filePath,
-        description: "No Description"
-      };
-
-      this.images = [...this.images, newEntry];
-      //this.partService.updatePart(this.images, this.partId);
-      //this.imageService.uploadFinding(this.images, this.partId)
-      this.imageService.uploadFinding(newEntry, this.partDetail.getPartId(), this.imagePath);
-      this.ref.detectChanges(); // trigger change detection cycle
+      this.describeFinding(name, resPath, filePath).then();
     });
   }
 
@@ -170,7 +161,7 @@ export class FindingComponent implements OnInit {
         {
           text: 'Cancel',
           handler: () => {
-            
+
           }
         }, {
           text: 'Yes',
@@ -178,11 +169,11 @@ export class FindingComponent implements OnInit {
             this.images.splice(position, 1);
 
             this.storage.get(this.imagePath).then(images => {
-              let arr = JSON.parse(images);
-              let filtered = arr.filter(name => name != imgEntry.name);
+              const arr = JSON.parse(images);
+              const filtered = arr.filter(name => name !== imgEntry.name);
               this.storage.set(this.imagePath, JSON.stringify(filtered));
 
-              var correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
+              const correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
 
               this.file.removeFile(correctPath, imgEntry.name).then(res => {
                 this.toastController.displayToast('File removed.');
@@ -199,17 +190,55 @@ export class FindingComponent implements OnInit {
     if (img === null) {
       return '';
     } else {
-      let converted = this.webview.convertFileSrc(img);
+      const converted = this.webview.convertFileSrc(img);
       return converted;
     }
   }
 
   createFileName() {
-    return new Date().getTime() + ".png";
+    return new Date().getTime() + '.png';
   }
 
   canWrite(): boolean {
     return this.authService.canWrite();
   }
 
+  async describeFinding(name: string, resPath: string, filePath: string): Promise<any> {
+    const alert = await this.alertCtrl.create({
+      header: 'Finding description',
+      message: 'Please describe the finding',
+      inputs: [{
+        name: 'description',
+        placeholder: 'Description',
+        type: 'text'
+      }],
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => { }
+      },
+        {
+          text: 'Ok',
+          handler: (alertData) => {
+            if (alertData.description) {
+              const description = alertData.description;
+              const newEntry = {
+                name: name,
+                path: resPath,
+                filePath: filePath,
+                description: description
+              };
+
+              this.storage.set(this.imagePath + '/term' + this.images.length, description);
+              this.images = [...this.images, newEntry];
+              this.imageService.uploadFinding(newEntry, this.partDetail.getPartId());
+              this.ref.detectChanges(); // trigger change detection cycle
+            } else {
+              this.toastController.displayToast('Failed. A finding needs a description.');
+            }
+          }
+        }]
+    });
+    await alert.present();
+  }
 }

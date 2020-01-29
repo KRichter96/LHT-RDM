@@ -25,8 +25,8 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.tokensSrvice.setToken('');
-    this.http.get(`${PART_URL + '1'}`).subscribe((res) =>
-      console.log(res)
+    this.http.get(`${PART_URL + '1'}`).subscribe((res) => {}
+      // console.log(res)
     );
   }
 

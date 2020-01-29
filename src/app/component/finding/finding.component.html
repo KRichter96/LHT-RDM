@@ -3,11 +3,11 @@
   <ion-label>Add Finding</ion-label>
 </ion-button>
 <ion-list>
-  <ion-item *ngFor="let img of images; index as pos" class="ion-text-wrap">
+  <ion-item no-lines *ngFor="let img of images; index as pos" class="ion-text-wrap">
     <ion-thumbnail slot="start" size="large">
       <ion-img [src]="img.path" (click)="openImage(img.filePath)" (press)="deleteImage(img, pos)"></ion-img>
     </ion-thumbnail>
-    <ion-input (change)="descriptionChanged($event.target.value, pos)" placeholder="Enter your description" [(ngModel)]="img.description"></ion-input>
+    <ion-label>{{img.description}}</ion-label>
   </ion-item>
 </ion-list>
 <!---

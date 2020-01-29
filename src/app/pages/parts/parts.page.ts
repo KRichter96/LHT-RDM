@@ -22,7 +22,7 @@ import { filter, map } from 'rxjs/operators';
   selector: 'app-parts',
   templateUrl: './parts.page.html',
   styleUrls: ['./parts.page.scss'],
-  styles: [ ".greenClass { background-color: green } .yellowClass {background-color: red }"]
+  styles: [ '.greenClass { background-color: green } .yellowClass {background-color: red }']
 })
 export class PartsPage implements OnInit {
 
@@ -30,10 +30,10 @@ export class PartsPage implements OnInit {
 
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
-  searchTerm: string = "";
+  searchTerm = '';
   id: string;
-  progress: number = 0;
-  offline: boolean = true;
+  progress = 0;
+  offline = true;
   progressColor: string;
 
   constructor(private partService: PartService, private toastCtrl: ToastService,
@@ -49,15 +49,15 @@ export class PartsPage implements OnInit {
           if (event instanceof NavigationEnd) {
             this.loadData();
           }
-        })
+        });
         this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
-          if (status == ConnectionStatus.Online) {
+          if (status === ConnectionStatus.Online) {
             this.offlineManager.checkForEvents().subscribe();
           }
         });
       });
   }
-  
+
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
     this.projectService.setProjectId(this.id);
@@ -73,11 +73,11 @@ export class PartsPage implements OnInit {
   }
 
   doRefresh(event) {
-    console.log('Begin async operation');
+    // console.log('Begin async operation');
     this.loadData();
-    
+
     setTimeout(() => {
-      console.log('Async operation has ended');
+      // console.log('Async operation has ended');
       event.target.complete();
     }, 2000);
   }
@@ -90,7 +90,7 @@ export class PartsPage implements OnInit {
     this.partService.getParts(this.id).subscribe(res => {
       this.parts = res;
       this.updateProgressBar();
-      this.offline = this.checkOffline()
+      this.offline = this.checkOffline();
       if (this.chips.length > 0) {
         this.parts = this.partService.filterItems(this.chips);
       }
@@ -98,11 +98,9 @@ export class PartsPage implements OnInit {
   }
 
   checkOffline() {
-    let status = this.networkService.getCurrentNetworkStatus();
-    if (status == 0) { //status: 0: Online, 1: Offline
-      return false;
-    }
-    return true; // offline == true
+    const status = this.networkService.getCurrentNetworkStatus();
+    return status !== 0;
+     // offline == true
   }
 
   onSync() {
@@ -110,7 +108,7 @@ export class PartsPage implements OnInit {
   }
 
   setSearchedItems() {
-    //this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
+    // this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
   }
 
   scanPartIdentTag() {
@@ -138,15 +136,15 @@ export class PartsPage implements OnInit {
   }
 
   deleteChip(i, event) {
-    if(i > -1) { //Prüfe Index der chips
-      this.chips.splice(i, 1); //Entferne ausgewählten Chip
+    if (i > -1) { // Prüfe Index der chips
+      this.chips.splice(i, 1); // Entferne ausgewählten Chip
     }
     event.target.value = -1;
-    this.onChangeFilter(event); //Wende Filter an
+    this.onChangeFilter(event); // Wende Filter an
   }
 
   async deletePart(i: number) {
-    let alert = await this.alertCtrl.create({
+    const alert = await this.alertCtrl.create({
       header: 'Reason for removal',
       message: 'Please describe your reason for removing this part',
       inputs: [{
@@ -174,8 +172,7 @@ export class PartsPage implements OnInit {
               this.toastCtrl.displayToast('You can only delete parts created in the app.');
             }
             return true;
-          }
-          else {
+          } else {
             this.toastCtrl.displayToast('Please enter a reason for deletion!');
           }
         }
@@ -186,88 +183,79 @@ export class PartsPage implements OnInit {
   }
 
   onChangeFilter(event) {
-    if (event.target.value == null) { //Durch doppelten Aufruf, da event sicherstellen dass der Filter nur 1mal angewendet wird
+    if (event.target.value == null) { // Durch doppelten Aufruf, da event sicherstellen dass der Filter nur 1mal angewendet wird
       return;
-    }
-    else if (event.target.value == -1) {
+    } else if (event.target.value === -1) {
       this.parts = this.partService.filterItems(this.chips);
       return;
     }
-    
-    if (!this.searchTerm) { //Wenn Suchfeld leer
+
+    if (!this.searchTerm) { // Wenn Suchfeld leer
       event.target.value = null;
-      this.toastCtrl.displayToast("Please enter a filter value!");
-    }
-    else {
-      var filterTerm = this.searchTerm;
-      var filterObj = event.target.value;
-      
-      if (this.chips.length == 0) { //Wenn kein Filter gesetzt
-        this.chips.push(new Chip(filterObj, filterTerm)); //Erstelle Chipsarray
-        this.parts = this.partService.filterItems(this.chips); //Wende Filter an
-      }
-      else { //Wenn Filter bereits gesetzt
-        let tempChips = this.chips.filter(x => x.FilterObj == filterObj);
-        for (let chip of tempChips) {
-          if (!(chip.FilterTerm.filter(x => x == filterTerm).length > 0)) {
+      this.toastCtrl.displayToast('Please enter a filter value!');
+    } else {
+      const filterTerm = this.searchTerm;
+      const filterObj = event.target.value;
+
+      if (this.chips.length === 0) { // Wenn kein Filter gesetzt
+        this.chips.push(new Chip(filterObj, filterTerm)); // Erstelle Chipsarray
+        this.parts = this.partService.filterItems(this.chips); // Wende Filter an
+      } else { // Wenn Filter bereits gesetzt
+        const tempChips = this.chips.filter(x => x.FilterObj === filterObj);
+        for (const chip of tempChips) {
+          if (!(chip.FilterTerm.filter(x => x === filterTerm).length > 0)) {
             chip.FilterTerm = [...chip.FilterTerm, filterTerm];
             break;
-          }       
-          for (let term of chip.FilterTerm) {
-            if (term == filterTerm) {
-              this.toastCtrl.displayToast("Already have this filter!");
-              this.searchTerm = "";
+          }
+          for (const term of chip.FilterTerm) {
+            if (term === filterTerm) {
+              this.toastCtrl.displayToast('Already have this filter!');
+              this.searchTerm = '';
               event.target.value = null;
               return;
             }
           }
         }
-        if (tempChips.length == 0) {
+        if (tempChips.length === 0) {
           this.chips = [...this.chips, new Chip(filterObj, filterTerm)];
         }
         this.parts = this.partService.filterItems(this.chips);
       }
       event.target.value = null;
     }
-    this.searchTerm = "";
+    this.searchTerm = '';
   }
 
   updateProgressBar() {
-    let cento = this.parts.length;
-    let percent = this.parts.filter(x => (x.rackNo != "" && x.rackLocation != "" && x.preModWeight != "" && x.preModPNAC !="" && x.nomenclature != "" && x.rackNo != "N/A" && x.rackLocation != "N/A" && x.preModWeight != "N/A")).length; // percent of parts not completed
-    let progress = percent / cento;
-    if(progress != 1) {
-      this.progressColor = "danger";
+    const cento = this.parts.length; // tslint:disable-next-line
+    const percent = this.parts.filter(x => (x.rackNo !== '' && x.rackLocation !== '' && x.preModWeight !== '' && x.preModPNAC !== '' && x.nomenclature !== '' && x.rackNo !== 'N/A' && x.rackLocation !== 'N/A' && x.preModWeight !== 'N/A')).length; // percent of parts not completed
+    const progress = percent / cento;
+    if (progress !== 1) {
+      this.progressColor = 'danger';
     } else {
-      this.progressColor = "success";
+      this.progressColor = 'success';
     }
     return progress;
   }
 
   public checkStatus(part) {
     try {
-      let p: PartModel = part;
-      if (p.rackLocation && p.rackNo && p.preModWeight && p.preModWeight != "N/A" && p.rackLocation != "N/A" && p.rackNo != "N/A") {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    catch (Exception) {
+      const p: PartModel = part;
+      return p.rackLocation && p.rackNo && p.preModWeight && p.preModWeight !== 'N/A' && p.rackLocation !== 'N/A' && p.rackNo !== 'N/A';
+    } catch (Exception) {
       return false;
     }
   }
 
   async  filterStatus() {
-    for (let chip of this.chips) {
-      if (chip.FilterObj == "Status") {
-        this.toastCtrl.displayToast("Please remove the status filter!");
+    for (const chip of this.chips) {
+      if (chip.FilterObj === 'Status') {
+        this.toastCtrl.displayToast('Please remove the status filter!');
         break;
       }
     }
 
-    let alert = await this.alertCtrl.create({
+    const alert = await this.alertCtrl.create({
       header: 'Select the status you want to filter',
       inputs: [
         {
@@ -289,18 +277,18 @@ export class PartsPage implements OnInit {
       {
         text: 'Ok',
         handler: data => {
-          if (data == 0) {
-            if (this.chips.length == 0){
-              this.chips.push(new Chip("Status", "ToDo"));
+          if (data === 0) {
+            if (this.chips.length === 0) {
+              this.chips.push(new Chip('Status', 'ToDo'));
             } else {
-              this.chips = [...this.chips, new Chip("Status", "ToDo")];
+              this.chips = [...this.chips, new Chip('Status', 'ToDo')];
             }
             this.parts = this.partService.filterItems(this.chips);
-          } else if (data == 1) {
-            if (this.chips.length == 0){
-              this.chips.push(new Chip("Status", "Done"));
+          } else if (data === 1) {
+            if (this.chips.length === 0) {
+              this.chips.push(new Chip('Status', 'Done'));
             } else {
-              this.chips = [...this.chips, new Chip("Status", "Done")];
+              this.chips = [...this.chips, new Chip('Status', 'Done')];
             }
             this.parts = this.partService.filterItems(this.chips);
           }
@@ -311,7 +299,7 @@ export class PartsPage implements OnInit {
   }
 
   showStatus() {
-    
+
   }
 
   async openPopover(ev: Event) {
@@ -332,8 +320,8 @@ export class PartsPage implements OnInit {
   }
 
   deleteData() {
-    this.token.setToken("");
-    //this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
+    this.token.setToken('');
+    // this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
   }
 
   canWrite(): boolean {

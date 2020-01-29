@@ -26,7 +26,6 @@ export class ProjectService {
       return this.http.get(`${PROJECT_URL}`).pipe(
         map(res => res['projects']),
         tap(res => {
-          console.log('returns real live API data', PROJECT_URL);
           this.setLocalData('projects', res);
         })
       );
@@ -55,7 +54,6 @@ export class ProjectService {
 
   //Get cached API result
   private getLocalData(key) {
-    console.log("return local data");
     return this.storage.get(`${API_STORAGE_KEY}-${key}`);
   }
 

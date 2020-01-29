@@ -46,7 +46,6 @@ export class PartService {
   }
 
   public setParts(partId, partItem) {
-    console.log('sets partdetail');
     this.setLocalData('parts', partItem);
   }
 
@@ -59,7 +58,7 @@ export class PartService {
     }
     else {
       this.http.post(url, data).subscribe(response => {
-          console.log(response);
+          // console.log(response);
         },
         error => {
           alert(error);
@@ -88,7 +87,7 @@ export class PartService {
     else {
       this.http.put(url, data).subscribe(
         response => {
-          console.log(response);
+          // console.log(response);
         },
         error => {
           alert(error);
@@ -119,7 +118,7 @@ export class PartService {
             const filtered = this.items.filter(x => x.id !== data.id);
             this.items = filtered;
             this.setLocalData('parts' + this.projectid, this.items);
-            console.log(response);
+            // console.log(response);
           },
           error => {
             alert(error);
@@ -236,14 +235,13 @@ export class PartService {
 
   //Get cached API result
   private getLocalData(key) {
-    console.log("return local data");
     return this.storage.get(`${key}`);
   }
 
   //delete
   private removeLocalData(){
     this.storage.remove('parts').then(()=>{
-      console.log('part is removed');
+      // console.log('part is removed');
     });
   }
 }

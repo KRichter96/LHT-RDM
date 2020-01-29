@@ -72,8 +72,8 @@ export class OfflineService {
         storedObj = [action];
       }
 
-      console.log("local request stored: ", action);
-      //Save old & new local transactions back to Storage
+      // console.log("local request stored: ", action);
+      // Save old & new local transactions back to Storage
       return this.storage.set(STORAGE_REQ_KEY, JSON.stringify(storedObj));
     });
   }
@@ -82,7 +82,7 @@ export class OfflineService {
     let obs = [];
 
     for (let op of operations) {
-      console.log("Make one request: ", op);
+      // console.log("Make one request: ", op);
       let oneObs = this.http.request(op.type, op.url, { body:op.data });
       obs.push(oneObs);
     }

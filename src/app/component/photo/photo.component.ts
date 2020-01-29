@@ -21,7 +21,7 @@ import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 export class PhotoComponent implements OnInit {
 
   images = [];
-  imagePath = "";
+  imagePath = '';
   projectId: string;
 
   constructor(private alertCtrl: AlertController, private photoViewer: PhotoViewer, private imageService: ImageService,
@@ -33,9 +33,9 @@ export class PhotoComponent implements OnInit {
               private authService: AuthService) { }
 
   ngOnInit() {
-    let partId = this.partDetail.counterId + 1;
+    const partId = this.partDetail.counterId + 1;
     this.projectId = this.projectService.getProjectId();
-    this.imagePath = "image/" + this.projectId + "/" + partId;
+    this.imagePath = 'image/' + this.projectId + '/' + partId;
     this.loadStoredImages();
   }
 
@@ -46,12 +46,12 @@ export class PhotoComponent implements OnInit {
   loadStoredImages() {
     this.storage.get(this.imagePath).then(images => {
       if (images) {
-        let arr = JSON.parse(images);
+        const arr = JSON.parse(images);
         this.images = [];
-        for (let img of arr) {
-          let filePath = this.file.dataDirectory + img;
-          let resPath = this.pathForImage(filePath);
-          this.images.push({ name: img, path: resPath, filePath: filePath });
+        for (const img of arr) {
+          const filePath = this.file.dataDirectory + img;
+          const resPath = this.pathForImage(filePath);
+          this.images.push({ name: img, path: resPath, filePath });
         }
       }
     });
@@ -87,9 +87,9 @@ export class PhotoComponent implements OnInit {
   }
 
   takePicture(sourceType: PictureSourceType) {
-    var options: CameraOptions = {
+    const options: CameraOptions = {
       quality: 100,
-      sourceType: sourceType,
+      sourceType,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
@@ -101,13 +101,13 @@ export class PhotoComponent implements OnInit {
       if (this.plt.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
         this.filePath.resolveNativePath(imagePath)
           .then(filePath => {
-            let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
-            let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
+            const correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
+            const currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
             this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
           });
       } else {
-        var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
-        var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+        const currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+        const correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
         this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
       }
     });
@@ -123,27 +123,27 @@ export class PhotoComponent implements OnInit {
 
   updateStoredImages(name) {
     this.storage.get(this.imagePath).then(images => {
-      let arr = JSON.parse(images);
+      const arr = JSON.parse(images);
       if (!arr) {
-        let newImages = [name];
+        const newImages = [name];
         this.storage.set(this.imagePath, JSON.stringify(newImages));
       } else {
         arr.push(name);
         this.storage.set(this.imagePath, JSON.stringify(arr));
       }
 
-      let filePath = this.file.dataDirectory + name;
-      let resPath = this.pathForImage(filePath);
+      const filePath = this.file.dataDirectory + name;
+      const resPath = this.pathForImage(filePath);
 
-      let newEntry = {
-        name: name,
+      const newEntry = {
+        name,
         path: resPath,
-        filePath: filePath
+        filePath
       };
 
       this.images = [newEntry, ...this.images];
-      //this.partService.updatePart(this.images, this.partId);
-      this.imageService.uploadImage(newEntry, this.partDetail.getPartId(), this.imagePath);
+      // this.partService.updatePart(this.images, this.partId);
+      this.imageService.uploadImage(newEntry, this.partDetail.getPartId());
       this.ref.detectChanges(); // trigger change detection cycle
     });
   }
@@ -163,11 +163,11 @@ export class PhotoComponent implements OnInit {
             this.images.splice(position, 1);
 
             this.storage.get(this.imagePath).then(images => {
-              let arr = JSON.parse(images);
-              let filtered = arr.filter(name => name != imgEntry.name);
+              const arr = JSON.parse(images);
+              const filtered = arr.filter(name => name !== imgEntry.name);
               this.storage.set(this.imagePath, JSON.stringify(filtered));
 
-              var correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
+              const correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
 
               this.file.removeFile(correctPath, imgEntry.name).then(res => {
                 this.toastController.displayToast('File removed.');
@@ -184,13 +184,13 @@ export class PhotoComponent implements OnInit {
     if (img === null) {
       return '';
     } else {
-      let converted = this.webview.convertFileSrc(img);
+      const converted = this.webview.convertFileSrc(img);
       return converted;
     }
   }
 
   createFileName() {
-    return new Date().getTime() + ".png";
+    return new Date().getTime() + '.png';
   }
 
   canWrite(): boolean {
