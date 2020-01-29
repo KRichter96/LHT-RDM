@@ -289,7 +289,7 @@
     </ion-segment>
 
     <app-comment *ngIf="selectedSegment === 'comment'"></app-comment>
-    <app-photo *ngIf="selectedSegment === 'photos'"></app-photo>
-    <app-finding *ngIf="selectedSegment === 'findings'"></app-finding>
+    <app-photo *ngIf="selectedSegment === 'photos' && canWrite()"></app-photo>
+    <app-finding *ngIf="selectedSegment === 'findings' && canWrite()"></app-finding>
   </div>
 </ion-content>
