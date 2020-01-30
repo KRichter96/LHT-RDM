@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { PartModel } from 'src/app/models/part/partmodel';
 import { ActivatedRoute } from '@angular/router';
@@ -28,26 +29,27 @@ export class PartDetailPage implements OnInit {
   parentCounterId: number;
   parentWeight: string;
   childWeight: string;
+  saved = false;
 
-  newId: string; //todo needed?
+  newId: string; // todo needed?
 
 
 
-  constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute
-              , private partService: PartService, private plt: Platform) {
+  constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute,
+              private partService: PartService, private plt: Platform, private authService: AuthService) {
   }
 
   ngOnInit() {
     this.projectId = this.projectService.getProjectId();
-    this.strProjectId = this.projectService.getProjectId().toString(); //needed for saves
+    this.strProjectId = this.projectService.getProjectId().toString(); // needed for saves
     this.counterId = +this.route.snapshot.paramMap.get('id');
     let newItem = this.route.snapshot.paramMap.get('new');
-    this.isNewChildItem = newItem && newItem.indexOf('true') != -1; //bool
-    this.selectedSegment = "comment";
+    this.isNewChildItem = newItem && newItem.indexOf('true') !== -1; // bool
+    this.selectedSegment = 'comment';
 
     this.childItem = false;
 
-    if (this.counterId == -1) { // If CounterId doesn't exist
+    if (this.counterId === -1) { // If CounterId doesn't exist
       this.partItem = new PartModel();
       this.createNewPartItem(); // Completely New Item
     } else {
@@ -61,10 +63,10 @@ export class PartDetailPage implements OnInit {
     this.existingItem = false;
     this.partItem.projectId = this.strProjectId;
     this.partItem.id = generateUUID();
-    this.partItem.counterId = this.randomInt();
-    this.partItem.statusCreate = "New";
-    this.partItem.statusEdit = "";
-    this.counterId = this.partItem.counterId;
+    this.partService.getParts(this.projectId).subscribe(e => {
+      this.partItem.counterId = 1 + Math.max.apply(Math, e.map(function(o){return o.counterId}))}); // tslint:disable-line
+    this.partItem.statusCreate = 'New';
+    this.partItem.statusEdit = '';
   }
 
   loadData() {
@@ -72,25 +74,24 @@ export class PartDetailPage implements OnInit {
     let parentItem: PartModel;
     this.partService.getParts(this.projectId).subscribe(e => {
       this.parts = e;
-      partItem = e.filter(x => {return x.counterId == this.counterId})[0]; // Get only the partItem with same CounterId
+      partItem = e.filter(x =>  x.counterId === this.counterId)[0]; // Get only the partItem with same CounterId
 
       if(this.isNewChildItem) { // Only goes in when completely new  child item
         this.partItem = this.prepareForChildItem(partItem);
         this.parentCounterId = this.counterId; // sets ParentId in html
-        this.parentWeight = this.partItem.preModWeight.replace(/,/i,".");
-        this.partItem.preModWeight = "";
+        this.parentWeight = this.partItem.preModWeight.replace(/,/i, '.');
+        this.partItem.preModWeight = '';
         this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
-        this.partItem.counterId = this.randomInt(); // Create temp CounterId, will be replaced in parts.service ((IF ONLINE))
+        this.partItem.counterId = 1 + Math.max.apply(Math, this.parts.map(function(o) {return o.counterId; })); // tslint:disable-line
         this.partItem.id = generateUUID();
         this.childItem = true;
       } else {
         this.partItem = partItem;
-        if (this.partItem.parentId == "-1") { // if new Item
+        if (this.partItem.parentId === '-1') { // if new Item
           this.childItem = false;
-        }
-        else { // is Existing Child Item
+        } else { // is Existing Child Item
           this.childItem = true; // sets child grid
-          parentItem = e.filter(x => {return x.id == this.partItem.parentId})[0];
+          parentItem = e.filter(x => x.id === this.partItem.parentId)[0];
           this.parentCounterId = parentItem.counterId; // sets ParentId in html
         }
       }
@@ -98,21 +99,22 @@ export class PartDetailPage implements OnInit {
   }
 
   onSave() {
-    if (this.partItem.counterId > 99999){
+    if (!this.canWrite()) {
+      this.toastCtrl.displayToast('Not allowed to make any changes.');
+      return;
+    }
+
+    if ((this.counterId === -1 || this.isNewChildItem) && !this.saved) {
       if (this.partItem.preModWeight) {
-        this.childWeight = this.partItem.preModWeight.replace(/,/i,".");
-        this.partItem.preModWeight.replace(/./i,",");
+        this.childWeight = this.partItem.preModWeight.replace(/,/i, '.');
+        this.partItem.preModWeight.replace(/./i, ',');
       } // set child weight back to ,
       this.partService.createPart(this.partItem);
-      //this.calculateWeight(); TODO Kai hier rein
-    }
-    else {
+      // this.calculateWeight(); TODO Kai hier rein
+      this.saved = true;
+    } else {
       this.partService.updatePart(this.partItem, this.partItem.counterId);
     }
-  }
-
-  randomInt(){
-    return Math.floor(Math.random() * (2147483647 - 99999 + 1)) + 99999;
   }
 
   prepareForChildItem(partItem: PartModel): PartModel { // Keeps some properties for Child Item, deletes the rest
@@ -126,14 +128,14 @@ export class PartDetailPage implements OnInit {
        partItem.reasonRemoval = "";
        partItem.intendedPurpose = "";
        partItem.installZoneRoom = "";
+      partItem.preModPositionIPC = "";
     */
     partItem.nomenclature = "";
-    partItem.preModPositionIPC = "";
     partItem.ipcReference = "";
     partItem.ipcItemNumber = "";
     partItem.preModPNAC = ""; // Writeable
     partItem.serialNo = ""; // Writeable
-    //partItem.preModWeight = ""; // Writeable
+    // partItem.preModWeight = ""; // Writeable
     partItem.rackNo = ""; // Writeable
     partItem.rackLocation = ""; // Writeable
     partItem.existingComponents = ""; // Writeable
@@ -180,5 +182,9 @@ export class PartDetailPage implements OnInit {
 
   async segmentChanged(event) {
     this.selectedSegment = event.detail.value;
+  }
+
+  canWrite(): boolean {
+    return this.authService.canWrite();
   }
 }

@@ -9,12 +9,14 @@
     <ion-button slot="end">
       <ion-icon icon name="funnel" ></ion-icon>
       <ion-select name="filter" interface="popover" (ionChange)="onChangeFilter($event)">
-        <ion-select-option value="Ident-Nr">Ident-Nr</ion-select-option>
+        <ion-select-option value="Ident.-Nr.">Ident.-Nr.</ion-select-option>
         <ion-select-option value="P/N">P/N</ion-select-option>
+        <ion-select-option value="Nomenclature">Nomenclature</ion-select-option>
         <ion-select-option value="Category">Category</ion-select-option>
         <ion-select-option value="ComponentType">Component Type</ion-select-option>
         <ion-select-option value="Rack-Nr">Rack-Nr.</ion-select-option>
         <ion-select-option value="Position">Position</ion-select-option>
+        <ion-select-option value="Arrangement">Arrangement</ion-select-option>
         <ion-select-option value="InstallationRoom">Installation Room</ion-select-option>
       </ion-select>
     </ion-button>
@@ -105,7 +107,7 @@
             </ion-col>
             <ion-col size="1">
               <div class="stacked-group">
-                <ion-label>{{ part.postModPN }}</ion-label>
+                <ion-label>{{ part.preModPNIPC }}</ion-label>
               </div>
             </ion-col>
 

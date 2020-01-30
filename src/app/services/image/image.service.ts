@@ -1,13 +1,10 @@
-import { Injectable } from '@angular/core';
-import { NetworkService, ConnectionStatus } from '../network/network.service';
-import { OfflineService } from '../offline/offline.service';
-import { HttpClient } from '@angular/common/http';
-import { from } from 'rxjs';
-import { File } from '@ionic-native/file/ngx';
-import { Storage } from '@ionic/storage';
-import { API_IP } from './../../../environments/environment';
-
-const UPLOAD_IMAGE_URL = API_IP + 'parts/';
+import {Injectable} from '@angular/core';
+import {ConnectionStatus, NetworkService} from '../network/network.service';
+import {OfflineService} from '../offline/offline.service';
+import {HttpClient} from '@angular/common/http';
+import {from} from 'rxjs';
+import {File} from '@ionic-native/file/ngx';
+import {BackendUrlProviderService} from '../backend-url-provider/backend-url-provider.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,28 +12,31 @@ const UPLOAD_IMAGE_URL = API_IP + 'parts/';
 export class ImageService {
 
   images: any[] = [];
+  imageUrl: string;
 
-  constructor(private http: HttpClient, private networkService: NetworkService, private offlineManager: OfflineService, private file: File, private storage: Storage) { }
+  constructor(private http: HttpClient, private networkService: NetworkService,
+              private offlineManager: OfflineService, private file: File,
+              private backendUrlProviderService: BackendUrlProviderService) {
+    this.imageUrl = this.backendUrlProviderService.getUrl() + 'parts/';
+  }
 
-  uploadImage(image: any, partId, imagepath) {
-    let url = `${UPLOAD_IMAGE_URL + partId + "/photos"}`;
-    
-    let a = image.filePath.substring(0, image.filePath.lastIndexOf('/'));
-    let b = image.filePath.substring(image.filePath.lastIndexOf('/')+1);
+  uploadImage(image: any, partId) {
+    const url = `${this.imageUrl + partId + '/photos'}`;
+
+    const a = image.filePath.substring(0, image.filePath.lastIndexOf('/'));
+    const b = image.filePath.substring(image.filePath.lastIndexOf('/') + 1);
     this.file.readAsArrayBuffer(a, b).then((res) => {
       try {
-        let blob = new Blob([res], {type: "image/png"});
-        var formData = new FormData();
+        const blob = new Blob([res], {type: 'image/png'});
+        const formData = new FormData();
         formData.append('image', blob);
-        formData.append('description', image.name);
-        if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
+        formData.append('description', '');
+        if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
           return from(this.offlineManager.storeRequest(url, 'POST', formData));
-        }
-        else {
+        } else {
           this.http.post(url, formData).subscribe(
             response => {
-              //this.storage.remove(imagepath);
-              console.log(response);
+              // nothing
             },
             error => {
               this.offlineManager.storeRequest(url, 'POST', formData);
@@ -46,44 +46,35 @@ export class ImageService {
       } catch (e) {
 
       }
-    })
+    });
   }
 
-  updateFinding(partId, photoid, term) {
-    let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
+  uploadFinding(data: any, partId) {
+    const url = `${this.imageUrl + partId + '/findings'}`;
 
-  }
-
-  uploadFinding(data: any, partId, imagepath) {
-    let url = `${UPLOAD_IMAGE_URL + partId + "/findings"}`;
-
-    for (let image of data) {
-      let a = image.filePath.substring(0, image.filePath.lastIndexOf('/'));
-      let b = image.filePath.substring(image.filePath.lastIndexOf('/')+1);
-      this.file.readAsArrayBuffer(a, b).then((res) => {
-        try {
-          let blob = new Blob([res], {type: "image/png"});
-          var formData = new FormData();
-          formData.append('image', blob);
-          formData.append('description', image.description);
-          if (this.networkService.getCurrentNetworkStatus() == ConnectionStatus.Offline) {
-            return from(this.offlineManager.storeRequest(url, 'POST', formData));
-          }
-          else {
-            this.http.post(url, formData).subscribe(
-              response => {
-                this.images.push(response["id"], data)
-                console.log(response["id"], " asdasdasd");
-              },
-              error => {
-                this.offlineManager.storeRequest(url, 'POST', formData);
-                console.log(error);
-              });
-          }
-        } catch (e) {
-
+    const a = data.filePath.substring(0, data.filePath.lastIndexOf('/'));
+    const b = data.filePath.substring(data.filePath.lastIndexOf('/') + 1);
+    this.file.readAsArrayBuffer(a, b).then((res) => {
+      try {
+        const blob = new Blob([res], {type: 'image/png'});
+        const formData = new FormData();
+        formData.append('image', blob);
+        formData.append('description', data.description);
+        if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+          return from(this.offlineManager.storeRequest(url, 'POST', formData));
+        } else {
+          this.http.post<any>(url, formData).subscribe(
+            response => {
+              this.images.push(response.id, data);
+            },
+            error => {
+              this.offlineManager.storeRequest(url, 'POST', formData);
+              console.log(error);
+            });
         }
-      })
-    }
+      } catch (e) {
+
+      }
+    });
   }
 }
