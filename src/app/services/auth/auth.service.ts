@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
       constructor() {}
 
       canWrite(): boolean {
+          return true
           return this.scope.toLocaleLowerCase().includes('write');
       }
 

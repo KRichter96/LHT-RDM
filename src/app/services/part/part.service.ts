@@ -19,6 +19,7 @@ export class PartService {
 
   partUrl: string;
   updatePartUrl: string;
+  parentCounterId: number;
 
   constructor(private http: HttpClient, private networkService: NetworkService,
               private storage: Storage, private offlineManager: OfflineService,
@@ -75,15 +76,15 @@ export class PartService {
     }
   }
 
-  getDimensionsByFind(id) {
-    return this.items.find(x => x.counterId === id);
+  getPartById(id: number) {
+    return this.items.find(x => x.counterId == id);
   }
 
   // TODO
   public updatePart(data, partId): Observable<any> {
     const url = `${this.updatePartUrl}`;
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.items[this.getDimensionsByFind(data.counterId).counterId - 1] = data;
+      this.items[this.getPartById(data.counterId).counterId - 1] = data;
       this.setLocalData('parts' + this.projectid, this.items); // something went wrong here
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
     } else {

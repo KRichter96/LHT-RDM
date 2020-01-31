@@ -22,7 +22,7 @@
         <ion-icon name="md-close"></ion-icon>
           Cancel
       </ion-tab-button>
-      <ion-tab-button (click)="closePopover()" [routerLink]="'/part-detail/'+ parentId +'/' + childItem" routerLinkActive="router-link-active" routerDirection="forward">
+      <ion-tab-button (click)="closePopover(parentId)" [routerLink]="'/part-detail/'+ newId" routerLinkActive="router-link-active" routerDirection="forward">
         <ion-icon name="md-add"></ion-icon>
           Add
       </ion-tab-button>

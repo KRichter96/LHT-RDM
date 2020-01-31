@@ -7,7 +7,6 @@ import { PartService } from 'src/app/services/part/part.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { generateUUID } from 'ionic/lib/utils/uuid';
-import { PartsPage } from '../parts/parts.page';
 
 
 @Component({
@@ -43,15 +42,19 @@ export class PartDetailPage implements OnInit {
     this.projectId = this.projectService.getProjectId();
     this.strProjectId = this.projectService.getProjectId().toString(); // needed for saves
     this.counterId = +this.route.snapshot.paramMap.get('id');
-    let newItem = this.route.snapshot.paramMap.get('new');
-    this.isNewChildItem = newItem && newItem.indexOf('true') !== -1; // bool
+
+    let newItem = true;
+    if (this.partService.getPartById(this.counterId)){
+      newItem = false;
+    }
+
     this.selectedSegment = 'comment';
-
-    this.childItem = false;
-
-    if (this.counterId === -1) { // If CounterId doesn't exist
+    if (newItem) { // If CounterId doesn't exist
       this.partItem = new PartModel();
       this.createNewPartItem(); // Completely New Item
+      if (this.partService.parentCounterId) {
+        this.partItem = this.prepareForChildItem(this.partService.getPartById(this.partService.parentCounterId), this.partItem);
+      }
     } else {
       this.plt.ready().then(() => {
         this.loadData();
@@ -63,39 +66,18 @@ export class PartDetailPage implements OnInit {
     this.existingItem = false;
     this.partItem.projectId = this.strProjectId;
     this.partItem.id = generateUUID();
-    this.partService.getParts(this.projectId).subscribe(e => {
-      this.partItem.counterId = 1 + Math.max.apply(Math, e.map(function(o){return o.counterId}))}); // tslint:disable-line
     this.partItem.statusCreate = 'New';
     this.partItem.statusEdit = '';
   }
 
   loadData() {
-    let partItem: PartModel;
-    let parentItem: PartModel;
-    this.partService.getParts(this.projectId).subscribe(e => {
-      this.parts = e;
-      partItem = e.filter(x =>  x.counterId === this.counterId)[0]; // Get only the partItem with same CounterId
-
-      if(this.isNewChildItem) { // Only goes in when completely new  child item
-        this.partItem = this.prepareForChildItem(partItem);
-        this.parentCounterId = this.counterId; // sets ParentId in html
-        this.parentWeight = this.partItem.preModWeight.replace(/,/i, '.');
-        this.partItem.preModWeight = '';
-        this.partItem.parentId = this.partItem.id; // Set the copied Id as ParentId
-        this.partItem.counterId = 1 + Math.max.apply(Math, this.parts.map(function(o) {return o.counterId; })); // tslint:disable-line
-        this.partItem.id = generateUUID();
-        this.childItem = true;
-      } else {
-        this.partItem = partItem;
-        if (this.partItem.parentId === '-1') { // if new Item
-          this.childItem = false;
-        } else { // is Existing Child Item
-          this.childItem = true; // sets child grid
-          parentItem = e.filter(x => x.id === this.partItem.parentId)[0];
-          this.parentCounterId = parentItem.counterId; // sets ParentId in html
-        }
-      }
-    });
+    this.partItem = this.partService.getPartById(this.counterId);
+    this.parentWeight = this.partItem.preModWeight.replace(/,/i, '.');
+    if (this.partItem.parentId === '-1') {
+      this.childItem = false;
+    } else {
+      this.childItem = true;
+    }
   }
 
   onSave() {
@@ -104,77 +86,80 @@ export class PartDetailPage implements OnInit {
       return;
     }
 
-    if ((this.counterId === -1 || this.isNewChildItem) && !this.saved) {
+    if ((this.isNewChildItem) && !this.saved) {
       if (this.partItem.preModWeight) {
         this.childWeight = this.partItem.preModWeight.replace(/,/i, '.');
         this.partItem.preModWeight.replace(/./i, ',');
       } // set child weight back to ,
       this.partService.createPart(this.partItem);
-      // this.calculateWeight(); TODO Kai hier rein
+      this.calculateWeight();
       this.saved = true;
     } else {
-      this.partService.updatePart(this.partItem, this.partItem.counterId);
+      this.partService.updatePart(this.partItem, "not needed");
     }
   }
 
-  prepareForChildItem(partItem: PartModel): PartModel { // Keeps some properties for Child Item, deletes the rest
-    /* taken from Parent PartItem
-       partItem.category = "";
-       partItem.componentType = "";
-       partItem.postModPN = "";
-       partItem.arrangement = "";
-       partItem.ammRemovalTask = "";
-       partItem.ammInstallTask = "";
-       partItem.reasonRemoval = "";
-       partItem.intendedPurpose = "";
-       partItem.installZoneRoom = "";
-      partItem.preModPositionIPC = "";
-    */
-    partItem.nomenclature = "";
-    partItem.ipcReference = "";
-    partItem.ipcItemNumber = "";
-    partItem.preModPNAC = ""; // Writeable
-    partItem.serialNo = ""; // Writeable
-    // partItem.preModWeight = ""; // Writeable
-    partItem.rackNo = ""; // Writeable
-    partItem.rackLocation = ""; // Writeable
-    partItem.existingComponents = ""; // Writeable
-    partItem.remarksRemoval = "";
-    partItem.aupa = "";
-    partItem.postModPosition = "";
-    partItem.modDWG = "";
-    partItem.panelPNAVI = "";
-    partItem.integrCompPN = "";
-    partItem.integrCompTypes = "";
-    partItem.equipNo = "";
-    partItem.integratedComponents = "";
-    partItem.postModWeight = "";
-    partItem.remarksMod = "";
-    partItem.cmmReference = "";
-    partItem.xxx = "";
-    partItem.moC0 = "";
-    partItem.moC1 = "";
-    partItem.moC2 = "";
-    partItem.testSample = "";
-    partItem.moC4Flameability = "";
-    partItem.moC7 = "";
-    partItem.deleteReason = "";
-    partItem.statusCreate = "New";
-    partItem.statusEdit = "Edited";
-    return partItem;
+  prepareForChildItem(partItem: PartModel, child: PartModel): PartModel { // Keeps some properties for Child Item, deletes the rest
+    this.childItem = true;
+    this.isNewChildItem = true;
+    child.category = partItem.category;
+    child.componentType = partItem.componentType;
+    child.postModPN = partItem.postModPN;
+    child.arrangement = partItem.arrangement;
+    child.ammRemovalTask = partItem.ammRemovalTask;
+    child.ammInstallTask = partItem.ammInstallTask;
+    child.reasonRemoval = partItem.reasonRemoval;
+    child.intendedPurpose = partItem.intendedPurpose;
+    child.installZoneRoom = partItem.installZoneRoom;
+    child.parentId = partItem.id;
+   // partItem.preModWeight = ""; // Writeable
+    child.nomenclature = "";
+    child.ipcReference = "";
+    child.ipcItemNumber = "";
+    child.preModPNAC = ""; // Writeable
+    child.serialNo = ""; // Writeable
+    child.rackNo = ""; // Writeable
+    child.rackLocation = ""; // Writeable
+    child.existingComponents = ""; // Writeable
+    child.remarksRemoval = "";
+    child.aupa = "";
+    child.postModPosition = "";
+    child.modDWG = "";
+    child.panelPNAVI = "";
+    child.integrCompPN = "";
+    child.integrCompTypes = "";
+    child.equipNo = "";
+    child.integratedComponents = "";
+    child.postModWeight = "";
+    child.remarksMod = "";
+    child.cmmReference = "";
+    child.xxx = "";
+    child.moC0 = "";
+    child.moC1 = "";
+    child.moC2 = "";
+    child.testSample = "";
+    child.moC4Flameability = "";
+    child.moC7 = "";
+    child.deleteReason = "";
+    child.statusCreate = "New";
+    child.statusEdit = "";
+    return child;
   }
 
-  // calculateWeight() { TODO Kai hier
-  //   if(this.childItem == true) {
-  //     var parentItem: PartModel = this.parts.filter(x => {return x.id == this.partItem.parentId})[0];
-  //     console.log("old " + parentItem.preModWeight);
-  //     var calculatedWorth = (+this.parentWeight - +this.childWeight).toString(); //parentItem.preModWeight
-  //       parentItem.preModWeight = calculatedWorth.replace(/./i,","); // set parent weight back to ,
-  //       console.log("new " + parentItem.preModWeight);
-  //       this.partService.updatePart(parentItem);
-  //       console.log(parentItem);
-  //   }
-  // }
+  calculateWeight() {
+    if(this.childItem == true) {
+      var parentItem: PartModel = this.partService.getPartById(this.partService.parentCounterId);
+      parentItem.preModWeight = parentItem.preModWeight.replace(",", ".");
+      parentItem.preModWeight = parentItem.preModWeight.replace(" kg", "");
+      console.log("old ", +parentItem.preModWeight);
+      var calculatedWorth = Math.round((+parentItem.preModWeight - +this.childWeight)).toString(); //parentItem.preModWeight
+      parentItem.preModWeight = calculatedWorth.replace(".",","); // set parent weight back to ,
+      parentItem.preModWeight = parentItem.preModWeight + " kg";
+      console.log("new " + parentItem.preModWeight);
+      this.partService.updatePart(parentItem, parentItem.id);
+      console.log(parentItem);
+    }
+  }
 
   getPartId(): string {
     return this.partItem.id;
