@@ -76,6 +76,16 @@ export class PartService {
     }
   }
 
+  getHighestId(): number {
+    let highestId = 0;
+    for (let part of this.items) {
+      if (highestId < part.counterId) {
+        highestId = part.counterId;
+      }
+    }
+    return highestId + 1;
+  }
+
   getPartById(id: number) {
     return this.items.find(x => x.counterId == id);
   }

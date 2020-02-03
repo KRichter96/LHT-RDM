@@ -30,6 +30,12 @@
     
     <ion-row>
       <ion-col>
+        <ion-item [ngStyle]="{'color': partItem.preModWeight? 'green' : 'red'}">
+          <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
+          <ion-input placeholder="(Required)" id="pmw" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
         <ion-item [ngStyle]="{'color': partItem.rackNo? 'green' : 'red'}">
           <ion-label position="floating" color="dark">Rack Number:</ion-label>
           <ion-input placeholder="(Required)" type="number" [(ngModel)]="partItem.rackNo" required="true"></ion-input>
@@ -40,15 +46,8 @@
           <ion-label position="floating" color="dark">Rack Location:</ion-label>
           <ion-input placeholder="(Required)" [(ngModel)]="partItem.rackLocation" required="true"></ion-input>
         </ion-item>
-      </ion-col>
-
+      </ion-col>      
       
-      <ion-col>
-        <ion-item [ngStyle]="{'color': partItem.preModWeight? 'green' : 'red'}">
-          <ion-label position="floating" color="dark">Pre-Mod Weight:</ion-label>
-          <ion-input placeholder="(Required)" id="pmw" [(ngModel)]="partItem.preModWeight" required="true"></ion-input>
-        </ion-item>
-      </ion-col>
     </ion-row>
     
     <ion-row>
@@ -247,12 +246,6 @@
       <ion-text color="primary"><h1 class="ion-margin-start header">Parent Part Information</h1></ion-text>
     </ion-col>
     <ion-row>
-      <ion-col>
-        <ion-item>
-          <ion-label position="floating" color="dark">Ident.-Nr.:</ion-label>
-          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.counterId"> </ion-input>
-        </ion-item>
-      </ion-col>
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Parent Id:</ion-label>
