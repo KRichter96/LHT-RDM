@@ -5,11 +5,11 @@ import {ToastService} from '../toast/toast.service';
   providedIn: 'root'
 })
 export class BackendUrlProviderService {
-//http://192.168.176.77:8081
-  //private url = 'https://plm4.ham.dlh.de:17081/api/';
-  private url = 'http://192.168.43.11:8081/api/';
-  //private defaultUrl = 'https://plm4.ham.dlh.de:17081/api/';
-  private defaultUrl = 'http://192.168.43.11:8081/api/';
+
+  private url = 'https://plm4.ham.dlh.de:17081/api/';
+  //private url = 'http://192.168.43.11:8081/api/';
+  private defaultUrl = 'https://plm4.ham.dlh.de:17081/api/';
+  //private defaultUrl = 'http://192.168.43.11:8081/api/';
 
   constructor(private toastService: ToastService) {}
 
