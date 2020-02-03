@@ -1,7 +1,7 @@
 import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { PartModel } from 'src/app/models/part/partmodel';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { PartService } from 'src/app/services/part/part.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
@@ -35,7 +35,7 @@ export class PartDetailPage implements OnInit {
 
 
   constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute,
-              private partService: PartService, private plt: Platform, private authService: AuthService) {
+              private partService: PartService, private plt: Platform, private authService: AuthService, private router: Router) {
   }
 
   ngOnInit() {
@@ -71,11 +71,9 @@ export class PartDetailPage implements OnInit {
   }
 
   createChild() {
-    let parent = this.partService.getPartById(this.partItem.counterId);
-    this.partItem = new PartModel();
-    this.partItem.parentId = parent.id;
-    
-    this.createNewPartItem();
+    const maxId = Math.max.apply(Math, this.partService.items.map(function (o) {return o.counterId;})) + 1; // tslint:disable-line
+    this.partService.parentCounterId = this.counterId;
+    this.router.navigate(['/part-detail/' + maxId]);
   }
 
   loadData() {
