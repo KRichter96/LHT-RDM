@@ -41,7 +41,7 @@ export class PopoverPage implements OnInit {
     });
   }
 
-  closePopover(parent: number) {
+  closePopover(parent?: number) {
     if (parent) {
       this.partService.parentCounterId = parent;
     } else {

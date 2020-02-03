@@ -52,7 +52,7 @@ export class PartDetailPage implements OnInit {
     if (newItem) { // If CounterId doesn't exist
       this.partItem = new PartModel();
       this.createNewPartItem(); // Completely New Item
-      if (this.partService.parentCounterId) {
+      if (this.partService.parentCounterId > 1) {
         this.partItem = this.prepareForChildItem(this.partService.getPartById(this.partService.parentCounterId), this.partItem);
       }
     } else {
@@ -68,6 +68,14 @@ export class PartDetailPage implements OnInit {
     this.partItem.id = generateUUID();
     this.partItem.statusCreate = 'New';
     this.partItem.statusEdit = '';
+  }
+
+  createChild() {
+    let parent = this.partService.getPartById(this.partItem.counterId);
+    this.partItem = new PartModel();
+    this.partItem.parentId = parent.id;
+    
+    this.createNewPartItem();
   }
 
   loadData() {

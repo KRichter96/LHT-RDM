@@ -5,8 +5,12 @@
       <ion-button [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="back">Cancel</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button (click)="createChild()">Add Child</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
       <ion-button (click)="onSave()" [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="forward">Done</ion-button>
     </ion-buttons>
+    
   </ion-toolbar>
 </ion-header>
 
