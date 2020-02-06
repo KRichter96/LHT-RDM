@@ -319,11 +319,6 @@ export class PartsPage implements OnInit {
     await popover.present();
   }
 
-  deleteData() {
-    this.token.setToken('');
-    // this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
-  }
-
   canWrite(): boolean {
     return this.authService.canWrite();
   }

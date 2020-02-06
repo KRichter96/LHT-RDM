@@ -6,6 +6,7 @@ import {OfflineService} from 'src/app/services/offline/offline.service';
 import {PartService} from '../../services/part/part.service';
 import {Storage} from '@ionic/storage';
 import {ProgressHolder} from './progress.holder';
+import {TokenService} from '../../services/token/token.service';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class ProjectsPage implements OnInit {
 
   constructor(private plt: Platform, private projectService: ProjectService,
               private offlineManager: OfflineService, private storage: Storage,
-              private partService: PartService) { }
+              private partService: PartService, private tokenService: TokenService) { }
 
   ngOnInit() {
     this.plt.ready().then(() => {
@@ -65,5 +66,9 @@ export class ProjectsPage implements OnInit {
         }
       });
     }
+  }
+
+  deleteToken(): void {
+    this.tokenService.setToken('');
   }
 }

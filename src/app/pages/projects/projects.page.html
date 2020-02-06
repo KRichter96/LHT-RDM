@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Projects</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/login" routerDirection="root">
+      <ion-button (click)="deleteToken()" routerLink="/login" routerDirection="root">
         <ion-icon slot="icon-only" name="log-out"></ion-icon>
       </ion-button>
     </ion-buttons>
