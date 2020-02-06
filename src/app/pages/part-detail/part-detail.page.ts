@@ -21,7 +21,7 @@ export class PartDetailPage implements OnInit {
   strProjectId: string;
   partItem: PartModel;
   selectedSegment: string;
-  existingItem: boolean;
+  existingItem = true;
   isNewChildItem: boolean;
   disable: boolean;
   childItem: boolean; // used to filter html grids
