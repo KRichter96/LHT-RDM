@@ -101,7 +101,27 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Component Type:</ion-label>
-          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.componentType"></ion-input>
+          <ion-select (ionChange)="otherComponentType($event, partItem)" disabled={{existingItem}} [(ngModel)]="partItem.componentType" >
+            <ion-select-option *ngFor="">Attachment</ion-select-option>
+            <ion-select-option>Bin</ion-select-option>
+            <ion-select-option>Ceiling Panel</ion-select-option>
+            <ion-select-option>Cockpit door</ion-select-option>
+            <ion-select-option>Crew Rest</ion-select-option>
+            <ion-select-option>Curtain</ion-select-option>
+            <ion-select-option>Door Lining</ion-select-option>
+            <ion-select-option>Emergency Equipment</ion-select-option>
+            <ion-select-option>Lavatory</ion-select-option>
+            <ion-select-option>Other</ion-select-option>
+            <ion-select-option>Partition</ion-select-option>
+            <ion-select-option>Passenger Seat</ion-select-option>
+            <ion-select-option>PSU Filler Paner</ion-select-option>
+            <ion-select-option>Seat</ion-select-option>
+            <ion-select-option>Sidewall Panel</ion-select-option>
+            <ion-select-option>Stairway</ion-select-option>
+            <ion-select-option>Stowage</ion-select-option>
+            <ion-select-option>Support Structure</ion-select-option>
+            <ion-select-option>Galley</ion-select-option>
+          </ion-select>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -170,7 +190,20 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Intended Purpose:</ion-label>
-          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.intendedPurpose"></ion-input>
+          <ion-select (ionChange)="otherPurpose($event,partItem)" disabled={{existingItem}} [(ngModel)]="partItem.intendedPurpose">
+            <ion-select-option>AMM Refurbishment</ion-select-option>
+            <ion-select-option>Check Only</ion-select-option>
+            <ion-select-option>No Modification</ion-select-option>
+            <ion-select-option>Access</ion-select-option>
+            <ion-select-option>Flammability</ion-select-option>
+            <ion-select-option>Part Replacement</ion-select-option>
+            <ion-select-option>Return to Customer</ion-select-option>
+            <ion-select-option>No Removal</ion-select-option>
+            <ion-select-option>Trim</ion-select-option>
+            <ion-select-option>Extend</ion-select-option>
+            <ion-select-option>Other Modification</ion-select-option>
+            <ion-select-option>LHT Refurbishment</ion-select-option>
+          </ion-select>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -263,7 +296,27 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Component Type:</ion-label>
-          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.componentType"></ion-input>
+          <ion-select (onChange)="otherComponentType($event, partItem)"  disabled={{existingItem}}  [(ngModel)]="partItem.componentType">
+            <ion-select-option>Attachment</ion-select-option>
+            <ion-select-option>Bin</ion-select-option>
+            <ion-select-option>Ceiling Panel</ion-select-option>
+            <ion-select-option>Cockpit door</ion-select-option>
+            <ion-select-option>Crew Rest</ion-select-option>
+            <ion-select-option>Curtain</ion-select-option>
+            <ion-select-option>Door Lining</ion-select-option>
+            <ion-select-option>Emergency Equipment</ion-select-option>
+            <ion-select-option>Lavatory</ion-select-option>
+            <ion-select-option>Other</ion-select-option>
+            <ion-select-option>Partition</ion-select-option>
+            <ion-select-option>Passenger Seat</ion-select-option>
+            <ion-select-option>PSU Filler Paner</ion-select-option>
+            <ion-select-option>Seat</ion-select-option>
+            <ion-select-option>Sidewall Panel</ion-select-option>
+            <ion-select-option>Stairway</ion-select-option>
+            <ion-select-option>Stowage</ion-select-option>
+            <ion-select-option>Support Structure</ion-select-option>
+            <ion-select-option>Galley</ion-select-option>
+          </ion-select>
         </ion-item>
       </ion-col>
       <ion-col>

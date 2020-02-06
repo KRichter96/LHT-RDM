@@ -2,7 +2,7 @@ import { AuthService } from './../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { PartModel } from 'src/app/models/part/partmodel';
 import {ActivatedRoute, Router} from '@angular/router';
-import { Platform } from '@ionic/angular';
+import { Platform, AlertController } from '@ionic/angular';
 import { PartService } from 'src/app/services/part/part.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ProjectService } from 'src/app/services/project/project.service';
@@ -32,9 +32,30 @@ export class PartDetailPage implements OnInit {
 
   newId: string; // todo needed?
 
+  selectOptions = ["Attachment",
+    "Bin",
+    "Ceiling Panel",
+    "Cockpit door",
+    "Crew Rest",
+    "Curtain",
+    "Door Lining",
+    "Emergency Equipment",
+    "Lavatory",
+    "Other",
+    "Partition",
+    "Passenger Seat",
+    "PSU Filler Paner",
+    "Seat",
+    "Sidewall Panel",
+    "Stairway",
+    "Stowage",
+    "Support Structure",
+    "Galley",
+    "New"]
 
 
-  constructor(private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute,
+
+  constructor(private alertCtrl: AlertController , private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute,
               private partService: PartService, private plt: Platform, private authService: AuthService, private router: Router) {
   }
 
@@ -102,6 +123,63 @@ export class PartDetailPage implements OnInit {
       this.saved = true;
     } else {
       this.partService.updatePart(this.partItem, "not needed");
+    }
+  }
+
+  async otherPurpose(event, p) {
+    if (!event.target.value)
+      return;
+    if (event.target.value === "New") {
+      const alert = await this.alertCtrl.create({
+        header: 'New intended Purpose',
+        message: 'Please describe your new Purpose',
+        inputs: [{
+          name: 'reason',
+          placeholder: 'Intended Purpose',
+          type: 'text'
+        }],
+        buttons: [{
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => { }
+        },
+        {
+          text: 'Ok',
+          handler: (alertData) => {
+            this.partItem.intendedPurpose = alertData.reason;
+          }
+        }]
+      });
+      await alert.present();
+    }
+  }
+
+  async otherComponentType(event, p) {
+    if (event.target.value == null)
+      return;
+    if (event.target.value === "New") {
+      const alert = await this.alertCtrl.create({
+        header: 'New Component Type',
+        message: 'Please describe your new ComponentType',
+        inputs: [{
+          name: 'reason',
+          placeholder: 'Component Type',
+          type: 'text'
+        }],
+        buttons: [{
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => { }
+        },
+        {
+          text: 'Ok',
+          handler: (alertData) => {
+            this.partItem.componentType = alertData.reason;
+            console.log(this.partItem.componentType);
+          }
+        }]
+      });
+      await alert.present();
     }
   }
 
