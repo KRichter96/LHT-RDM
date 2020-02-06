@@ -1,4 +1,4 @@
-import { AuthService } from './../../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { PartModel } from 'src/app/models/part/partmodel';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -32,31 +32,32 @@ export class PartDetailPage implements OnInit {
 
   newId: string; // todo needed?
 
-  selectOptions = ["Attachment",
-    "Bin",
-    "Ceiling Panel",
-    "Cockpit door",
-    "Crew Rest",
-    "Curtain",
-    "Door Lining",
-    "Emergency Equipment",
-    "Lavatory",
-    "Other",
-    "Partition",
-    "Passenger Seat",
-    "PSU Filler Paner",
-    "Seat",
-    "Sidewall Panel",
-    "Stairway",
-    "Stowage",
-    "Support Structure",
-    "Galley",
-    "New"]
+  selectOptions = ['Attachment',
+    'Bin',
+    'Ceiling Panel',
+    'Cockpit door',
+    'Crew Rest',
+    'Curtain',
+    'Door Lining',
+    'Emergency Equipment',
+    'Lavatory',
+    'Other',
+    'Partition',
+    'Passenger Seat',
+    'PSU Filler Paner',
+    'Seat',
+    'Sidewall Panel',
+    'Stairway',
+    'Stowage',
+    'Support Structure',
+    'Galley',
+    'New'];
 
 
 
-  constructor(private alertCtrl: AlertController , private projectService: ProjectService, private toastCtrl: ToastService, private route: ActivatedRoute,
-              private partService: PartService, private plt: Platform, private authService: AuthService, private router: Router) {
+  constructor(private alertCtrl: AlertController , private projectService: ProjectService, private toastCtrl: ToastService,
+              private route: ActivatedRoute, private partService: PartService, private plt: Platform,
+              private authService: AuthService, private router: Router) {
   }
 
   ngOnInit() {
@@ -65,7 +66,7 @@ export class PartDetailPage implements OnInit {
     this.counterId = +this.route.snapshot.paramMap.get('id');
 
     let newItem = true;
-    if (this.partService.getPartById(this.counterId)){
+    if (this.partService.getPartById(this.counterId)) {
       newItem = false;
     }
 
@@ -122,14 +123,15 @@ export class PartDetailPage implements OnInit {
       this.calculateWeight();
       this.saved = true;
     } else {
-      this.partService.updatePart(this.partItem, "not needed");
+      this.partService.updatePart(this.partItem, 'not needed');
     }
   }
 
   async otherPurpose(event, p) {
-    if (!event.target.value)
+    if (!event.target.value) {
       return;
-    if (event.target.value === "New") {
+    }
+    if (event.target.value === 'New') {
       const alert = await this.alertCtrl.create({
         header: 'New intended Purpose',
         message: 'Please describe your new Purpose',
@@ -155,9 +157,10 @@ export class PartDetailPage implements OnInit {
   }
 
   async otherComponentType(event, p) {
-    if (event.target.value == null)
+    if (event.target.value == null) {
       return;
-    if (event.target.value === "New") {
+    }
+    if (event.target.value === 'New') {
       const alert = await this.alertCtrl.create({
         header: 'New Component Type',
         message: 'Please describe your new ComponentType',
@@ -197,51 +200,49 @@ export class PartDetailPage implements OnInit {
     child.installZoneRoom = partItem.installZoneRoom;
     child.parentId = partItem.id;
    // partItem.preModWeight = ""; // Writeable
-    child.nomenclature = "";
-    child.ipcReference = "";
-    child.ipcItemNumber = "";
-    child.preModPNAC = ""; // Writeable
-    child.serialNo = ""; // Writeable
-    child.rackNo = ""; // Writeable
-    child.rackLocation = ""; // Writeable
-    child.existingComponents = ""; // Writeable
-    child.remarksRemoval = "";
-    child.aupa = "";
-    child.postModPosition = "";
-    child.modDWG = "";
-    child.panelPNAVI = "";
-    child.integrCompPN = "";
-    child.integrCompTypes = "";
-    child.equipNo = "";
-    child.integratedComponents = "";
-    child.postModWeight = "";
-    child.remarksMod = "";
-    child.cmmReference = "";
-    child.xxx = "";
-    child.moC0 = "";
-    child.moC1 = "";
-    child.moC2 = "";
-    child.testSample = "";
-    child.moC4Flameability = "";
-    child.moC7 = "";
-    child.deleteReason = "";
-    child.statusCreate = "New";
-    child.statusEdit = "";
+    child.nomenclature = '';
+    child.ipcReference = '';
+    child.ipcItemNumber = '';
+    child.preModPNAC = ''; // Writeable
+    child.serialNo = ''; // Writeable
+    child.rackNo = ''; // Writeable
+    child.rackLocation = ''; // Writeable
+    child.existingComponents = ''; // Writeable
+    child.remarksRemoval = '';
+    child.aupa = '';
+    child.postModPosition = '';
+    child.modDWG = '';
+    child.panelPNAVI = '';
+    child.integrCompPN = '';
+    child.integrCompTypes = '';
+    child.equipNo = '';
+    child.integratedComponents = '';
+    child.postModWeight = '';
+    child.remarksMod = '';
+    child.cmmReference = '';
+    child.xxx = '';
+    child.moC0 = '';
+    child.moC1 = '';
+    child.moC2 = '';
+    child.testSample = '';
+    child.moC4Flameability = '';
+    child.moC7 = '';
+    child.deleteReason = '';
+    child.statusCreate = 'New';
+    child.statusEdit = '';
     return child;
   }
 
   calculateWeight() {
-    if(this.childItem == true) {
-      var parentItem: PartModel = this.partService.getPartById(this.partService.parentCounterId);
-      parentItem.preModWeight = parentItem.preModWeight.replace(",", ".");
-      parentItem.preModWeight = parentItem.preModWeight.replace(" kg", "");
-      console.log("old ", +parentItem.preModWeight);
-      var calculatedWorth = Math.round((+parentItem.preModWeight - +this.childWeight)).toString(); //parentItem.preModWeight
-      parentItem.preModWeight = calculatedWorth.replace(".",","); // set parent weight back to ,
-      parentItem.preModWeight = parentItem.preModWeight + " kg";
-      console.log("new " + parentItem.preModWeight);
+    if (this.childItem) {
+      const parentItem: PartModel = this.partService.getPartById(this.partService.parentCounterId);
+      parentItem.preModWeight = parentItem.preModWeight.replace(',', '.');
+      parentItem.preModWeight = parentItem.preModWeight.replace(' kg', '');
+
+      const calculatedWorth = Math.round((+parentItem.preModWeight - +this.childWeight)).toString();
+      parentItem.preModWeight = calculatedWorth.replace('.', ',');
+
       this.partService.updatePart(parentItem, parentItem.id);
-      console.log(parentItem);
     }
   }
 
