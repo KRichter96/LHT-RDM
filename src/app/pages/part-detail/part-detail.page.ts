@@ -198,6 +198,7 @@ export class PartDetailPage implements OnInit {
     child.reasonRemoval = partItem.reasonRemoval;
     child.intendedPurpose = partItem.intendedPurpose;
     child.installZoneRoom = partItem.installZoneRoom;
+    child.preModPositionIPC = partItem.preModPositionIPC;
     child.parentId = partItem.id;
    // partItem.preModWeight = ""; // Writeable
     child.nomenclature = '';
