@@ -5,7 +5,7 @@
       <ion-button [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="back">Cancel</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="createChild()" *ngIf="!isNewChildItem">Add Child</ion-button>
+      <ion-button (click)="createChild()" *ngIf="!isNewChildItem && !childItem">Add Child</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="onSave()" [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="forward">Done</ion-button>
