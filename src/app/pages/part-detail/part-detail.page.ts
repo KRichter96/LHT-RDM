@@ -101,10 +101,9 @@ export class PartDetailPage implements OnInit {
   loadData() {
     this.partItem = this.partService.getPartById(this.counterId);
     this.parentWeight = this.partItem.preModWeight.replace(/,/i, '.');
-    if (this.partItem.parentId === '-1') {
-      this.childItem = false;
-    } else {
-      this.childItem = true;
+    this.childItem = this.partItem.parentId !== '-1';
+    if (this.partItem.parentId !== '-1') {
+      this.partItem['parentCounterId'] = this.partService.items.filter(part => part.id === this.partItem.parentId)[0].counterId; // tslint:disable-line
     }
   }
 
@@ -200,6 +199,7 @@ export class PartDetailPage implements OnInit {
     child.installZoneRoom = partItem.installZoneRoom;
     child.preModPositionIPC = partItem.preModPositionIPC;
     child.parentId = partItem.id;
+    child['parentCounterId'] = partItem.counterId; // tslint:disable-line
    // partItem.preModWeight = ""; // Writeable
     child.nomenclature = '';
     child.ipcReference = '';
