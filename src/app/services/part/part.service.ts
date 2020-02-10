@@ -54,7 +54,7 @@ export class PartService {
     this.setLocalData('parts', partItem);
   }
 
-  public createPart(data) {
+  public createPart(data: PartModel) {
     const url = `${this.updatePartUrl}`;
     this.items = [...this.items, data];
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
@@ -94,7 +94,7 @@ export class PartService {
   public updatePart(data, partId): Observable<any> {
     const url = `${this.updatePartUrl}`;
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.items[this.getPartById(data.counterId).counterId - 1] = data;
+      this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
       this.setLocalData('parts' + this.projectid, this.items); // something went wrong here
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
     } else {

@@ -73,11 +73,9 @@ export class PartsPage implements OnInit {
   }
 
   doRefresh(event) {
-    // console.log('Begin async operation');
     this.loadData();
 
     setTimeout(() => {
-      // console.log('Async operation has ended');
       event.target.complete();
     }, 2000);
   }
@@ -88,6 +86,12 @@ export class PartsPage implements OnInit {
 
   loadData() {
     this.partService.getParts(this.id).subscribe(res => {
+      for (let part of res) {
+        if (!part.counterId) {
+          part.counterId = this.partService.getHighestId() + 1;
+        }
+      }
+
       this.parts = res;
       this.updateProgressBar();
       this.offline = this.checkOffline();

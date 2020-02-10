@@ -29,6 +29,7 @@ export class PartDetailPage implements OnInit {
   parentWeight: string;
   childWeight: string;
   saved = false;
+  newItem = true;
 
   newId: string; // todo needed?
 
@@ -64,13 +65,12 @@ export class PartDetailPage implements OnInit {
     this.strProjectId = this.projectService.getProjectId().toString(); // needed for saves
     this.counterId = +this.route.snapshot.paramMap.get('id');
 
-    let newItem = true;
     if (this.partService.getPartById(this.counterId)){
-      newItem = false;
+      this.newItem = false;
     }
 
     this.selectedSegment = 'comment';
-    if (newItem) { // If CounterId doesn't exist
+    if (this.newItem) { // If CounterId doesn't exist
       this.partItem = new PartModel();
       this.createNewPartItem(); // Completely New Item
       if (this.partService.parentCounterId > 1) {
@@ -113,13 +113,13 @@ export class PartDetailPage implements OnInit {
       return;
     }
 
-    if ((this.isNewChildItem) && !this.saved) {
-      if (this.partItem.preModWeight) {
+    if ((this.newItem) && !this.saved) {
+      if (this.childItem) {
         this.childWeight = this.partItem.preModWeight.replace(/,/i, '.');
         this.partItem.preModWeight.replace(/./i, ',');
+        this.calculateWeight();
       } // set child weight back to ,
       this.partService.createPart(this.partItem);
-      this.calculateWeight();
       this.saved = true;
     } else {
       this.partService.updatePart(this.partItem, "not needed");
