@@ -281,14 +281,14 @@ export class PartsPage implements OnInit {
       {
         text: 'Ok',
         handler: data => {
-          if (data === 0) {
+          if (data === '0') {
             if (this.chips.length === 0) {
               this.chips.push(new Chip('Status', 'ToDo'));
             } else {
               this.chips = [...this.chips, new Chip('Status', 'ToDo')];
             }
             this.parts = this.partService.filterItems(this.chips);
-          } else if (data === 1) {
+          } else if (data === '1') {
             if (this.chips.length === 0) {
               this.chips.push(new Chip('Status', 'Done'));
             } else {
@@ -321,11 +321,6 @@ export class PartsPage implements OnInit {
       event: ev
     });
     await popover.present();
-  }
-
-  deleteData() {
-    this.token.setToken('');
-    // this.offlineManager.checkForEvents().subscribe(() => { this.storage.clear() });
   }
 
   canWrite(): boolean {

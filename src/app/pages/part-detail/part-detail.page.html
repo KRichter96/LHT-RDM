@@ -5,7 +5,7 @@
       <ion-button [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="back">Cancel</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="createChild()" *ngIf="!isNewChildItem">Add Child</ion-button>
+      <ion-button (click)="createChild()" *ngIf="!isNewChildItem && !childItem">Add Child</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="onSave()" [routerLink]="'/parts/' + projectId" routerLinkActive="router-link-active" routerDirection="forward">Done</ion-button>
@@ -81,7 +81,7 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Ident.-Nr.:</ion-label>
-          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.counterId"> </ion-input>
+          <ion-input disabled=true [(ngModel)]="partItem.counterId"> </ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
@@ -102,7 +102,7 @@
         <ion-item>
           <ion-label position="floating" color="dark">Component Type:</ion-label>
           <ion-select (ionChange)="otherComponentType($event, partItem)" disabled={{existingItem}} [(ngModel)]="partItem.componentType" >
-            <ion-select-option *ngFor="">Attachment</ion-select-option>
+            <ion-select-option>Attachment</ion-select-option>
             <ion-select-option>Bin</ion-select-option>
             <ion-select-option>Ceiling Panel</ion-select-option>
             <ion-select-option>Cockpit door</ion-select-option>
@@ -282,7 +282,7 @@
       <ion-col>
         <ion-item>
           <ion-label position="floating" color="dark">Parent Id:</ion-label>
-          <ion-input disabled={{existingItem}} [(ngModel)]="partItem.parentId"> </ion-input>
+          <ion-input disabled=true [(ngModel)]="partItem['parentCounterId']"> </ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
