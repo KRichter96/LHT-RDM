@@ -1,22 +1,18 @@
-import { AuthService } from './../../services/auth/auth.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
-import { PartModel } from 'src/app/models/part/partmodel';
-import { Platform, AlertController, PopoverController } from '@ionic/angular';
-import { BarcodeService } from 'src/app/services/barcode/barcode.service';
-import { PartService } from 'src/app/services/part/part.service';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { Chip } from './Chip';
-import { ToastService } from 'src/app/services/toast/toast.service';
-import { FilterService } from 'src/app/services/filter/filter.service';
-import { ProjectService } from 'src/app/services/project/project.service';
-import { PopoverPage } from '../../component/popover/popover.page';
-import { NetworkService, ConnectionStatus } from 'src/app/services/network/network.service';
-import { OfflineService } from 'src/app/services/offline/offline.service';
-import { ImageService } from 'src/app/services/image/image.service';
-import { Storage } from '@ionic/storage';
-import { TokenService } from 'src/app/services/token/token.service';
-import { filter, map } from 'rxjs/operators';
+import {AuthService} from '../../services/auth/auth.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {PartModel} from 'src/app/models/part/partmodel';
+import {AlertController, Platform, PopoverController} from '@ionic/angular';
+import {PartService} from 'src/app/services/part/part.service';
+import {BarcodeScanner} from '@ionic-native/barcode-scanner/ngx';
+import {Chip} from './Chip';
+import {ToastService} from 'src/app/services/toast/toast.service';
+import {FilterService} from 'src/app/services/filter/filter.service';
+import {ProjectService} from 'src/app/services/project/project.service';
+import {PopoverPage} from '../../component/popover/popover.page';
+import {ConnectionStatus, NetworkService} from 'src/app/services/network/network.service';
+import {OfflineService} from 'src/app/services/offline/offline.service';
+import {TokenService} from 'src/app/services/token/token.service';
 
 @Component({
   selector: 'app-parts',
@@ -68,7 +64,6 @@ export class PartsPage implements OnInit {
     }
     this.plt.ready().then(() => {
       this.loadData();
-      this.setSearchedItems();
     });
   }
 
@@ -86,7 +81,7 @@ export class PartsPage implements OnInit {
 
   loadData() {
     this.partService.getParts(this.id).subscribe(res => {
-      for (let part of res) {
+      for (const part of res) {
         if (!part.counterId) {
           part.counterId = this.partService.getHighestCounterId() + 1;
         }
@@ -104,39 +99,26 @@ export class PartsPage implements OnInit {
   checkOffline() {
     const status = this.networkService.getCurrentNetworkStatus();
     return status !== 0;
-     // offline == true
-  }
-
-  onSync() {
-    this.partService.updatePart('Parts', this.id).subscribe();
-  }
-
-  setSearchedItems() {
-    // this.parts = this.partService.searchItems(this.searchTerm); //Suche nach einem Wertebereich in Category or Component
   }
 
   scanPartIdentTag() {
-    // if (this.plt.is('android') || this.plt.is('ios') || this.plt.is('cordova')) {  // FIX HERE
-      this.barcodeScanner.scan().then(barcodeData => {
-        let partFound = false;
-        if (barcodeData.cancelled) {
-          return;
-        }
+    this.barcodeScanner.scan().then(barcodeData => {
+      let partFound = false;
+      if (barcodeData.cancelled) {
+        return;
+      }
 
-        for (const part of this.parts) {
-          if (part.counterId + '' === barcodeData.text) {
-            partFound = true;
-            this.router.navigate(['/part-detail/' + part.counterId]);
-            break;
-          }
+      for (const part of this.parts) {
+        if (part.counterId + '' === barcodeData.text) {
+          partFound = true;
+          this.router.navigate(['/part-detail/' + part.counterId]).then();
+          break;
         }
-        if (!partFound) {
-          this.toastCtrl.displayToast('No Part found');
-        }
-      });
-    /*} else {
-      this.toastCtrl.displayToast('Works only on a device!');
-    }*/
+      }
+      if (!partFound) {
+        this.toastCtrl.displayToast('No Part found');
+      }
+    });
   }
 
   deleteChip(i, event) {

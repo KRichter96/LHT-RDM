@@ -122,7 +122,7 @@ export class PartDetailPage implements OnInit {
       this.partService.createPart(this.partItem);
       this.saved = true;
     } else {
-      this.partService.updatePart(this.partItem, 'not needed');
+      this.partService.updatePart(this.partItem);
     }
   }
 
@@ -242,7 +242,7 @@ export class PartDetailPage implements OnInit {
       const calculatedWorth = Math.round((+parentItem.preModWeight - +this.childWeight)).toString();
       parentItem.preModWeight = calculatedWorth.replace('.', ',');
 
-      this.partService.updatePart(parentItem, parentItem.id);
+      this.partService.updatePart(parentItem);
     }
   }
 

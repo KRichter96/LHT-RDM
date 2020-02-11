@@ -77,52 +77,37 @@ export class PartService {
     return this.items.find(x => x.counterId === counterId);
   }
 
-  public updatePart(data, partId): Observable<any> {
-    const url = `${this.partUrl}`;
+  public updatePart(data: PartModel) {
+    this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
+
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
-      this.setLocalData('parts' + this.projectid, this.items); // something went wrong here
-      return from(this.offlineManager.storeRequest(url, 'PUT', data));
+      this.setLocalData('parts' + this.projectid, this.items);
+      this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();
     } else {
-      this.http.put(url, data).subscribe(
+      this.http.put(this.partUrl, data).subscribe(
         () => {},
-        () => {});
-      return this.http.put(url, data).pipe(catchError(err => {
-          this.offlineManager.storeRequest(url, 'PUT', data);
-          throw new Error(err);
-        })
+        () => {
+          this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();
+        }
       );
     }
   }
 
 
-  public deletePart(data): Observable<any>  {
+  public deletePart(data: PartModel)  {
+    this.items = this.items.filter(x => x.id !== data.id);
+    this.setLocalData('parts' + this.projectid, this.items);
 
-    const url = this.partUrl;
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      const filtered = this.items.filter(x => x.id !== data.id);
-
-      this.items = filtered;
-      this.setLocalData('parts' + this.projectid, this.items);
-      return from(this.offlineManager.storeRequest(url, 'PUT', data));
+      this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();
     } else {
-      this.http.put(url, data).subscribe(
-          response => {
-            const filtered = this.items.filter(x => x.id !== data.id);
-            this.items = filtered;
-            this.setLocalData('parts' + this.projectid, this.items);
-          },
-        () => {});
-      return this.http.put(url, data).pipe(catchError(err => {
-          const filtered = this.items.filter(x => x.id !== data.id);
-          this.items = filtered;
-          this.setLocalData('parts' + this.projectid, this.items);
-          this.offlineManager.storeRequest(url, 'DELETE', data);
-          throw new Error(err);
-          })
+      this.http.put(this.partUrl, data).subscribe(
+        () => {},
+        () => {
+          this.offlineManager.storeRequest(this.partUrl, 'DELETE', data).then();
+        }
       );
     }
-
   }
 
   public filterItems(chips: Chip[]): PartModel[] {
