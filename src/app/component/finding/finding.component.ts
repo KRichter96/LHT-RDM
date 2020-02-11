@@ -44,14 +44,6 @@ export class FindingComponent implements OnInit {
   pressImage(event, pos) {
   }
 
-  // <!--(change)="descriptionChanged($event.target.value, pos)" placeholder="Enter your description"-->
-  // does not work because the image id is not saved
-  /* descriptionChanged(term, pos) {
-    this.storage.set(this.imagePath + '/term' + pos, term);
-    console.log('index', pos, term, 'imgPath', this.imagePath);
-    this.imageService.updateFinding(this.images[pos], this.partDetail.getPartId(), term);
-  }*/
-
   loadStoredImages() {
     this.storage.get(this.imagePath).then(images => {
       if (images) {

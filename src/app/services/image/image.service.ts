@@ -34,13 +34,9 @@ export class ImageService {
         if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
           return from(this.offlineManager.storeRequest(url, 'POST', formData));
         } else {
-          this.http.post(url, formData).subscribe(
-            response => {
-              // nothing
-            },
-            error => {
+          this.http.post(url, formData).subscribe(() => {},
+            () => {
               this.offlineManager.storeRequest(url, 'POST', formData);
-              console.log(error);
             });
         }
       } catch (e) {
@@ -69,7 +65,6 @@ export class ImageService {
             },
             error => {
               this.offlineManager.storeRequest(url, 'POST', formData);
-              console.log(error);
             });
         }
       } catch (e) {

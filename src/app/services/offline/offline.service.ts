@@ -26,7 +26,6 @@ export class OfflineService {
     return from(this.storage.get(STORAGE_REQ_KEY)).pipe(
       switchMap(storedOperations => {
         let storedObj = JSON.parse(storedOperations);
-        //console.log("online");
         if (storedObj && storedObj.length > 0) {
           return this.sendRequests(storedObj).pipe(
               finalize(() => {
@@ -40,7 +39,6 @@ export class OfflineService {
               })
             );
         } else {
-          //console.log("no local events");
           return of(false);
         }
       })
@@ -72,8 +70,6 @@ export class OfflineService {
         storedObj = [action];
       }
 
-      // console.log("local request stored: ", action);
-      // Save old & new local transactions back to Storage
       return this.storage.set(STORAGE_REQ_KEY, JSON.stringify(storedObj));
     });
   }
@@ -82,11 +78,9 @@ export class OfflineService {
     let obs = [];
 
     for (let op of operations) {
-      // console.log("Make one request: ", op);
       let oneObs = this.http.request(op.type, op.url, { body:op.data });
       obs.push(oneObs);
     }
-    //Send out all local events and return once they are finished
     return forkJoin(obs);
   }
 }

@@ -64,7 +64,7 @@ export class PartDetailPage implements OnInit {
   ngOnInit() {
     this.projectId = this.projectService.getProjectId();
     this.strProjectId = this.projectService.getProjectId().toString(); // needed for saves
-    this.counterId = +this.route.snapshot.paramMap.get('id');
+    this.counterId = parseInt(this.route.snapshot.paramMap.get('id'), 10);
 
     if (this.partService.getPartById(this.counterId)) {
       this.newItem = false;
@@ -177,7 +177,6 @@ export class PartDetailPage implements OnInit {
           text: 'Ok',
           handler: (alertData) => {
             this.partItem.componentType = alertData.reason;
-            console.log(this.partItem.componentType);
           }
         }]
       });

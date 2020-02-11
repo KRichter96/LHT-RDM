@@ -67,14 +67,16 @@ export class PartService {
         highestId = part.counterId;
       }
     }
-    return +highestId + 1;
+    return highestId + 1;
   }
 
   getPartById(counterId: number) {
+    if (typeof counterId !== 'number') {
+      counterId = parseInt(counterId, 10);
+    }
     return this.items.find(x => x.counterId === counterId);
   }
 
-  // TODO
   public updatePart(data, partId): Observable<any> {
     const url = `${this.partUrl}`;
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
@@ -83,13 +85,8 @@ export class PartService {
       return from(this.offlineManager.storeRequest(url, 'PUT', data));
     } else {
       this.http.put(url, data).subscribe(
-        response => {
-          // console.log(response);
-        },
-        error => {
-          alert(error);
-          console.log(error);
-        });
+        () => {},
+        () => {});
       return this.http.put(url, data).pipe(catchError(err => {
           this.offlineManager.storeRequest(url, 'PUT', data);
           throw new Error(err);
@@ -114,12 +111,8 @@ export class PartService {
             const filtered = this.items.filter(x => x.id !== data.id);
             this.items = filtered;
             this.setLocalData('parts' + this.projectid, this.items);
-            // console.log(response);
           },
-          error => {
-            alert(error);
-            console.log(error);
-          });
+        () => {});
       return this.http.put(url, data).pipe(catchError(err => {
           const filtered = this.items.filter(x => x.id !== data.id);
           this.items = filtered;
