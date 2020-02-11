@@ -88,7 +88,7 @@ export class PartsPage implements OnInit {
     this.partService.getParts(this.id).subscribe(res => {
       for (let part of res) {
         if (!part.counterId) {
-          part.counterId = this.partService.getHighestId() + 1;
+          part.counterId = this.partService.getHighestCounterId() + 1;
         }
       }
 

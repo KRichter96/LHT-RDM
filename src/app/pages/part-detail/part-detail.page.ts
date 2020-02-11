@@ -66,7 +66,7 @@ export class PartDetailPage implements OnInit {
     this.strProjectId = this.projectService.getProjectId().toString(); // needed for saves
     this.counterId = +this.route.snapshot.paramMap.get('id');
 
-    if (this.partService.getPartById(this.counterId)){
+    if (this.partService.getPartById(this.counterId)) {
       this.newItem = false;
     }
 
@@ -88,6 +88,7 @@ export class PartDetailPage implements OnInit {
     this.existingItem = false;
     this.partItem.projectId = this.strProjectId;
     this.partItem.id = generateUUID();
+    this.partItem.counterId = this.partService.getHighestCounterId();
     this.partItem.statusCreate = 'New';
     this.partItem.statusEdit = '';
   }
@@ -116,9 +117,8 @@ export class PartDetailPage implements OnInit {
     if ((this.newItem) && !this.saved) {
       if (this.childItem) {
         this.childWeight = this.partItem.preModWeight.toString().replace(/,/i, '.');
-        // this.partItem.preModWeight.replace(/./i, ',');
         this.calculateWeight();
-      } // set child weight back to ,
+      }
       this.partService.createPart(this.partItem);
       this.saved = true;
     } else {

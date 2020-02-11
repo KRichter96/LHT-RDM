@@ -17,15 +17,15 @@ export class PartService {
   public items: PartModel[] = [];
   public projectid: string;
 
+  getPartsUrl: string;
   partUrl: string;
-  updatePartUrl: string;
   parentCounterId: number;
 
   constructor(private http: HttpClient, private networkService: NetworkService,
               private storage: Storage, private offlineManager: OfflineService,
               private backendUrlProviderService: BackendUrlProviderService) {
-    this.partUrl = this.backendUrlProviderService.getUrl() + 'parts/byProject/';
-    this.updatePartUrl = this.backendUrlProviderService.getUrl() + 'parts';
+    this.getPartsUrl = this.backendUrlProviderService.getUrl() + 'parts/byProject/';
+    this.partUrl = this.backendUrlProviderService.getUrl() + 'parts';
   }
 
   public getParts(projectId): Observable<any> {
@@ -33,7 +33,7 @@ export class PartService {
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
       return from(this.getLocalData('parts' + this.projectid));
     } else {
-      return this.http.get(`${this.partUrl + projectId}`).pipe(
+      return this.http.get(`${this.getPartsUrl + projectId}`).pipe(
         map(res => res['parts']),
         map(res => res.filter(part => part.statusEdit !== 'Deleted')),
         tap(res => {
@@ -55,44 +55,38 @@ export class PartService {
   }
 
   public createPart(data: PartModel) {
-    const url = `${this.updatePartUrl}`;
-    this.items = [...this.items, data];
+    this.items.push(data);
+    this.setLocalData('parts' + this.projectid, this.items);
+
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.setLocalData('parts' + this.projectid, this.items); // something went wrong here
-      return from(this.offlineManager.storeRequest(url, 'POST', data));
+      this.offlineManager.storeRequest(this.partUrl, 'POST', data).then();
     } else {
-      this.http.post(url, data).subscribe(response => {
-          // console.log(response);
-        },
-        error => {
-          alert(error);
-          console.log(error);
-      });
-      return this.http.post(url, data).pipe(catchError(err => {
-          this.offlineManager.storeRequest(url, 'POST', data);
-          throw new Error(err);
-        })
+      this.http.post(this.partUrl, data).subscribe(
+        () => {},
+        () => {
+          this.offlineManager.storeRequest(this.partUrl, 'POST', data).then();
+        }
       );
     }
   }
 
-  getHighestId(): number {
-    let highestId = 0;
-    for (let part of this.items) {
+  getHighestCounterId(): number {
+    let highestId = 1000;
+    for (const part of this.items) {
       if (highestId < part.counterId) {
         highestId = part.counterId;
       }
     }
-    return highestId + 1;
+    return +highestId + 1;
   }
 
-  getPartById(id: number) {
-    return this.items.find(x => x.counterId == id);
+  getPartById(counterId: number) {
+    return this.items.find(x => x.counterId === counterId);
   }
 
   // TODO
   public updatePart(data, partId): Observable<any> {
-    const url = `${this.updatePartUrl}`;
+    const url = `${this.partUrl}`;
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
       this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
       this.setLocalData('parts' + this.projectid, this.items); // something went wrong here
@@ -117,7 +111,7 @@ export class PartService {
 
   public deletePart(data): Observable<any>  {
 
-    const url = this.updatePartUrl;
+    const url = this.partUrl;
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
       const filtered = this.items.filter(x => x.id !== data.id);
 
