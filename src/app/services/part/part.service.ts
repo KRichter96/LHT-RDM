@@ -44,16 +44,6 @@ export class PartService {
     }
   }
 
-  public getOfflineParts() {
-    if (1 === 1) {
-      return this.getLocalData('parts' + this.projectid);
-    }
-  }
-
-  public setParts(partId, partItem) {
-    this.setLocalData('parts', partItem);
-  }
-
   public createPart(data: PartModel) {
     this.items.push(data);
     this.setLocalData('parts' + this.projectid, this.items);
@@ -234,20 +224,11 @@ export class PartService {
     });
   }
 
-  // Save result of API requests
   private setLocalData(key, data) {
     this.storage.set(`${key}`, data);
   }
 
-  // Get cached API result
   private getLocalData(key) {
     return this.storage.get(`${key}`);
-  }
-
-  // delete
-  private removeLocalData() {
-    this.storage.remove('parts').then(() => {
-      // console.log('part is removed');
-    });
   }
 }

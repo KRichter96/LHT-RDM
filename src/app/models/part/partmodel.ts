@@ -1,6 +1,6 @@
 export class PartModel {
   counterId: number;
-  parentId: string;
+  parentId = '-1';
   nomenclature = '';
   category = '';
   componentType = '';

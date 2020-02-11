@@ -101,7 +101,7 @@ export class PartDetailPage implements OnInit {
 
   loadData() {
     this.partItem = this.partService.getPartById(this.counterId);
-    this.parentWeight = this.partItem.preModWeight.replace(/,/i, '.');
+    this.parentWeight = this.partItem.preModWeight.toString().replace(/,/i, '.');
     this.childItem = this.partItem.parentId !== '-1';
     if (this.partItem.parentId !== '-1') {
       this.partItem['parentCounterId'] = this.partService.items.filter(part => part.id === this.partItem.parentId)[0].counterId; // tslint:disable-line
@@ -237,7 +237,6 @@ export class PartDetailPage implements OnInit {
   calculateWeight() {
     if (this.childItem) {
       const parentItem: PartModel = this.partService.getPartById(this.partService.parentCounterId);
-      console.log(parentItem);
       parentItem.preModWeight = parentItem.preModWeight.toString().replace(',', '.');
       parentItem.preModWeight = parentItem.preModWeight.replace(' kg', '');
 
