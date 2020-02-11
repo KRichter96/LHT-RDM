@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavParams, PopoverController} from '@ionic/angular';
 import {PartService} from '../../services/part/part.service';
 import {PartModel} from '../../models/part/partmodel';
+import {ProjectService} from '../../services/project/project.service';
 
 @Component({
   selector: 'app-popover',
@@ -10,33 +11,31 @@ import {PartModel} from '../../models/part/partmodel';
 })
 export class PopoverPage implements OnInit {
   childItem: false;
-  id: string;
-  parentId: -1;
-  newId: number;
+  parentCounterId: -1;
+  newCounterId = 0;
   parts: PartModel[] = [];
 
   constructor(private navParams: NavParams, private popoverController: PopoverController,
-              private partService: PartService) { }
+              private partService: PartService, private projectService: ProjectService) { }
 
   ngOnInit() {
-    this.id = this.navParams.get('custom_id');
     this.childItem = false;
-    this.parentId = -1;
+    this.parentCounterId = -1;
     this.loadData();
   }
 
   loadData() {
-    this.partService.getParts(this.id).subscribe(res => {
+    this.partService.getParts(this.projectService.getProjectId()).subscribe(res => {
       this.parts = res.filter(part => part.parentId === '-1');
 
-      let highesIDtmp = 0;
+      let highesIDtmp = 1000;
       for (const part of res) {
         if (highesIDtmp < part.counterId) {
           highesIDtmp = part.counterId;
         }
       }
 
-      this.newId = highesIDtmp + 1;
+      this.newCounterId = highesIDtmp + 1;
     });
   }
 

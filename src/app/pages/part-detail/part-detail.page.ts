@@ -17,8 +17,6 @@ import { generateUUID } from 'ionic/lib/utils/uuid';
 export class PartDetailPage implements OnInit {
   parts: PartModel[] = [];
   counterId: number;
-  projectId: string;
-  strProjectId: string;
   partItem: PartModel;
   selectedSegment: string;
   existingItem = true;
@@ -62,9 +60,7 @@ export class PartDetailPage implements OnInit {
   }
 
   ngOnInit() {
-    this.projectId = this.projectService.getProjectId();
-    this.strProjectId = this.projectService.getProjectId().toString(); // needed for saves
-    this.counterId = parseInt(this.route.snapshot.paramMap.get('id'), 10);
+    this.counterId = parseInt(this.route.snapshot.paramMap.get('newid'), 10);
 
     if (this.partService.getPartById(this.counterId)) {
       this.newItem = false;
@@ -86,7 +82,7 @@ export class PartDetailPage implements OnInit {
 
   createNewPartItem() {
     this.existingItem = false;
-    this.partItem.projectId = this.strProjectId;
+    this.partItem.projectId = this.projectService.getProjectId();
     this.partItem.id = generateUUID();
     this.partItem.counterId = this.partService.getHighestCounterId();
     this.partItem.statusCreate = 'New';
@@ -119,9 +115,11 @@ export class PartDetailPage implements OnInit {
         this.childWeight = this.partItem.preModWeight.toString().replace(/,/i, '.');
         this.calculateWeight();
       }
+      console.log('save');
       this.partService.createPart(this.partItem);
       this.saved = true;
     } else {
+      console.log('update');
       this.partService.updatePart(this.partItem);
     }
   }
@@ -256,5 +254,9 @@ export class PartDetailPage implements OnInit {
 
   canWrite(): boolean {
     return this.authService.canWrite();
+  }
+
+  getProjectId(): string {
+    return this.projectService.getProjectId();
   }
 }

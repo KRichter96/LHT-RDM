@@ -12,7 +12,7 @@
   <br>
   <ion-item *ngIf="childItem == true" >
       <ion-label>Select Parent</ion-label>
-      <ion-select id=power [(ngModel)]="parentId" placeholder="Select">
+      <ion-select id=power [(ngModel)]="parentCounterId" placeholder="Select">
           <ion-select-option value={{item.counterId}} *ngFor="let item of parts let i = index">{{item.counterId}} - {{ item.nomenclature}}</ion-select-option>
       </ion-select>
   </ion-item>
@@ -22,7 +22,7 @@
         <ion-icon name="md-close"></ion-icon>
           Cancel
       </ion-tab-button>
-      <ion-tab-button (click)="closePopover(parentId)" [routerLink]="'/part-detail/'+ newId" routerLinkActive="router-link-active" routerDirection="forward">
+      <ion-tab-button (click)="closePopover(parentCounterId)" [routerLink]="'/part-detail/'+ newCounterId" routerLinkActive="router-link-active" routerDirection="forward">
         <ion-icon name="md-add"></ion-icon>
           Add
       </ion-tab-button>

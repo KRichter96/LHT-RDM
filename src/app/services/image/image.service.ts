@@ -61,7 +61,7 @@ export class ImageService {
         } else {
           this.http.post<any>(url, formData).subscribe(
             response => {
-              this.images.push(response.id, data);
+              this.images.push(response.projectId, data);
             },
             error => {
               this.offlineManager.storeRequest(url, 'POST', formData);

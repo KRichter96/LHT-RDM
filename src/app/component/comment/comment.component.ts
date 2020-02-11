@@ -18,8 +18,6 @@ export class CommentComponent implements OnInit {
 
   ngOnInit() {
     this.comment = this.partDetail.partItem.remarksRemoval;
-    this.projectId = this.projectService.getProjectId();
-    this.partService.getParts(this.projectId);
   }
 
   notify() {

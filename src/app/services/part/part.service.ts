@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {from, Observable} from 'rxjs';
 import {ConnectionStatus, NetworkService} from '../network/network.service';
-import {catchError, map, tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {OfflineService} from '../offline/offline.service';
 import {Storage} from '@ionic/storage';
 import {Chip} from '../../pages/parts/Chip';
@@ -15,7 +15,6 @@ import {BackendUrlProviderService} from '../backend-url-provider/backend-url-pro
 export class PartService {
 
   public items: PartModel[] = [];
-  public projectid: string;
 
   getPartsUrl: string;
   partUrl: string;
@@ -29,9 +28,13 @@ export class PartService {
   }
 
   public getParts(projectId): Observable<any> {
-    this.projectid = projectId;
+
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      return from(this.getLocalData('parts' + this.projectid));
+      return from(this.getLocalData('parts' + projectId)).pipe(
+        tap(res => {
+          this.items = res;
+        })
+      );
     } else {
       return this.http.get(`${this.getPartsUrl + projectId}`).pipe(
         map(res => res['parts']),
@@ -46,7 +49,7 @@ export class PartService {
 
   public createPart(data: PartModel) {
     this.items.push(data);
-    this.setLocalData('parts' + this.projectid, this.items);
+    this.setLocalData('parts' + data.projectId, this.items);
 
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
       this.offlineManager.storeRequest(this.partUrl, 'POST', data).then();
@@ -71,6 +74,7 @@ export class PartService {
   }
 
   getPartById(counterId: number) {
+    console.log(this.items);
     if (typeof counterId !== 'number') {
       counterId = parseInt(counterId, 10);
     }
@@ -79,9 +83,9 @@ export class PartService {
 
   public updatePart(data: PartModel) {
     this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
+    this.setLocalData('parts' + data.projectId, this.items);
 
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.setLocalData('parts' + this.projectid, this.items);
       this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();
     } else {
       this.http.put(this.partUrl, data).subscribe(
@@ -96,7 +100,7 @@ export class PartService {
 
   public deletePart(data: PartModel)  {
     this.items = this.items.filter(x => x.id !== data.id);
-    this.setLocalData('parts' + this.projectid, this.items);
+    this.setLocalData('parts' + data.projectId, this.items);
 
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
       this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();

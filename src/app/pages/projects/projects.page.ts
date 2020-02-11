@@ -68,4 +68,9 @@ export class ProjectsPage implements OnInit {
   deleteToken(): void {
     this.tokenService.setToken('');
   }
+
+  openParts(projectId: string): void {
+    this.projectService.setProjectId(projectId);
+    this.partService.getParts(projectId).subscribe();
+  }
 }

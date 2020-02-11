@@ -27,7 +27,6 @@ export class PartsPage implements OnInit {
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm = '';
-  id: string;
   progress = 0;
   offline = true;
   progressColor: string;
@@ -55,9 +54,6 @@ export class PartsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
-    this.projectService.setProjectId(this.id);
-
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
       this.partService.filterItems(this.chips);
@@ -80,13 +76,7 @@ export class PartsPage implements OnInit {
   }
 
   loadData() {
-    this.partService.getParts(this.id).subscribe(res => {
-      for (const part of res) {
-        if (!part.counterId) {
-          part.counterId = this.partService.getHighestCounterId() + 1;
-        }
-      }
-
+    this.partService.getParts(this.projectService.getProjectId()).subscribe(res => {
       this.parts = res;
       this.updateProgressBar();
       this.offline = this.checkOffline();
@@ -233,7 +223,7 @@ export class PartsPage implements OnInit {
     }
   }
 
-  async  filterStatus() {
+  async filterStatus() {
     for (const chip of this.chips) {
       if (chip.FilterObj === 'Status') {
         this.toastCtrl.displayToast('Please remove the status filter!');
@@ -297,9 +287,6 @@ export class PartsPage implements OnInit {
     const popover = await this.popoverController.create({
       component: PopoverPage,
       cssClass: 'child-pop-over-style',
-      componentProps: {
-        custom_id: this.id
-      },
       event: ev
     });
     await popover.present();
