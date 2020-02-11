@@ -115,8 +115,8 @@ export class PartDetailPage implements OnInit {
 
     if ((this.newItem) && !this.saved) {
       if (this.childItem) {
-        this.childWeight = this.partItem.preModWeight.replace(/,/i, '.');
-        this.partItem.preModWeight.replace(/./i, ',');
+        this.childWeight = this.partItem.preModWeight.toString().replace(/,/i, '.');
+        // this.partItem.preModWeight.replace(/./i, ',');
         this.calculateWeight();
       } // set child weight back to ,
       this.partService.createPart(this.partItem);
@@ -237,7 +237,8 @@ export class PartDetailPage implements OnInit {
   calculateWeight() {
     if (this.childItem) {
       const parentItem: PartModel = this.partService.getPartById(this.partService.parentCounterId);
-      parentItem.preModWeight = parentItem.preModWeight.replace(',', '.');
+      console.log(parentItem);
+      parentItem.preModWeight = parentItem.preModWeight.toString().replace(',', '.');
       parentItem.preModWeight = parentItem.preModWeight.replace(' kg', '');
 
       const calculatedWorth = Math.round((+parentItem.preModWeight - +this.childWeight)).toString();
