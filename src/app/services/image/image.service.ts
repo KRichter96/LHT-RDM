@@ -31,12 +31,13 @@ export class ImageService {
         const formData = new FormData();
         formData.append('image', blob);
         formData.append('description', '');
+        const data = {a, b, description: ''};
         if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-          return from(this.offlineManager.storeRequest(url, 'POST', formData));
+          return from(this.offlineManager.storeRequest(url, 'POST', data));
         } else {
           this.http.post(url, formData).subscribe(() => {},
             () => {
-              this.offlineManager.storeRequest(url, 'POST', formData);
+              this.offlineManager.storeRequest(url, 'POST', data);
             });
         }
       } catch (e) {
@@ -56,15 +57,16 @@ export class ImageService {
         const formData = new FormData();
         formData.append('image', blob);
         formData.append('description', data.description);
+        const d = {a, b, description: data.description};
         if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-          return from(this.offlineManager.storeRequest(url, 'POST', formData));
+          return from(this.offlineManager.storeRequest(url, 'POST', d));
         } else {
           this.http.post<any>(url, formData).subscribe(
             response => {
               this.images.push(response.projectId, data);
             },
             error => {
-              this.offlineManager.storeRequest(url, 'POST', formData);
+              this.offlineManager.storeRequest(url, 'POST', d);
             });
         }
       } catch (e) {

@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { switchMap, finalize, map, tap } from 'rxjs/operators';
 import { Storage } from '@ionic/storage';
+import {File} from '@ionic-native/file/ngx';
 
 const STORAGE_REQ_KEY = "storedreq";
 
@@ -20,7 +21,8 @@ interface StoredRequest {
 })
 export class OfflineService {
 
-  constructor(private storage: Storage, private toastController: ToastController, private http: HttpClient) { }
+  constructor(private storage: Storage, private toastController: ToastController, private http: HttpClient,
+              private file: File) { }
 
   checkForEvents(): Observable<any> {
     return from(this.storage.get(STORAGE_REQ_KEY)).pipe(
@@ -75,11 +77,27 @@ export class OfflineService {
   }
 
   sendRequests(operations: StoredRequest[]) {
-    let obs = [];
+    const obs = [];
 
-    for (let op of operations) {
-      let oneObs = this.http.request(op.type, op.url, { body:op.data });
-      obs.push(oneObs);
+    for (const op of operations) {
+      if (op.url.includes('/findings') || op.url.includes('/photos')) {
+        // load file and upload
+        this.file.readAsArrayBuffer(op.data.a, op.data.b).then((res) => {
+
+          try {
+            const blob = new Blob([res], {type: 'image/png'});
+            const formData = new FormData();
+            formData.append('image', blob);
+            formData.append('description', op.data.description);
+            this.http.post(op.url, formData).subscribe();
+          } catch (error) {
+            console.log(error.message);
+          }
+        });
+      } else { // regular request
+        const oneObs = this.http.request(op.type, op.url, {body: op.data});
+        obs.push(oneObs);
+      }
     }
     return forkJoin(obs);
   }
