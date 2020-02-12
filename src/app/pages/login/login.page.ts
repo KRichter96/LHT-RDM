@@ -5,6 +5,7 @@ import {ToastService} from 'src/app/services/toast/toast.service';
 import {HttpClient} from '@angular/common/http';
 import {TokenService} from 'src/app/services/token/token.service';
 import {BackendUrlProviderService} from '../../services/backend-url-provider/backend-url-provider.service';
+import {VERSION_NUMBER} from '../../app.component';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +13,7 @@ import {BackendUrlProviderService} from '../../services/backend-url-provider/bac
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+  version: string;
 
   pwField: string;
   usField: string;
@@ -23,6 +25,7 @@ export class LoginPage implements OnInit {
               private tokensSrvice: TokenService, private authService: AuthService,
               private backendUrlProviderService: BackendUrlProviderService) {
     this.urlField = this.backendUrlProviderService.getUrl();
+    this.version = VERSION_NUMBER;
   }
 
   ngOnInit() {
