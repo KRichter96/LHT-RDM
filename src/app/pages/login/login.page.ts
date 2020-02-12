@@ -15,8 +15,8 @@ import {VERSION_NUMBER} from '../../app.component';
 export class LoginPage implements OnInit {
   version: string;
 
-  pwField: string;
-  usField: string;
+  pwField = '';
+  usField = '';
   urlField: string;
 
   showUrl = false;
