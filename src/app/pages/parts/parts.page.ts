@@ -1,5 +1,5 @@
 import {AuthService} from '../../services/auth/auth.service';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {PartModel} from 'src/app/models/part/partmodel';
 import {AlertController, Platform, PopoverController} from '@ionic/angular';
@@ -13,6 +13,7 @@ import {PopoverPage} from '../../component/popover/popover.page';
 import {ConnectionStatus, NetworkService} from 'src/app/services/network/network.service';
 import {OfflineService} from 'src/app/services/offline/offline.service';
 import {TokenService} from 'src/app/services/token/token.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-parts',
@@ -20,7 +21,7 @@ import {TokenService} from 'src/app/services/token/token.service';
   styleUrls: ['./parts.page.scss'],
   styles: [ '.greenClass { background-color: green } .yellowClass {background-color: red }']
 })
-export class PartsPage implements OnInit {
+export class PartsPage implements OnInit, OnDestroy {
 
   @ViewChild('slidingList', null) slidingList: any;
 
@@ -30,6 +31,7 @@ export class PartsPage implements OnInit {
   progress = 0;
   offline = true;
   progressColor: string;
+  routerSub: Subscription;
 
   constructor(private partService: PartService, private toastCtrl: ToastService,
               private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform,
@@ -38,29 +40,31 @@ export class PartsPage implements OnInit {
               private offlineManager: OfflineService, private popoverController: PopoverController,
               private token: TokenService, private authService: AuthService) {
 
-      this.chips = new Array<Chip>();
-      this.plt.ready().then(() => {
-        this.router.events.subscribe((event) => {
-          if (event instanceof NavigationEnd) {
-            this.loadData();
-          }
-        });
-        this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
-          if (status === ConnectionStatus.Online) {
-            this.offlineManager.checkForEvents().subscribe();
-          }
-        });
-      });
+    this.chips = new Array<Chip>();
   }
 
   ngOnInit() {
+    this.routerSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd &&
+        event.urlAfterRedirects.includes('parts/' + this.projectService.getProjectId())) {
+        setTimeout(() => this.loadData(), 500);
+      }
+    });
+
     if (this.filterService.getChips().length > 0) {
       this.chips = this.filterService.getChips();
       this.partService.filterItems(this.chips);
     }
-    this.plt.ready().then(() => {
-      this.loadData();
+
+    this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
+      if (status === ConnectionStatus.Online) {
+        this.offlineManager.checkForEvents().subscribe();
+      }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.routerSub.unsubscribe();
   }
 
   doRefresh(event) {

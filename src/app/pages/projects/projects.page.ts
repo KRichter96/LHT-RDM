@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProjectModel} from 'src/app/models/project/ProjectModel';
 import {Platform} from '@ionic/angular';
 import {ProjectService} from 'src/app/services/project/project.service';
@@ -7,6 +7,8 @@ import {PartService} from '../../services/part/part.service';
 import {Storage} from '@ionic/storage';
 import {ProgressHolder} from './progress.holder';
 import {TokenService} from '../../services/token/token.service';
+import {NavigationEnd, Router} from '@angular/router';
+import {Subscription} from 'rxjs';
 
 
 @Component({
@@ -14,19 +16,29 @@ import {TokenService} from '../../services/token/token.service';
   templateUrl: './projects.page.html',
   styleUrls: ['./projects.page.scss'],
 })
-export class ProjectsPage implements OnInit {
+export class ProjectsPage implements OnInit, OnDestroy {
 
   status = {};
   projects: ProjectModel[] = [];
+  routerSub: Subscription;
 
   constructor(private plt: Platform, private projectService: ProjectService,
               private offlineManager: OfflineService, private storage: Storage,
-              private partService: PartService, private tokenService: TokenService) { }
+              private partService: PartService, private tokenService: TokenService,
+              private router: Router) {
+  }
 
   ngOnInit() {
-    this.plt.ready().then(() => {
-      this.loadData();
+    this.routerSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd &&
+        event.urlAfterRedirects.includes('projects')) {
+        this.loadData();
+      }
     });
+  }
+
+  ngOnDestroy() {
+    this.routerSub.unsubscribe();
   }
 
   doRefresh(event) {
@@ -71,6 +83,5 @@ export class ProjectsPage implements OnInit {
 
   openParts(projectId: string): void {
     this.projectService.setProjectId(projectId);
-    this.partService.getParts(projectId).subscribe();
   }
 }
