@@ -115,11 +115,9 @@ export class PartDetailPage implements OnInit {
         this.childWeight = this.partItem.preModWeight.toString().replace(/,/i, '.');
         this.calculateWeight();
       }
-      console.log('save');
       this.partService.createPart(this.partItem);
       this.saved = true;
     } else {
-      console.log('update');
       this.partService.updatePart(this.partItem);
     }
   }

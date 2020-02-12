@@ -74,7 +74,6 @@ export class PartService {
   }
 
   getPartById(counterId: number) {
-    console.log(this.items);
     if (typeof counterId !== 'number') {
       counterId = parseInt(counterId, 10);
     }

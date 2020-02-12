@@ -41,7 +41,9 @@ export class LoginPage implements OnInit {
         this.authService.setScope(data.token);
         this.router.navigate(['projects']);
       },
-      error =>  this.toastService.displayToast('Wrong password, please try again!')
+      () =>  {
+        this.toastService.displayToast('Something went wrong!');
+      }
     );
   }
 
