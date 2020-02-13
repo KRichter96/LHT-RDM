@@ -90,24 +90,27 @@ export class OfflineService {
       const oneObs = this.http.request(op.type, op.url, {body: op.data});
       obs.push(oneObs);
     }
-
-    // this.file.listDir('file:///data/user/0/com.lufthansa.app.lht.rdcom', 'files').then(result => console.log(result)); -> files do exist
-    imageOperations.forEach((op, index) =>  {
-      // load file and upload
-      // this.file.checkFile(op.data.a, op.data.b).then(result => console.log(result), error => console.log(op.data.a, op.data.b));
-      this.file.readAsArrayBuffer(op.data.a, op.data.b).then((res) => {
-        try {
-          const blob = new Blob([res], {type: 'image/png'});
-          const formData = new FormData();
-          formData.append('image', blob);
-          formData.append('description', op.data.description);
-          setTimeout(() => this.http.post(op.url, formData).subscribe(), 10000 * index);
-        } catch (error) {
-          console.log(error.message);
-        }
-      });
-    });
-
+    this.sendImageRequestsSequentially(imageOperations, 0);
     return forkJoin(obs);
+  }
+
+  sendImageRequestsSequentially(operations: any[], index: number) {
+    const op = operations[index];
+
+    this.file.readAsArrayBuffer(op.data.a, op.data.b).then((res) => {
+      try {
+        const blob = new Blob([res], {type: 'image/png'});
+        const formData = new FormData();
+        formData.append('image', blob);
+        formData.append('description', op.data.description);
+        this.http.post(op.url, formData).subscribe(() => {
+          if (index < operations.length - 1) {
+            this.sendImageRequestsSequentially(operations, index + 1);
+          }
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    });
   }
 }

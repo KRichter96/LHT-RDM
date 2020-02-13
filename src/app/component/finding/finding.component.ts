@@ -31,7 +31,7 @@ export class FindingComponent implements OnInit {
               private ref: ChangeDetectorRef, private authService: AuthService) { }
 
   ngOnInit() {
-    const partId = this.partDetail.counterId + 1;
+    const partId = this.partDetail.getPartId();
     this.projectId = this.projectService.getProjectId();
     this.imagePath = 'finding/' + this.projectId + '/' + partId;
     this.loadStoredImages();
