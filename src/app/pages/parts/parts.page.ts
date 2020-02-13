@@ -10,7 +10,7 @@ import {ToastService} from 'src/app/services/toast/toast.service';
 import {FilterService} from 'src/app/services/filter/filter.service';
 import {ProjectService} from 'src/app/services/project/project.service';
 import {PopoverPage} from '../../component/popover/popover.page';
-import {ConnectionStatus, NetworkService} from 'src/app/services/network/network.service';
+import {NetworkService} from 'src/app/services/network/network.service';
 import {OfflineService} from 'src/app/services/offline/offline.service';
 import {TokenService} from 'src/app/services/token/token.service';
 import {Subscription} from 'rxjs';
@@ -55,12 +55,6 @@ export class PartsPage implements OnInit, OnDestroy {
       this.chips = this.filterService.getChips();
       this.partService.filterItems(this.chips);
     }
-
-    this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
-      if (status === ConnectionStatus.Online) {
-        this.offlineManager.checkForEvents().subscribe();
-      }
-    });
   }
 
   ngOnDestroy(): void {

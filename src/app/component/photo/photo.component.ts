@@ -33,7 +33,7 @@ export class PhotoComponent implements OnInit {
               private authService: AuthService) { }
 
   ngOnInit() {
-    const partId = this.partDetail.counterId + 1;
+    const partId = this.partDetail.getPartId();
     this.projectId = this.projectService.getProjectId();
     this.imagePath = 'image/' + this.projectId + '/' + partId;
     this.loadStoredImages();
