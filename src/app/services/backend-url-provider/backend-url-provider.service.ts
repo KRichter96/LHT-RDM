@@ -6,8 +6,8 @@ import {ToastService} from '../toast/toast.service';
 })
 export class BackendUrlProviderService {
 
-  private url = 'https://plm4.ham.dlh.de:17081/api/';
-  private defaultUrl = 'https://plm4.ham.dlh.de:17081/api/';
+  private url = 'https://plm4.ham.dlh.de:27081/api/';
+  private defaultUrl = 'https://plm4.ham.dlh.de:27081/api/';
   // private url = 'http://192.168.43.228:8081/api/';
   // private defaultUrl = 'http://192.168.43.228:8081/api/';
 
