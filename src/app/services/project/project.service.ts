@@ -13,21 +13,17 @@ import {BackendUrlProviderService} from '../backend-url-provider/backend-url-pro
 export class ProjectService {
 
   projectId: string;
-
-  projectUrl: string;
   apiStorageKey = 'projects';
 
   constructor(private http: HttpClient, private networkService: NetworkService,
               private storage: Storage, private offlineManager: OfflineService,
-              private backendUrlProviderService: BackendUrlProviderService) {
-    this.projectUrl = this.backendUrlProviderService.getUrl() + 'projects';
-  }
+              private bupService: BackendUrlProviderService) {}
 
   public getProjects(): Observable<any>  {
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
       return from(this.getLocalData('projects'));
     } else {
-      return this.http.get(`${this.projectUrl}`).pipe(
+      return this.http.get(`${this.bupService.getUrl() + 'projects'}`).pipe(
         map(res => res['projects']),
         tap(res => {
           this.setLocalData('projects', res);

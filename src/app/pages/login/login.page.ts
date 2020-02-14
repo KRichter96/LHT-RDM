@@ -1,4 +1,4 @@
-import {AuthService} from './../../services/auth/auth.service';
+import {AuthService} from '../../services/auth/auth.service';
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ToastService} from 'src/app/services/toast/toast.service';
@@ -23,8 +23,8 @@ export class LoginPage implements OnInit {
 
   constructor(private router: Router, private http: HttpClient, private toastService: ToastService,
               private tokensSrvice: TokenService, private authService: AuthService,
-              private backendUrlProviderService: BackendUrlProviderService) {
-    this.urlField = this.backendUrlProviderService.getUrl();
+              private bupService: BackendUrlProviderService) {
+    this.bupService.initUrl().then(url => this.urlField = url);
     this.version = VERSION_NUMBER;
   }
 
@@ -34,8 +34,8 @@ export class LoginPage implements OnInit {
 
   login() {
     const credentials = {username: this.usField, password: this.pwField};
-    this.backendUrlProviderService.setUrl(this.urlField);
-    this.http.post(this.backendUrlProviderService.getUrl() + 'auth/login', credentials).subscribe(
+    this.bupService.setUrl(this.urlField);
+    this.http.post(this.bupService.getUrl() + 'auth/login', credentials).subscribe(
       (data: any) => {
         this.tokensSrvice.setToken(data.token);
         this.authService.setScope(data.token);
@@ -50,8 +50,11 @@ export class LoginPage implements OnInit {
   triggerUrl(): void {
     this.showUrl = !this.showUrl;
     if (!this.showUrl) {
-      this.backendUrlProviderService.resetUrl();
-      this.urlField = this.backendUrlProviderService.getUrl();
+      this.urlField = this.bupService.getUrl();
     }
+  }
+
+  resetToDefault() {
+    this.urlField = this.bupService.resetToDefault();
   }
 }

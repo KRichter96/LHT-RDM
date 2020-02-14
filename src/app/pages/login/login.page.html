@@ -7,7 +7,10 @@
 <ion-content>
   <ion-input placeholder="User" [(ngModel)]="usField" class="login-button"></ion-input>
   <ion-input placeholder="Password" [(ngModel)]="pwField" class="login-button" type="Password"></ion-input>
-  <ion-input placeholder="Backend base url" [(ngModel)]="urlField" class="login-button" *ngIf="showUrl"></ion-input>
+  <ion-item *ngIf="showUrl" class="login-button">
+    <ion-input placeholder="Backend base url" [(ngModel)]="urlField"></ion-input>
+    <ion-icon name="refresh" style="color: black" (click)="resetToDefault()" size="small" item-right></ion-icon>
+  </ion-item>
   <ion-button size="large" color="light" expand="full" (click)="login()" class="login-button">
     <!-- routerLink="/projects" routerDirection="root"-->
     Log in to RDM

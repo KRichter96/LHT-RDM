@@ -5,7 +5,7 @@ import {Platform} from '@ionic/angular';
 import {HttpClient} from '@angular/common/http';
 import {ToastService} from '../toast/toast.service';
 import {BackendUrlProviderService} from '../backend-url-provider/backend-url-provider.service';
-import {catchError, map, timeout} from 'rxjs/operators';
+import {catchError, timeout} from 'rxjs/operators';
 
 export enum ConnectionStatus { Online, Offline }
 
@@ -13,12 +13,11 @@ export enum ConnectionStatus { Online, Offline }
   providedIn: 'root'
 })
 export class NetworkService {
+
   private status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Online);
-  projectUrl: string;
 
   constructor(private network: Network, private plt: Platform, private http: HttpClient,
-              private toastCtrl: ToastService, private backendUrlProviderService: BackendUrlProviderService) {
-    this.projectUrl = this.backendUrlProviderService.getUrl() + 'projects';
+              private toastCtrl: ToastService, private bupService: BackendUrlProviderService) {
 
     this.plt.ready().then(() => {
       const status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
@@ -28,7 +27,7 @@ export class NetworkService {
   }
 
   checkConnection() {
-    this.http.get(this.projectUrl).pipe(
+    this.http.get(this.bupService.getUrl() + 'projects').pipe(
       timeout(2000),
         catchError(error => {
           this.updateNetworkStatus(ConnectionStatus.Offline, error).then();

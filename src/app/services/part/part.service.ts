@@ -15,17 +15,11 @@ import {BackendUrlProviderService} from '../backend-url-provider/backend-url-pro
 export class PartService {
 
   public items: PartModel[] = [];
-
-  getPartsUrl: string;
-  partUrl: string;
   parentCounterId: number;
 
   constructor(private http: HttpClient, private networkService: NetworkService,
               private storage: Storage, private offlineManager: OfflineService,
-              private backendUrlProviderService: BackendUrlProviderService) {
-    this.getPartsUrl = this.backendUrlProviderService.getUrl() + 'parts/byProject/';
-    this.partUrl = this.backendUrlProviderService.getUrl() + 'parts';
-  }
+              private bupService: BackendUrlProviderService) {}
 
   public getParts(projectId): Observable<any> {
 
@@ -36,8 +30,8 @@ export class PartService {
         })
       );
     } else {
-      return this.http.get(`${this.getPartsUrl + projectId}`).pipe(
-        map(res => res['parts']),
+      return this.http.get(`${this.bupService.getUrl() + 'parts/byProject/' + projectId}`).pipe(
+        map(res => res['parts']), // tslint:disable-line
         map(res => res.filter(part => part.statusEdit !== 'Deleted')),
         tap(res => {
           this.setLocalData('parts' + projectId, res);
@@ -48,16 +42,17 @@ export class PartService {
   }
 
   public createPart(data: PartModel) {
+    const partUrl = this.bupService.getUrl() + 'parts';
     this.items.push(data);
     this.setLocalData('parts' + data.projectId, this.items);
 
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.offlineManager.storeRequest(this.partUrl, 'POST', data).then();
+      this.offlineManager.storeRequest(partUrl, 'POST', data).then();
     } else {
-      this.http.post(this.partUrl, data).subscribe(
+      this.http.post(partUrl, data).subscribe(
         () => {},
         () => {
-          this.offlineManager.storeRequest(this.partUrl, 'POST', data).then();
+          this.offlineManager.storeRequest(partUrl, 'POST', data).then();
         }
       );
     }
@@ -81,16 +76,17 @@ export class PartService {
   }
 
   public updatePart(data: PartModel) {
+    const partUrl = this.bupService.getUrl() + 'parts';
     this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
     this.setLocalData('parts' + data.projectId, this.items);
 
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();
+      this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
     } else {
-      this.http.put(this.partUrl, data).subscribe(
+      this.http.put(partUrl, data).subscribe(
         () => {},
         () => {
-          this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();
+          this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
         }
       );
     }
@@ -98,16 +94,17 @@ export class PartService {
 
 
   public deletePart(data: PartModel)  {
+    const partUrl = this.bupService.getUrl() + 'parts';
     this.items = this.items.filter(x => x.id !== data.id);
     this.setLocalData('parts' + data.projectId, this.items);
 
     if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
-      this.offlineManager.storeRequest(this.partUrl, 'PUT', data).then();
+      this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
     } else {
-      this.http.put(this.partUrl, data).subscribe(
+      this.http.put(partUrl, data).subscribe(
         () => {},
         () => {
-          this.offlineManager.storeRequest(this.partUrl, 'DELETE', data).then();
+          this.offlineManager.storeRequest(partUrl, 'DELETE', data).then();
         }
       );
     }
