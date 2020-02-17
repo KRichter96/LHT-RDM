@@ -6,6 +6,7 @@ import {HttpClient} from '@angular/common/http';
 import {TokenService} from 'src/app/services/token/token.service';
 import {BackendUrlProviderService} from '../../services/backend-url-provider/backend-url-provider.service';
 import {VERSION_NUMBER} from '../../app.component';
+import {ProjectService} from '../../services/project/project.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,7 @@ export class LoginPage implements OnInit {
 
   constructor(private router: Router, private http: HttpClient, private toastService: ToastService,
               private tokensSrvice: TokenService, private authService: AuthService,
-              private bupService: BackendUrlProviderService) {
+              private bupService: BackendUrlProviderService, private projectService: ProjectService) {
     this.bupService.initUrl().then(url => this.urlField = url);
     this.version = VERSION_NUMBER;
   }
@@ -39,7 +40,9 @@ export class LoginPage implements OnInit {
       (data: any) => {
         this.tokensSrvice.setToken(data.token);
         this.authService.setScope(data.token);
-        this.router.navigate(['projects']);
+        this.projectService.getProjectsAfterLogin().subscribe(() => {
+          this.router.navigate(['projects']);
+        });
       },
       () =>  {
         this.toastService.displayToast('Something went wrong!');

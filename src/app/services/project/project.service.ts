@@ -32,6 +32,15 @@ export class ProjectService {
     }
   }
 
+  public getProjectsAfterLogin(): Observable<any>  {
+    return this.http.get(`${this.bupService.getUrl() + 'projects'}`).pipe(
+      map(res => res['projects']),
+      tap(res => {
+        this.setLocalData('projects', res);
+      })
+    );
+  }
+
   private setLocalData(key, data) {
     this.storage.set(`${this.apiStorageKey}-${key}`, data);
   }
