@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import {ConnectionStatus, NetworkService} from './services/network/network.service';
 import {OfflineService} from './services/offline/offline.service';
 
-export const VERSION_NUMBER = '1.2.0';
+export const VERSION_NUMBER = '1.3.0';
 
 @Component({
   selector: 'app-root',
