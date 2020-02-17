@@ -10,7 +10,7 @@ export class BackendUrlProviderService {
   private URL_KEY = 'URL_KEY';
 
   private url;
-  private defaultUrl = 'https://plm4.ham.dlh.de:27081/api/';
+  private defaultUrl = 'https://3dspace.ham.dlh.de:27081/api/';
   // private url = 'http://192.168.43.228:8081/api/';
   // private defaultUrl = 'http://192.168.43.228:8081/api/';
 
