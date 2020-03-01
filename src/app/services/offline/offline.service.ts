@@ -1,9 +1,11 @@
-import {forkJoin} from 'rxjs';
+import {forkJoin, from, Observable, of} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Storage} from '@ionic/storage';
 import {File} from '@ionic-native/file/ngx';
 import {ToastService} from '../toast/toast.service';
+import {mergeMap} from 'rxjs/operators';
+import {Platform} from '@ionic/angular';
 
 const STORAGE_REQ_KEY = 'storedreq';
 
@@ -23,16 +25,22 @@ export class OfflineService {
   constructor(private storage: Storage,
               private toastService: ToastService,
               private http: HttpClient,
-              private file: File) { }
+              private file: File,
+              private plt: Platform) { }
 
-  checkForEvents() {
+  async checkForEvents() {
+
     this.storage.get(STORAGE_REQ_KEY).then(storedOperations => {
 
       const storedObj = JSON.parse(storedOperations as string);
       if (storedObj && storedObj.length > 0) {
-        this.sendRequests(storedObj).subscribe(() => {
+
+        this.sendRequests(storedObj).subscribe(async () => {
           this.toastService.displayToast('Local data successfully synced to API!', 3000);
-          this.storage.remove(STORAGE_REQ_KEY);
+
+          await this.plt.ready().then();
+          await this.storage.ready().then();
+          this.storage.remove(STORAGE_REQ_KEY).then();
         });
       }
       }
@@ -77,31 +85,46 @@ export class OfflineService {
     const imageOperations = operations.filter(op => op.url.endsWith('/findings') || op.url.endsWith('/photos'));
     const otherOperations = operations.filter(op => !(op.url.endsWith('/findings') || op.url.endsWith('/photos')));
 
+    // add part requests
     for (const op of otherOperations) {
-      const oneObs = this.http.request(op.type, op.url, {body: op.data});
+      let oneObs; // do not make POST requests for creating parts in offline service
+      if (op.type === 'POST' && op.url.endsWith('/parts')) {
+        oneObs = this.http.request('PUT', op.url, {body: op.data});
+      } else {
+        oneObs = this.http.request(op.type, op.url, {body: op.data});
+      }
       obs.push(oneObs);
     }
-    this.sendImageRequestsSequentially(imageOperations, 0);
+
+    // add image requests
+    if (imageOperations.length > 0) {
+      obs.push(this.sendImageRequestsSequentially(imageOperations, 0));
+    }
+
     return forkJoin(obs);
   }
 
-  sendImageRequestsSequentially(operations: any[], index: number) {
+  sendImageRequestsSequentially(operations: any[], index: number): Observable<any> {
     const op = operations[index];
 
-    this.file.readAsArrayBuffer(op.data.a, op.data.b).then((res) => {
-      try {
+    return from(this.file.readAsArrayBuffer(op.data.a, op.data.b)).pipe(
+      mergeMap((res) => {
+
         const blob = new Blob([res], {type: 'image/png'});
         const formData = new FormData();
         formData.append('image', blob);
         formData.append('description', op.data.description);
-        this.http.post(op.url, formData).subscribe(() => {
-          if (index < operations.length - 1) {
-            this.sendImageRequestsSequentially(operations, index + 1);
-          }
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
-    });
+        return this.http.post(op.url, formData).pipe(
+          mergeMap(() => {
+            if (index < operations.length - 1) {
+              return this.sendImageRequestsSequentially(operations, index + 1);
+            }
+
+            return of(null);
+          })
+        );
+      })
+    );
   }
 }
+

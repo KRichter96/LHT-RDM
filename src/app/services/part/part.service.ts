@@ -104,7 +104,7 @@ export class PartService {
       this.http.put(partUrl, data).subscribe(
         () => {},
         () => {
-          this.offlineManager.storeRequest(partUrl, 'DELETE', data).then();
+          this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
         }
       );
     }
