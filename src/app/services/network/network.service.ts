@@ -28,7 +28,7 @@ export class NetworkService {
 
   checkConnection() {
     this.http.get(this.bupService.getUrl() + 'projects').pipe(
-      timeout(2000),
+      timeout(7500),
         catchError(error => {
           this.updateNetworkStatus(ConnectionStatus.Offline, error).then();
           return of(null);
