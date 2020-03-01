@@ -7,6 +7,7 @@ import {TokenService} from 'src/app/services/token/token.service';
 import {BackendUrlProviderService} from '../../services/backend-url-provider/backend-url-provider.service';
 import {VERSION_NUMBER} from '../../app.component';
 import {ProjectService} from '../../services/project/project.service';
+import {LoginCredentials} from '../../models/login/login';
 
 @Component({
   selector: 'app-login',
@@ -30,24 +31,18 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-    this.tokensSrvice.setToken('');
+    this.tokensSrvice.setToken('').then();
   }
 
   login() {
-    const credentials = {username: this.usField, password: this.pwField};
     this.bupService.setUrl(this.urlField);
-    this.http.post(this.bupService.getUrl() + 'auth/login', credentials).subscribe(
-      (data: any) => {
-        this.tokensSrvice.setToken(data.token);
-        this.authService.setScope(data.token);
-        this.projectService.getProjectsAfterLogin().subscribe(() => {
-          this.router.navigate(['projects']);
-        });
-      },
-      () =>  {
-        this.toastService.displayToast('Something went wrong!');
-      }
-    );
+
+    const credentials: LoginCredentials = {username: this.usField, password: this.pwField};
+    this.tokensSrvice.login(credentials).then(() => {
+      this.projectService.getProjectsAfterLogin().subscribe(() => {
+        this.router.navigate(['projects']).then();
+      });
+    });
   }
 
   triggerUrl(): void {
