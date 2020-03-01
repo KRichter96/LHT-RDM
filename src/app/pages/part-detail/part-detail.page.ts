@@ -54,7 +54,7 @@ export class PartDetailPage implements OnInit {
 
 
 
-  constructor(private alertCtrl: AlertController , private projectService: ProjectService, private toastCtrl: ToastService,
+  constructor(private alertCtrl: AlertController , private projectService: ProjectService, private toastService: ToastService,
               private route: ActivatedRoute, private partService: PartService, private plt: Platform,
               private authService: AuthService, private router: Router) {
   }
@@ -106,7 +106,7 @@ export class PartDetailPage implements OnInit {
 
   onSave() {
     if (!this.canWrite()) {
-      this.toastCtrl.displayToast('Not allowed to make any changes.');
+      this.toastService.displayToast('Not allowed to make any changes.');
       return;
     }
 

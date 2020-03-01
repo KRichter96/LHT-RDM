@@ -1,27 +1,25 @@
-import { Injectable } from '@angular/core';
-import { Platform, ToastController } from '@ionic/angular';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import {Injectable} from '@angular/core';
+import {Platform} from '@ionic/angular';
+import {BarcodeScanner} from '@ionic-native/barcode-scanner/ngx';
+import {ToastService} from '../toast/toast.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BarcodeService {
 
-  constructor(private plt: Platform, private barcodeScanner: BarcodeScanner, private toastCtrl: ToastController) { }
+  constructor(private plt: Platform,
+              private barcodeScanner: BarcodeScanner,
+              private toastService: ToastService) { }
 
   public scanPartIdentTag(): any {
-    if (this.plt.is("android") || this.plt.is("ios") || this.plt.is("cordova")) {  // FIX HERE
+    if (this.plt.is('android') || this.plt.is('ios') || this.plt.is('cordova')) {  // FIX HERE
         this.barcodeScanner.scan().then(barcodeData => {
         return barcodeData.text;
-      })
-    }
-    else {
-      let toast = this.toastCtrl.create({
-        message: "This will only work on a device!",
-        duration: 3000,
-        position: "bottom"
       });
-      return toast.then(toast => toast.present());
+    } else {
+      this.toastService.displayToast('Works only on a device.');
+      return;
     }
 
   }

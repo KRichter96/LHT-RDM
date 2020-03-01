@@ -1,9 +1,9 @@
 import {forkJoin} from 'rxjs';
-import {ToastController} from '@ionic/angular';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Storage} from '@ionic/storage';
 import {File} from '@ionic-native/file/ngx';
+import {ToastService} from '../toast/toast.service';
 
 const STORAGE_REQ_KEY = 'storedreq';
 
@@ -20,7 +20,9 @@ interface StoredRequest {
 })
 export class OfflineService {
 
-  constructor(private storage: Storage, private toastController: ToastController, private http: HttpClient,
+  constructor(private storage: Storage,
+              private toastService: ToastService,
+              private http: HttpClient,
               private file: File) { }
 
   checkForEvents() {
@@ -29,12 +31,7 @@ export class OfflineService {
       const storedObj = JSON.parse(storedOperations as string);
       if (storedObj && storedObj.length > 0) {
         this.sendRequests(storedObj).subscribe(() => {
-          const toast = this.toastController.create({
-            message: 'Local data successfully synced to API!',
-            duration: 3000,
-            position: 'bottom'
-          });
-          toast.then(t => t.present());
+          this.toastService.displayToast('Local data successfully synced to API!', 3000);
           this.storage.remove(STORAGE_REQ_KEY);
         });
       }
@@ -45,13 +42,7 @@ export class OfflineService {
   storeRequest(url, type, data) {
     // when adding a request look through all stored requests and remove eveything that's put/post
     // for the part the current request is stored for
-
-    const toast = this.toastController.create({
-      message: 'Your data is stored locally because you seem to be offline',
-      duration: 3000,
-      position: 'bottom'
-    });
-    toast.then(t => t.present());
+    this.toastService.displayToast('Your data is stored locally because you seem to be offline.');
 
     const action: StoredRequest = {
       url,

@@ -33,7 +33,7 @@ export class PartsPage implements OnInit, OnDestroy {
   progressColor: string;
   routerSub: Subscription;
 
-  constructor(private partService: PartService, private toastCtrl: ToastService,
+  constructor(private partService: PartService, private toastService: ToastService,
               private alertCtrl: AlertController, private route: ActivatedRoute, private plt: Platform,
               private barcodeScanner: BarcodeScanner, private router: Router, private filterService: FilterService,
               private projectService: ProjectService, private networkService: NetworkService,
@@ -104,7 +104,7 @@ export class PartsPage implements OnInit, OnDestroy {
         }
       }
       if (!partFound) {
-        this.toastCtrl.displayToast('No Part found');
+        this.toastService.displayToast('No Part found');
       }
     });
   }
@@ -143,11 +143,11 @@ export class PartsPage implements OnInit, OnDestroy {
               this.parts.splice(i, 1);
               this.partService.deletePart(partToDelete);
             } else {
-              this.toastCtrl.displayToast('You can only delete parts created in the app.');
+              this.toastService.displayToast('You can only delete parts created in the app.');
             }
             return true;
           } else {
-            this.toastCtrl.displayToast('Please enter a reason for deletion!');
+            this.toastService.displayToast('Please enter a reason for deletion!');
           }
         }
       }]
@@ -166,7 +166,7 @@ export class PartsPage implements OnInit, OnDestroy {
 
     if (!this.searchTerm) { // Wenn Suchfeld leer
       event.target.value = null;
-      this.toastCtrl.displayToast('Please enter a filter value!');
+      this.toastService.displayToast('Please enter a filter value!');
     } else {
       const filterTerm = this.searchTerm;
       const filterObj = event.target.value;
@@ -183,7 +183,7 @@ export class PartsPage implements OnInit, OnDestroy {
           }
           for (const term of chip.FilterTerm) {
             if (term === filterTerm) {
-              this.toastCtrl.displayToast('Already have this filter!');
+              this.toastService.displayToast('Already have this filter!');
               this.searchTerm = '';
               event.target.value = null;
               return;
@@ -224,7 +224,7 @@ export class PartsPage implements OnInit, OnDestroy {
   async filterStatus() {
     for (const chip of this.chips) {
       if (chip.FilterObj === 'Status') {
-        this.toastCtrl.displayToast('Please remove the status filter!');
+        this.toastService.displayToast('Please remove the status filter!');
         break;
       }
     }
@@ -278,7 +278,7 @@ export class PartsPage implements OnInit, OnDestroy {
 
   async openPopover(ev: Event) {
     if (!this.canWrite()) {
-      this.toastCtrl.displayToast('Not allowed to make any changes.');
+      this.toastService.displayToast('Not allowed to make any changes.');
       return;
     }
 

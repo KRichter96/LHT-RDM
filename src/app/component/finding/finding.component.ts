@@ -27,7 +27,7 @@ export class FindingComponent implements OnInit {
               private projectService: ProjectService, private partDetail: PartDetailPage,
               private actionSheetController: ActionSheetController, private camera: Camera,
               private plt: Platform, private filePath: FilePath, private file: File,
-              private toastController: ToastService, private webview: WebView, private storage: Storage,
+              private toastService: ToastService, private webview: WebView, private storage: Storage,
               private ref: ChangeDetectorRef, private authService: AuthService) { }
 
   ngOnInit() {
@@ -65,7 +65,7 @@ export class FindingComponent implements OnInit {
 
   async selectImage() {
     if (!this.canWrite()) {
-      this.toastController.displayToast('Not allowed to make any changes.');
+      this.toastService.displayToast('Not allowed to make any changes.');
       return;
     }
 
@@ -123,7 +123,7 @@ export class FindingComponent implements OnInit {
     this.file.copyFile(namePath, currentName, this.file.dataDirectory, newFileName).then(success => {
       this.updateStoredImages(newFileName);
     }, error => {
-      this.toastController.displayToast('Error while storing file.');
+      this.toastService.displayToast('Error while storing file.');
     });
   }
 
@@ -168,7 +168,7 @@ export class FindingComponent implements OnInit {
               const correctPath = imgEntry.filePath.substr(0, imgEntry.filePath.lastIndexOf('/') + 1);
 
               this.file.removeFile(correctPath, imgEntry.name).then(res => {
-                this.toastController.displayToast('File removed.');
+                this.toastService.displayToast('File removed.');
               });
             });
           }
@@ -226,7 +226,7 @@ export class FindingComponent implements OnInit {
               this.imageService.uploadFinding(newEntry, this.partDetail.getPartId());
               this.ref.detectChanges(); // trigger change detection cycle
             } else {
-              this.toastController.displayToast('Failed. A finding needs a description.');
+              this.toastService.displayToast('Failed. A finding needs a description.');
             }
           }
         }]
