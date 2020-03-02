@@ -46,4 +46,17 @@ export class PartModel {
   statusEdit = '';
   id: string;
   projectId: string;
+
+  // frontend only
+  complete: boolean;
+}
+
+
+export function setStatus(part: PartModel) {
+  part.complete = part.rackLocation &&
+    part.rackNo &&
+    part.preModWeight &&
+    part.preModWeight !== 'N/A' &&
+    part.rackLocation !== 'N/A' &&
+    part.rackNo !== 'N/A';
 }

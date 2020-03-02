@@ -6,7 +6,7 @@ import {map, tap} from 'rxjs/operators';
 import {OfflineService} from '../offline/offline.service';
 import {Storage} from '@ionic/storage';
 import {Chip} from '../../pages/parts/Chip';
-import {PartModel} from 'src/app/models/part/partmodel';
+import {PartModel, setStatus} from 'src/app/models/part/partmodel';
 import {BackendUrlProviderService} from '../backend-url-provider/backend-url-provider.service';
 
 @Injectable({
@@ -33,7 +33,8 @@ export class PartService {
       return this.http.get(`${this.bupService.getUrl() + 'parts/byProject/' + projectId}`).pipe(
         map(res => res['parts']), // tslint:disable-line
         map(res => res.filter(part => part.statusEdit !== 'Deleted')),
-        tap(res => {
+        tap((res: PartModel[]) => {
+          res.forEach(r => setStatus(r));
           this.setLocalData('parts' + projectId, res);
           this.items = res;
         })
@@ -43,6 +44,7 @@ export class PartService {
 
   public createPart(data: PartModel) {
     const partUrl = this.bupService.getUrl() + 'parts';
+    setStatus(data);
     this.items.push(data);
     this.setLocalData('parts' + data.projectId, this.items);
 
@@ -77,6 +79,7 @@ export class PartService {
 
   public updatePart(data: PartModel) {
     const partUrl = this.bupService.getUrl() + 'parts';
+    setStatus(data);
     this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
     this.setLocalData('parts' + data.projectId, this.items);
 

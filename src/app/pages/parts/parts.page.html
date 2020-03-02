@@ -93,14 +93,13 @@
     <ion-icon name="close-circle" (click)="deleteChip(i, $event)"></ion-icon>
   </ion-chip>
 
-  <ion-list #slidingList>
-    <ion-item-sliding *ngFor="let part of parts; let i = index">
-      <ion-label *ngIf="part?.length">No results found :(</ion-label>
+  <ion-virtual-scroll [items]="parts" [approxItemHeight]="30">
+    <ion-item-sliding *virtualItem="let part; let i = index" #slidingItem>
       <ion-item (click)="openDetail()" [routerLink]="'/part-detail/' + part.counterId" routerLinkActive="router-link-active" routerDirection="forward" class="ion-no-padding">
         
         <ion-grid>
           <ion-row > <!-- TODO Adriel Delete hidden? *ngIf="part.statusEdit != 'Deleted' && offline == true" -->
-            <ion-col size="1" [ngClass]="{greenClass: checkStatus(part), yellowClass: !checkStatus(part)}">
+            <ion-col size="1" [ngClass]="{greenClass: part.complete, yellowClass: !part.complete}">
               <div class="stacked-group">
                 <ion-label>{{ part.counterId }}</ion-label>
               </div>
@@ -158,13 +157,11 @@
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
-  </ion-list>
+  </ion-virtual-scroll>
 
 </ion-content>
 
 <ion-footer>
-  <ion-progress-bar [value]="updateProgressBar()" color = {{this.progressColor}} mode="ios"></ion-progress-bar>
-  <br>
   <ion-toolbar style="height: 65px;" color="primary">
     <ion-tabs>
       <ion-tab-bar slot="bottom" color="primary">

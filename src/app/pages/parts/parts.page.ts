@@ -2,7 +2,7 @@ import {AuthService} from '../../services/auth/auth.service';
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {PartModel} from 'src/app/models/part/partmodel';
-import {AlertController, Platform, PopoverController} from '@ionic/angular';
+import {AlertController, IonItemSliding, Platform, PopoverController} from '@ionic/angular';
 import {PartService} from 'src/app/services/part/part.service';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner/ngx';
 import {Chip} from './Chip';
@@ -23,8 +23,7 @@ import {Subscription} from 'rxjs';
 })
 export class PartsPage implements OnInit, OnDestroy {
 
-  @ViewChild('slidingList', null) slidingList: any;
-
+  @ViewChild('slidingItem', {static: false}) slidingItem: IonItemSliding;
   parts: PartModel[] = [];
   chips: Array<Chip> = [];
   searchTerm = '';
@@ -47,7 +46,7 @@ export class PartsPage implements OnInit, OnDestroy {
     this.routerSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd &&
         event.urlAfterRedirects.includes('parts/' + this.projectService.getProjectId())) {
-        setTimeout(() => this.loadData(), 500);
+        setTimeout(() => this.loadData(), 250);
       }
     });
 
@@ -75,12 +74,12 @@ export class PartsPage implements OnInit, OnDestroy {
 
   loadData() {
     this.partService.getParts(this.projectService.getProjectId()).subscribe(res => {
-      this.parts = res;
-      this.updateProgressBar();
-      this.offline = this.checkOffline();
       if (this.chips.length > 0) {
-        this.parts = this.partService.filterItems(this.chips);
+        this.parts = [...this.partService.filterItems(this.chips)];
+      } else {
+        this.parts = [...res];
       }
+      this.offline = this.checkOffline();
     });
   }
 
@@ -141,7 +140,9 @@ export class PartsPage implements OnInit, OnDestroy {
               this.parts[i].statusEdit = 'Deleted';
               const partToDelete = {...this.parts[i]};
               this.parts.splice(i, 1);
-              this.partService.deletePart(partToDelete);
+              this.parts = [...this.parts];
+              this.partService.deletePart(partToDelete as PartModel);
+              this.slidingItem.close().then();
             } else {
               this.toastService.displayToast('You can only delete parts created in the app.');
             }
@@ -153,14 +154,13 @@ export class PartsPage implements OnInit, OnDestroy {
       }]
     });
     await alert.present();
-    await this.slidingList.closeSlidingItems();
   }
 
   onChangeFilter(event) {
     if (event.target.value == null) { // Durch doppelten Aufruf, da event sicherstellen dass der Filter nur 1mal angewendet wird
       return;
     } else if (event.target.value === -1) {
-      this.parts = this.partService.filterItems(this.chips);
+      this.parts = [...this.partService.filterItems(this.chips)];
       return;
     }
 
@@ -173,7 +173,7 @@ export class PartsPage implements OnInit, OnDestroy {
 
       if (this.chips.length === 0) { // Wenn kein Filter gesetzt
         this.chips.push(new Chip(filterObj, filterTerm)); // Erstelle Chipsarray
-        this.parts = this.partService.filterItems(this.chips); // Wende Filter an
+        this.parts = [...this.partService.filterItems(this.chips)]; // Wende Filter an
       } else { // Wenn Filter bereits gesetzt
         const tempChips = this.chips.filter(x => x.FilterObj === filterObj);
         for (const chip of tempChips) {
@@ -193,32 +193,11 @@ export class PartsPage implements OnInit, OnDestroy {
         if (tempChips.length === 0) {
           this.chips = [...this.chips, new Chip(filterObj, filterTerm)];
         }
-        this.parts = this.partService.filterItems(this.chips);
+        this.parts = [...this.partService.filterItems(this.chips)];
       }
       event.target.value = null;
     }
     this.searchTerm = '';
-  }
-
-  updateProgressBar() {
-    const cento = this.parts.length; // tslint:disable-next-line
-    const percent = this.parts.filter(x => (x.rackNo !== '' && x.rackLocation !== '' && x.preModWeight !== '' && x.preModPNAC !== '' && x.nomenclature !== '' && x.rackNo !== 'N/A' && x.rackLocation !== 'N/A' && x.preModWeight !== 'N/A')).length; // percent of parts not completed
-    const progress = percent / cento;
-    if (progress !== 1) {
-      this.progressColor = 'danger';
-    } else {
-      this.progressColor = 'success';
-    }
-    return progress;
-  }
-
-  public checkStatus(part) {
-    try {
-      const p: PartModel = part;
-      return p.rackLocation && p.rackNo && p.preModWeight && p.preModWeight !== 'N/A' && p.rackLocation !== 'N/A' && p.rackNo !== 'N/A';
-    } catch (Exception) {
-      return false;
-    }
   }
 
   async filterStatus() {
@@ -257,14 +236,14 @@ export class PartsPage implements OnInit, OnDestroy {
             } else {
               this.chips = [...this.chips, new Chip('Status', 'ToDo')];
             }
-            this.parts = this.partService.filterItems(this.chips);
+            this.parts = [...this.partService.filterItems(this.chips)];
           } else if (data === '1') {
             if (this.chips.length === 0) {
               this.chips.push(new Chip('Status', 'Done'));
             } else {
               this.chips = [...this.chips, new Chip('Status', 'Done')];
             }
-            this.parts = this.partService.filterItems(this.chips);
+            this.parts = [...this.partService.filterItems(this.chips)];
           }
         }
       }]
