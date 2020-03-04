@@ -1,5 +1,4 @@
 export class ProgressHolder {
-
-    public status: number = 0;
-
+    status = 0;
+    numParts = 0;
 }

@@ -8,10 +8,14 @@ import { ProgressHolder } from 'src/app/pages/projects/progress.holder';
 })
 export class ProgressComponent implements OnInit {
 
-  @Input('progress') progress: ProgressHolder;
+  @Input('progress') progress: ProgressHolder; // tslint:disable-line
 
   constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
+
+  calcWidth(status: number) {
+    return Math.max(status, 35);
+  }
 
 }

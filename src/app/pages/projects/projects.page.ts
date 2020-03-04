@@ -9,6 +9,7 @@ import {ProgressHolder} from './progress.holder';
 import {TokenService} from '../../services/token/token.service';
 import {NavigationEnd, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
+import {PartModel} from '../../models/part/partmodel';
 
 
 @Component({
@@ -58,20 +59,13 @@ export class ProjectsPage implements OnInit, OnDestroy {
   checkStatus() {
     for (let i = 0; i < this.projects.length; i++) { // tslint:disable-line
       const p = this.projects[i];
-      this.partService.getParts(p.id).subscribe((res) => {
+      this.partService.getParts(p.id).subscribe((res: PartModel[]) => {
         if (res.length === 0) {
-          if (!this.status[p.id]) {
-            this.status[p.id] = new ProgressHolder();
-          }
-          this.status[p.id].status = 0;
+          this.status[p.id] = {numParts: 0, status: 0};
         } else {
-          if (!this.status[p.id]) {
-            this.status[p.id] = new ProgressHolder();
-          }
           const cento = res.length;
-          const percent = res.filter(x => (x.rackLocation && x.rackNo && x.preModWeight && x.preModWeight !== 'N/A' &&
-            x.rackLocation !== 'N/A' && x.rackNo !== 'N/A')).length;
-          this.status[p.id].status = Math.floor((percent / cento) * 100);
+          const percent = res.filter(x => x.complete).length;
+          this.status[p.id] = {status: Math.floor((percent / cento) * 100), numParts: cento };
         }
       });
     }

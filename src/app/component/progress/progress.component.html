@@ -1,5 +1,11 @@
 <div class="progress-outer">
-  <div class="progress-inner" [style.width]="progress?.status + '%'">
-      {{progress?.status}}%
+  <div class="progress-inner"
+       [ngClass]="{
+           'orange': progress?.status < 50,
+           'yellow': progress?.status > 49 && progress?.status < 90,
+           'green': progress?.status > 89
+       }"
+       [style.width]="calcWidth(progress?.status) + '%'">
+      {{progress?.status}}% ({{progress?.numParts}})
   </div>
 </div>
