@@ -7,7 +7,7 @@
     <ion-searchbar slot="start" placeholder="Search/Filter" style="width: 550px" [(ngModel)]="searchTerm"></ion-searchbar>
 <!-- (ionChange)="setSearchedItems()"-->
     <ion-button slot="end">
-      <ion-icon icon name="funnel" ></ion-icon>
+      <ion-icon icon name="funnel"></ion-icon>
       <ion-select name="filter" interface="popover" (ionChange)="onChangeFilter($event)">
         <ion-select-option value="Ident.-Nr.">Ident.-Nr.</ion-select-option>
         <ion-select-option value="P/N">P/N</ion-select-option>
@@ -23,7 +23,7 @@
     
     <ion-buttons class="barcode-buttons" slot="end">
       <ion-button (click)="scanPartIdentTag()">
-        <ion-icon name="barcode"></ion-icon>
+        <ion-icon name="barcode" style="font-size:30px"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
