@@ -192,6 +192,24 @@ export class PartService {
             }
             break;
           }
+          case 'ReasonForRemoval': {
+            if (item.reasonRemoval.toString().toLowerCase().includes(term.toLowerCase())) {
+              chipMatched = true;
+            }
+            break;
+          }
+          case 'AUPA': {
+            if (item.aupa.toString().toLowerCase().includes(term.toLowerCase())) {
+              chipMatched = true;
+            }
+            break;
+          }
+          case 'RackLocation': {
+            if (item.rackLocation.toString().toLowerCase().includes(term.toLowerCase())) {
+              chipMatched = true;
+            }
+            break;
+          }
         }
       }
       ret = ret && chipMatched;
