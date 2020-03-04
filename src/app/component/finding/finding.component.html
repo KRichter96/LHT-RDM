@@ -1,7 +1,12 @@
-<ion-button expand="full" (click)="selectImage()" class="img-wrapper" size="large">
+<ion-button (click)="selectImage('camera')" expand="full" size="large" style="display: block">
   <ion-icon name="add" size="large"></ion-icon>
-  <ion-label>Add Finding</ion-label>
+  <ion-label>Camera</ion-label>
 </ion-button>
+<!--<ion-button (click)="selectImage('library')" size="large" style="display: inline-block;width:49%">
+  <ion-icon name="add" size="large"></ion-icon>
+  <ion-label>Library</ion-label>
+</ion-button>-->
+
 <ion-list>
   <ion-item no-lines *ngFor="let img of images; index as pos" class="ion-text-wrap">
     <ion-thumbnail slot="start" size="large">
@@ -10,14 +15,3 @@
     <ion-label>{{img.description}}</ion-label>
   </ion-item>
 </ion-list>
-<!---
-<ion-grid>
-  <ion-row>
-    <ion-col col-6 *ngFor="let img of images; index as pos">
-      <ion-img [src]="img.path" (click)="openImage(img.filePath)" (press)="deleteImage(img, pos)"></ion-img>
-    </ion-col>
-    <ion-col col-6>
-      <ion-input placeholder="......."></ion-input>
-    </ion-col>
-  </ion-row>
-</ion-grid>-->

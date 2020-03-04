@@ -57,38 +57,24 @@ export class PhotoComponent implements OnInit {
     });
   }
 
-  async selectImage() {
+  async selectImage(source: string) {
     if (!this.canWrite()) {
       this.toastService.displayToast('Not allowed to make any changes.');
       return;
     }
 
     this.partDetail.onSave(); // Speicher zwischen
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Select Image source',
-      buttons: [{
-        text: 'Load from Library',
-        handler: () => {
-          this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
-        }
-      },
-      {
-        text: 'Use Camera',
-        handler: () => {
-          this.takePicture(this.camera.PictureSourceType.CAMERA);
-        }
-      },
-      {
-        text: 'Cancel',
-        role: 'cancel'
-      }]
-    });
-    await actionSheet.present();
+
+    if (source === 'camera') {
+      this.takePicture(this.camera.PictureSourceType.CAMERA);
+    } else if (source === 'library') {
+      this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+    }
   }
 
   takePicture(sourceType: PictureSourceType) {
     const options: CameraOptions = {
-      quality: 100,
+      quality: 50,
       sourceType,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
