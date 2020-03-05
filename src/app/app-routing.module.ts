@@ -5,6 +5,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', loadChildren: './pages/login/login.module#LoginPageModule' },
   { path: 'projects', loadChildren: './pages/projects/projects.module#ProjectsPageModule' },
+  { path: 'dev', loadChildren: './component/dev/dev.module#DevModule'},
   { path: 'parts/:projectId', loadChildren: './pages/parts/parts.module#PartsPageModule' },
   { path: 'part-detail/:newid', loadChildren: './pages/part-detail/part-detail.module#PartDetailPageModule' },
   { path: 'popover', loadChildren: './component/popover/popover.module#PopoverPageModule' },

@@ -8,11 +8,11 @@ export class ToastService {
 
   constructor(private toastCtrl: ToastController) { }
 
-  displayToast(message: string, durationMs: number = 2000) {
+  displayToast(message: string, durationMs: number = 2000, position: any = 'top') {
     const toast = this.toastCtrl.create({
       message,
       duration: durationMs,
-      position: 'top'
+      position
     });
     toast.then(toastr => toastr.present());
   }

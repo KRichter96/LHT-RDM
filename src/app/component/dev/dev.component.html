@@ -1,0 +1,45 @@
+<ion-header>
+
+    <ion-toolbar color="primary">
+
+        <ion-title>Dev</ion-title>
+
+        <ion-buttons slot="start">
+            <ion-back-button [routerLink]="['/projects']" routerLinkActive="router-link-active"></ion-back-button>
+        </ion-buttons>
+
+        <ion-buttons slot="end">
+          <ion-button (click)="initializeDevInfo()">Refresh</ion-button>
+        </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="has-header">
+    <ion-text color="primary">
+      <h1 class="ion-margin-start header">Images</h1>
+      <div class="indent">
+        <p>Locally saved metadata: {{devInfo.locallySavedImageMeta}} ({{devInfo.locallySavedImageMetaImages}} Images)</p>
+        <p>Locally saved images: {{devInfo.locallySavedImages}}</p>
+        <!--<ion-button>Upload</ion-button>-->
+      </div>
+    </ion-text>
+
+    <ion-text>
+      <h1 class="ion-margin-start header">Unsynchronized Requests:</h1>
+      <div class="indent">
+        <p>Images: {{devInfo.unsynchronizedImages}}</p>
+        <p>Parts: {{devInfo.unsynchronizedParts}}</p>
+        <!--<ion-button>Upload</ion-button>-->
+      </div>
+    </ion-text>
+
+    <ion-text>
+      <h1 class="ion-margin-start header">Logging:</h1>
+      <div class="indent">
+        <!--<ion-button>Show Logs</ion-button>-->
+      </div>
+    </ion-text>
+
+</ion-content>

@@ -7,9 +7,9 @@ import {ToastService} from '../toast/toast.service';
 import {mergeMap} from 'rxjs/operators';
 import {Platform} from '@ionic/angular';
 
-const STORAGE_REQ_KEY = 'storedreq';
+export const STORAGE_REQ_KEY = 'storedreq';
 
-interface StoredRequest {
+export interface StoredRequest {
   url: string;
   type: string;
   data: any;
