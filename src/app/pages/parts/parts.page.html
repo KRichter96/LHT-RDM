@@ -96,7 +96,7 @@
         
         <ion-grid>
           <ion-row > <!-- TODO Adriel Delete hidden? *ngIf="part.statusEdit != 'Deleted' && offline == true" -->
-            <ion-col size="1" [ngClass]="{greenClass: part.complete, yellowClass: !part.complete}">
+            <ion-col size="1" [ngClass]="{greenClass: part.complete, redClass: !part.complete}">
               <div class="stacked-group">
                 <ion-label>{{ part.counterId }}</ion-label>
               </div>
@@ -134,10 +134,8 @@
               </div>
             </ion-col>
             <ion-col size="1">
-              <div *ngIf="offline == true && part.statusEdit == 'Deleted'">
-                <ion-icon name="cloud-upload"></ion-icon>
-                <ion-icon name="trash"></ion-icon>
-              </div>
+              <ion-icon name="cloud-upload" [ngClass]="{'red': !part.isSynchronized, 'green': part.isSynchronized}"></ion-icon>
+
               <ion-icon *ngIf="part.statusCreate == 'New' else elseBlock" name="add"></ion-icon>
                 <ng-template #elseBlock><ion-icon name="document"></ion-icon></ng-template> <!-- Initial (from backend) -->
               <ion-icon *ngIf="part.statusEdit == 'Edited'" name="create"></ion-icon>

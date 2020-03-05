@@ -49,6 +49,7 @@ export class PartModel {
 
   // frontend only
   complete: boolean;
+  isSynchronized = false;
 }
 
 

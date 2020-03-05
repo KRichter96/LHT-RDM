@@ -19,7 +19,7 @@ import {Subscription} from 'rxjs';
   selector: 'app-parts',
   templateUrl: './parts.page.html',
   styleUrls: ['./parts.page.scss'],
-  styles: [ '.greenClass { background-color: green } .yellowClass {background-color: red }']
+  styles: [ '.greenClass { background-color: green } .redClass {background-color: red }']
 })
 export class PartsPage implements OnInit, OnDestroy {
 

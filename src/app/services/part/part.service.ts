@@ -34,7 +34,10 @@ export class PartService {
         map(res => res['parts']), // tslint:disable-line
         map(res => res.filter(part => part.statusEdit !== 'Deleted')),
         tap((res: PartModel[]) => {
-          res.forEach(r => setStatus(r));
+          res.forEach(r => {
+            setStatus(r);
+            r.isSynchronized = true;
+          });
           this.setLocalData('parts' + projectId, res);
           this.items = res;
         })
@@ -80,6 +83,7 @@ export class PartService {
   public updatePart(data: PartModel) {
     const partUrl = this.bupService.getUrl() + 'parts';
     setStatus(data);
+    data.isSynchronized = false;
     this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
     this.setLocalData('parts' + data.projectId, this.items);
 
