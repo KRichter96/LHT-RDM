@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Storage} from '@ionic/storage';
 import {STORAGE_REQ_KEY, StoredRequest} from '../../services/offline/offline.service';
 import {ToastService} from '../../services/toast/toast.service';
@@ -37,7 +37,7 @@ export class DevComponent implements OnInit {
     this.setRequestInfo();
 
     // get stored image metadata
-    this.setImageMetadataInfo();
+    this.setImageMetadataInfo().then();
 
     // get stored images on this device
     this.setImageInfo();
@@ -55,17 +55,10 @@ export class DevComponent implements OnInit {
           this.devInfo.unsynchronizedParts = otherOperations.length;
           this.devInfo.unsynchronizedImages = imageOperations.length;
 
-          // this.toastService.displayToast('Updated request information.', 2000, 'bottom');
         } catch (e) {
 
           this.devInfo.unsynchronizedParts = 0;
           this.devInfo.unsynchronizedImages = 0;
-
-          /*if (result === null || result === undefined) {
-            this.toastService.displayToast('No requests stored locally.', 2000, 'bottom');
-          } else {
-            this.toastService.displayToast('No valid requests stored locally.', 2000, 'bottom');
-          }*/
         }
       });
     });
