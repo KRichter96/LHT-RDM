@@ -3,13 +3,25 @@ import {Storage} from '@ionic/storage';
 import {STORAGE_REQ_KEY, StoredRequest} from '../../services/offline/offline.service';
 import {ToastService} from '../../services/toast/toast.service';
 import {Entry, File} from '@ionic-native/file/ngx';
+import {Observable, of} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {catchError, mergeMap} from 'rxjs/operators';
+import {removePartRequestFromStorage, StorageHelperService} from '../../services/storage-helper/storage-helper.service';
+import {ObservableQService} from '../../services/observable-q/observable-q.service';
 
 export class DevInfo {
+  // for images
   locallySavedImageMeta = 0;
   locallySavedImageMetaImages = 0;
   locallySavedImages = 0;
+  // for unsynchronized requests
   unsynchronizedParts = 0;
   unsynchronizedImages = 0;
+  currentlyUploadedParts = 0;
+  uploadingParts = false;
+  currentlyUploadedImages = 0;
+  uploadingImages = false;
+  disableAll = false; // disables all buttons when doing something
 }
 
 @Component({
@@ -26,13 +38,19 @@ export class DevComponent implements OnInit {
 
   constructor(private storage: Storage,
               private toastService: ToastService,
-              private file: File) {}
+              private file: File,
+              private http: HttpClient,
+              private storageHelperService: StorageHelperService,
+              private obsQ: ObservableQService) {}
 
   ngOnInit() {
     this.initializeDevInfo();
   }
 
   initializeDevInfo() {
+    this.devInfo.currentlyUploadedParts = 0;
+    this.devInfo.currentlyUploadedImages = 0;
+
     // set information of unsynchronized requests
     this.setRequestInfo();
 
@@ -89,6 +107,10 @@ export class DevComponent implements OnInit {
   }
 
   setImageInfo(): void {
+    if (!this.file.dataDirectory) {
+      return;
+    }
+
     const dataDir = this.file.dataDirectory.split('/');
 
     let path: string;
@@ -106,6 +128,97 @@ export class DevComponent implements OnInit {
       files.forEach((file: Entry) => {
         if (file.name.endsWith('.png') || file.name.endsWith('.jpeg') || file.name.endsWith('.jpg')) {
           this.devInfo.locallySavedImages += 1;
+        }
+      });
+    });
+  }
+
+  // UPLOADS
+
+  uploadAllParts(): void {
+    this.devInfo.disableAll = true;
+    this.devInfo.uploadingParts = true;
+    this.storage.ready().then(() => {
+      this.storage.get(this.requestsKey).then( result => {
+        // extract part requests
+        let partRequests: StoredRequest[];
+        try {
+          const requests: StoredRequest[]  = JSON.parse(result);
+          partRequests = requests.filter(op => !(op.url.endsWith('/findings') || op.url.endsWith('/photos')));
+        } catch (e) {
+          this.toastService.displayToast('No valid request data found on device');
+        }
+
+        // upload requests recursively
+        this.toastService.displayToast('Starting the uploading process.');
+        this.uploadPart(partRequests, 0).subscribe(() => {
+          // update devInfo 1s after response of last request succeeded
+          // from here it seems every request succeeds, because the errors are
+          // catched in uploadPart()
+          setTimeout(() => {
+            this.devInfo.disableAll = false;
+            this.devInfo.uploadingParts = false;
+            this.initializeDevInfo();
+            this.toastService.displayToast('Finished the uploading process. If there are still unsyched requests left, please ' +
+              'visit the details view.');
+          }, 1500);
+        });
+      });
+    });
+  }
+
+  uploadPart(operations: StoredRequest[], index: number): Observable<any> {
+    const op = operations[index];
+    return this.http.request('PUT', op.url, {body: op.data}).pipe(
+      catchError(() => {
+        // request failed
+        // return a specific string
+        return of('req has failed');
+      }),
+      mergeMap((data) => {
+        if (data !== 'req has failed') {
+          // remove request from storage and update devInfo
+          const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
+            removePartRequestFromStorage, [op.data.id]);
+          this.obsQ.addToQueue(storageRemove);
+          this.devInfo.currentlyUploadedParts += 1;
+        }
+
+        // execute next request if there are any
+        if (index + 1 < operations.length) {
+          return this.uploadPart(operations, index + 1);
+        }
+        // last request succeeded, upload process is finished
+        return of(null);
+      })
+    );
+  }
+
+  uploadAllImages(): void {
+    // nothing
+  }
+
+  createPartThatWillFail(): void {
+    this.storage.ready().then(() => {
+      this.storage.get(this.requestsKey).then( result => {
+        // extract part requests
+        let requests: StoredRequest[];
+        try {
+          requests = JSON.parse(result);
+          requests.push({
+            url: 'fjpwiefowjefi/parts',
+            type: 'POST',
+            data: {
+              id: 'fwe98fwe98fwje8f',
+              counterId: 123829743,
+              projectId: 'mock.boid'
+            },
+            id: 'jfowefwoefjwefjo',
+            time: 109283102
+          });
+          this.storage.set(this.requestsKey, JSON.stringify(requests)).then();
+        } catch  (e) {
+          // nothing
         }
       });
     });

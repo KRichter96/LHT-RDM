@@ -2,6 +2,13 @@ import {Injectable} from '@angular/core';
 import {from, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {Storage} from '@ionic/storage';
+import {StoredRequest} from '../offline/offline.service';
+
+export const removePartRequestFromStorage = (list: StoredRequest[], partId: string): StoredRequest[] => {
+  return list.filter(req => {
+    return !req.url.endsWith('/parts') || req.data.id !== partId;
+  });
+};
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +18,19 @@ export class StorageHelperService {
   constructor(private storage: Storage) { }
 
   /**
+   *     // example usage
+   *     private append = (list: any[], t: number) => { list.push(t); return list; };
+   *     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+   *     this.storage.set(this.key, JSON.stringify([])).then(() => {
+   *       numbers.forEach(num => {
+   *         // create observable
+   *         const x: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.key, this.append, [num]);
+   *         // add observable to queue
+   *         this.promiseQService.addToQueue(x);
+   *       });
+   *     });
+   *
+   *
    * Creates an observable that can be queued by the observable-q.
    * Reads a value, modifies it and writes it. Used with the observable-q it
    * is possible to access the storage synchroniously.

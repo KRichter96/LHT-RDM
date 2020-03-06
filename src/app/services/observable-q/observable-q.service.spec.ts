@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ObsevableQService } from './obsevable-q.service';
+import { ObservableQService } from './observable-q.service';
 
-describe('ObsevableQService', () => {
+describe('ObservableQService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: ObsevableQService = TestBed.get(ObsevableQService);
+    const service: ObservableQService = TestBed.get(ObservableQService);
     expect(service).toBeTruthy();
   });
 });

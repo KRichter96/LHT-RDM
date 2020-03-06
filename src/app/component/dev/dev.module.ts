@@ -3,19 +3,25 @@ import {CommonModule} from '@angular/common';
 import {DevComponent} from './dev.component';
 import {RouterModule, Routes} from '@angular/router';
 import {IonicModule} from '@ionic/angular';
+import {DevPartDetailsComponent} from './dev-part-details/dev-part-details.component';
 
 
 const routes: Routes = [
   {
     path: '',
-    component: DevComponent
+    component: DevComponent,
+  },
+  {
+    path: 'part-req-details',
+    component: DevPartDetailsComponent
   }
 ];
 
 
 @NgModule({
   declarations: [
-    DevComponent
+    DevComponent,
+    DevPartDetailsComponent
   ],
   imports: [
     CommonModule,

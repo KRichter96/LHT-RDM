@@ -1,0 +1,32 @@
+<ion-header>
+
+  <ion-toolbar color="primary">
+
+    <ion-title>Part Request Details</ion-title>
+
+    <ion-buttons slot="start">
+      <ion-back-button [routerLink]="['/dev']" routerLinkActive="router-link-active"></ion-back-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="initializeRequests()">Refresh</ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="has-header">
+  <ion-text color="primary">
+    <div *ngFor="let partRequest of partRequests; let i = index">
+      <div class="indent">
+        <p>Part {{partRequest.data.counterId}} (project: {{projectMap[partRequest.data.projectId]}})</p>
+        <p>
+          <ion-button (click)="uploadPart(i)">Upload</ion-button>
+          <ion-button (click)="deletePartRequest(i)">Delete</ion-button>
+        </p>
+        <p>&nbsp;</p>
+      </div>
+    </div>
+  </ion-text>
+</ion-content>

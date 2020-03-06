@@ -9,7 +9,7 @@ import {Observable, Subject} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ObsevableQService {
+export class ObservableQService {
 
   private observable$ = new Subject<Observable<{}>>();
   private queue: Observable<{}>[] = [];

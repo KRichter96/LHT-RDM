@@ -22,7 +22,7 @@ import {PopoverPageModule} from './component/popover/popover.module';
 
 import {PhotoViewer} from '@ionic-native/photo-viewer/ngx';
 import {TokenInterceptor} from './services/token/tokeninterceptor';
-import {ObsevableQService} from './services/observable-q/obsevable-q.service';
+import {ObservableQService} from './services/observable-q/observable-q.service';
 import {StorageHelperService} from './services/storage-helper/storage-helper.service';
 
 
@@ -51,7 +51,7 @@ import {StorageHelperService} from './services/storage-helper/storage-helper.ser
     FilePath,
     WebView,
     PhotoViewer,
-    ObsevableQService,
+    ObservableQService,
     StorageHelperService
   ],
   bootstrap: [AppComponent]

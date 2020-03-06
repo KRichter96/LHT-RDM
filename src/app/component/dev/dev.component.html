@@ -22,24 +22,60 @@
       <div class="indent">
         <p>Locally saved metadata: {{devInfo.locallySavedImageMeta}} ({{devInfo.locallySavedImageMetaImages}} Images)</p>
         <p>Locally saved images: {{devInfo.locallySavedImages}}</p>
-        <!--<ion-button>Upload</ion-button>-->
+        <p>
+          <ion-button>Upload</ion-button>
+          <ion-button>Details</ion-button>
+        </p>
       </div>
     </ion-text>
 
     <ion-text>
       <h1 class="ion-margin-start header">Unsynchronized Requests:</h1>
       <div class="indent">
-        <p>Images: {{devInfo.unsynchronizedImages}}</p>
+        <p style="color: orange">[Always upload parts first!]</p>
+        <p>&nbsp;</p>
+
         <p>Parts: {{devInfo.unsynchronizedParts}}</p>
-        <!--<ion-button>Upload</ion-button>-->
+        <p>
+          <ion-button [disabled]="devInfo.disableAll || devInfo.unsynchronizedParts < 1"
+                      (click)="uploadAllParts()">
+            Upload Parts
+          </ion-button>
+          <ion-button [routerLink]="['./part-req-details']" routerDirection="forward"
+                  [disabled]="devInfo.disableAll">
+            Details
+          </ion-button>
+        </p>
+        <p *ngIf="devInfo.uploadingParts">
+          Uploading {{devInfo.currentlyUploadedParts}} of {{devInfo.unsynchronizedParts}} parts
+        </p>
+
+        <p>&nbsp;</p>
+
+        <p>Images: {{devInfo.unsynchronizedImages}}</p>
+        <p>
+          <ion-button [disabled]="devInfo.disableAll || devInfo.unsynchronizedImages < 1"
+                      (click)="uploadAllImages()">
+            Upload Images
+          </ion-button>
+          <ion-button  [disabled]="devInfo.disableAll">Details</ion-button>
+        </p>
+        <p *ngIf="devInfo.uploadingImages">
+          Uploading {{devInfo.currentlyUploadedImages}} of {{devInfo.unsynchronizedImages}} images
+        </p>
+
       </div>
     </ion-text>
 
     <ion-text>
       <h1 class="ion-margin-start header">Logging:</h1>
       <div class="indent">
-        <!--<ion-button>Show Logs</ion-button>-->
+        <ion-button [disabled]="devInfo.disableAll">Show Logs</ion-button>
       </div>
     </ion-text>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <ion-button (click)="createPartThatWillFail()">Create Fail Part</ion-button>
 
 </ion-content>
