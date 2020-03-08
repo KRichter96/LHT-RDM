@@ -13,6 +13,7 @@ import {
 } from '../../services/storage-helper/storage-helper.service';
 import {ObservableQService} from '../../services/observable-q/observable-q.service';
 import {NavigationEnd, Router} from '@angular/router';
+import {LogProvider} from '../../services/logging/log.service';
 
 export class DevInfo {
   // for images
@@ -48,7 +49,8 @@ export class DevComponent implements OnInit, OnDestroy {
               private http: HttpClient,
               private storageHelperService: StorageHelperService,
               private obsQ: ObservableQService,
-              private router: Router) {}
+              private router: Router,
+              private log: LogProvider) {}
 
   ngOnInit() {
     this.initializeDevInfo();
@@ -159,13 +161,15 @@ export class DevComponent implements OnInit, OnDestroy {
     this.storage.ready().then(() => {
       this.storage.get(this.requestsKey).then( result => {
         // extract part requests
-        let partRequests: StoredRequest[];
+        let partRequests: StoredRequest[] = [];
         try {
           const requests: StoredRequest[]  = JSON.parse(result);
           partRequests = requests.filter(op => !(op.url.endsWith('/findings') || op.url.endsWith('/photos')));
         } catch (e) {
           this.toastService.displayToast('No valid request data found on device');
         }
+
+        this.log.log('Starting dev parts upload (' + partRequests.length + ')');
 
         // upload requests recursively
         this.toastService.displayToast('Starting the uploading process.');
@@ -188,9 +192,10 @@ export class DevComponent implements OnInit, OnDestroy {
   uploadPart(operations: StoredRequest[], index: number): Observable<any> {
     const op = operations[index];
     return this.http.request('PUT', op.url, {body: op.data}).pipe(
-      catchError(() => {
+      catchError((error) => {
         // request failed
         // return a specific string
+        this.log.err('Error on dev parts upload (' + (index + 1) + ') ', error);
         return of('req has failed');
       }),
       mergeMap((data) => {
@@ -200,6 +205,7 @@ export class DevComponent implements OnInit, OnDestroy {
             removePartRequestFromStorage, [op.data.id]);
           this.obsQ.addToQueue(storageRemove);
           this.devInfo.currentlyUploadedParts += 1;
+          this.log.log('Successful dev parts upload (' + (index + 1) + ') ');
         }
 
         // execute next request if there are any
@@ -225,6 +231,8 @@ export class DevComponent implements OnInit, OnDestroy {
         } catch (e) {
           this.toastService.displayToast('No valid request data found on device');
         }
+
+        this.log.log('Starting dev images upload (' + imageRequests.length + ')');
 
         // upload requests recursively
         this.toastService.displayToast('Starting the uploading process.');
@@ -255,9 +263,10 @@ export class DevComponent implements OnInit, OnDestroy {
         formData.append('image', blob);
         formData.append('description', op.data.description);
         return this.http.post(op.url, formData).pipe(
-          catchError(() => {
+          catchError((error) => {
             // request failed
             // return a specific string
+            this.log.err('Error on dev images upload (' + (index + 1) + ') ', error);
             return of('req has failed');
           }),
           mergeMap((data) => {
@@ -267,6 +276,7 @@ export class DevComponent implements OnInit, OnDestroy {
                 removeImageRequestFromStorage, [op.data.b]);
               this.obsQ.addToQueue(storageRemove);
               this.devInfo.currentlyUploadedImages += 1;
+              this.log.log('Successful dev images upload (' + (index + 1) + ') ');
             }
 
             // execute next request if there are any
@@ -283,7 +293,7 @@ export class DevComponent implements OnInit, OnDestroy {
 
   // TEST HELPER
 
-  createPartThatWillFail(): void {
+  /*createPartThatWillFail(): void {
     this.storage.ready().then(() => {
       this.storage.get(this.requestsKey).then( result => {
         // extract part requests
@@ -307,5 +317,5 @@ export class DevComponent implements OnInit, OnDestroy {
         }
       });
     });
-  }
+  }*/
 }

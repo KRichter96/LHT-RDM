@@ -8,6 +8,7 @@ import {Storage} from '@ionic/storage';
 import {Chip} from '../../pages/parts/Chip';
 import {PartModel, setStatus} from 'src/app/models/part/partmodel';
 import {BackendUrlProviderService} from '../backend-url-provider/backend-url-provider.service';
+import {LogProvider} from '../logging/log.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,12 @@ export class PartService {
   public items: PartModel[] = [];
   parentCounterId: number;
 
-  constructor(private http: HttpClient, private networkService: NetworkService,
-              private storage: Storage, private offlineManager: OfflineService,
-              private bupService: BackendUrlProviderService) {}
+  constructor(private http: HttpClient,
+              private networkService: NetworkService,
+              private storage: Storage,
+              private offlineManager: OfflineService,
+              private bupService: BackendUrlProviderService,
+              private log: LogProvider) {}
 
   public getParts(projectId): Observable<any> {
 
@@ -55,8 +59,11 @@ export class PartService {
       this.offlineManager.storeRequest(partUrl, 'POST', data).then();
     } else {
       this.http.post(partUrl, data).subscribe(
-        () => {},
         () => {
+        this.log.log('Directly uploaded new part (' + data.counterId + ') of project (' + data.projectId + ')');
+        },
+        (error) => {
+          this.log.err('Error on upload of new part (' + data.counterId + ') of project (' + data.projectId + ') ', error);
           this.offlineManager.storeRequest(partUrl, 'POST', data).then();
         }
       );
@@ -91,8 +98,11 @@ export class PartService {
       this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
     } else {
       this.http.put(partUrl, data).subscribe(
-        () => {},
         () => {
+          this.log.log('Directly uploaded part (' + data.counterId + ') of project (' + data.projectId + ')');
+        },
+        (error) => {
+          this.log.err('Error on upload of part (' + data.counterId + ') of project (' + data.projectId + ') ', error);
           this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
         }
       );
@@ -109,8 +119,11 @@ export class PartService {
       this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
     } else {
       this.http.put(partUrl, data).subscribe(
-        () => {},
         () => {
+          this.log.log('Directly deleted part (' + data.counterId + ') of project (' + data.projectId + ')');
+        },
+        (error) => {
+          this.log.err('Error on upload of deleted part (' + data.counterId + ') of project (' + data.projectId + ') ', error);
           this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
         }
       );

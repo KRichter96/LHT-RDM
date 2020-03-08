@@ -8,6 +8,7 @@ import {removePartRequestFromStorage, StorageHelperService} from '../../../servi
 import {ObservableQService} from '../../../services/observable-q/observable-q.service';
 import {ToastService} from '../../../services/toast/toast.service';
 import {AlertController} from '@ionic/angular';
+import {LogProvider} from '../../../services/logging/log.service';
 
 @Component({
   selector: 'app-dev-part-details',
@@ -25,7 +26,8 @@ export class DevPartDetailsComponent implements OnInit {
               private storageHelperService: StorageHelperService,
               private obsQ: ObservableQService,
               private toastService: ToastService,
-              private alertCtrl: AlertController) {
+              private alertCtrl: AlertController,
+              private log: LogProvider) {
     this.requestsKey = STORAGE_REQ_KEY;
   }
 
@@ -75,10 +77,12 @@ export class DevPartDetailsComponent implements OnInit {
       // inform user of success
       this.toastService.displayToast('Uploaded part ' + op.data.counterId + ' (' + this.projectMap[op.data.projectId] + ')',
         2000, 'bottom');
+      this.log.log('Successful upload of dev part-details (' + op.data.counterId + ')');
       // refresh
       setTimeout(() => this.initializeRequests(), 1000);
     }, (error) => {
       // inform user of failure
+      this.log.err('Error on dev part-details upload (' + op.data.counterId + ') ', error);
       this.toastService.displayToast(error.message, 2000, 'bottom');
     });
   }
@@ -108,6 +112,7 @@ export class DevPartDetailsComponent implements OnInit {
               // refresh
               this.initializeRequests();
               // inform user of success
+              this.log.log('Deleted dev part-details (' + op.data.counterId + ')');
               this.toastService.displayToast('Deleted part ' + op.data.counterId + ' (' + this.projectMap[op.data.projectId] + ')',
                 2000, 'bottom');
             }, 1000);

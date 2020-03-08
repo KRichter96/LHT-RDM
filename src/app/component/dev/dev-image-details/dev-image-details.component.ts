@@ -8,6 +8,7 @@ import {ToastService} from '../../../services/toast/toast.service';
 import {AlertController} from '@ionic/angular';
 import {Observable} from 'rxjs';
 import {File} from '@ionic-native/file/ngx';
+import {LogProvider} from '../../../services/logging/log.service';
 
 @Component({
   selector: 'app-dev-image-details',
@@ -25,7 +26,8 @@ export class DevImageDetailsComponent implements OnInit {
               private obsQ: ObservableQService,
               private toastService: ToastService,
               private alertCtrl: AlertController,
-              private file: File) {
+              private file: File,
+              private log: LogProvider) {
     this.requestsKey = STORAGE_REQ_KEY;
   }
 
@@ -65,10 +67,13 @@ export class DevImageDetailsComponent implements OnInit {
 
         // inform user of success
         this.toastService.displayToast('Uploaded image.', 2000, 'bottom');
+        this.log.log('Successful upload of dev image-details (' + op.data.b + ')');
+
         // refresh
         setTimeout(() => this.initializeRequests(), 1000);
       }, (error) => {
         // inform user of failure
+        this.log.err('Error on dev image-details upload (' + op.data.b + ') ', error);
         this.toastService.displayToast(error.message, 2000, 'bottom');
       });
     });
@@ -106,6 +111,7 @@ export class DevImageDetailsComponent implements OnInit {
               // refresh
               this.initializeRequests();
               // inform user of success
+              this.log.log('Deleted dev image-details (' + op.data.b + ')');
               this.toastService.displayToast('Image deleted.',
                 2000, 'bottom');
             }, 1000);

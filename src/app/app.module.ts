@@ -8,7 +8,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {IonicStorageModule, Storage} from '@ionic/storage';
+import {IonicStorageModule} from '@ionic/storage';
 import {Network} from '@ionic-native/network/ngx';
 import {BarcodeScanner} from '@ionic-native/barcode-scanner/ngx';
 import {Camera} from '@ionic-native/camera/ngx';
@@ -24,6 +24,9 @@ import {PhotoViewer} from '@ionic-native/photo-viewer/ngx';
 import {TokenInterceptor} from './services/token/tokeninterceptor';
 import {ObservableQService} from './services/observable-q/observable-q.service';
 import {StorageHelperService} from './services/storage-helper/storage-helper.service';
+import {LogFileAppenderModule} from './services/logging/log-file-appender.module';
+import {LogProvider} from './services/logging/log.service';
+import {DatePipe} from '@angular/common';
 
 
 @NgModule({
@@ -37,7 +40,8 @@ import {StorageHelperService} from './services/storage-helper/storage-helper.ser
     IonicStorageModule.forRoot(),
     PartsPageModule,
     PartDetailPageModule,
-    PopoverPageModule
+    PopoverPageModule,
+    LogFileAppenderModule.forRoot()
   ],
   providers: [
     StatusBar,
@@ -52,7 +56,9 @@ import {StorageHelperService} from './services/storage-helper/storage-helper.ser
     WebView,
     PhotoViewer,
     ObservableQService,
-    StorageHelperService
+    StorageHelperService,
+    LogProvider,
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

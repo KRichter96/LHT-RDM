@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {from} from 'rxjs';
 import {File} from '@ionic-native/file/ngx';
 import {BackendUrlProviderService} from '../backend-url-provider/backend-url-provider.service';
+import {LogProvider} from '../logging/log.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,12 @@ export class ImageService {
 
   images: any[] = [];
 
-  constructor(private http: HttpClient, private networkService: NetworkService,
-              private offlineManager: OfflineService, private file: File,
-              private bupService: BackendUrlProviderService) {}
+  constructor(private http: HttpClient,
+              private networkService: NetworkService,
+              private offlineManager: OfflineService,
+              private file: File,
+              private bupService: BackendUrlProviderService,
+              private log: LogProvider) {}
 
   uploadImage(image: any, partId) {
     const url = `${this.bupService.getUrl() + 'parts/' + partId + '/photos'}`;
@@ -32,8 +36,12 @@ export class ImageService {
         if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
           return from(this.offlineManager.storeRequest(url, 'POST', data));
         } else {
-          this.http.post(url, formData).subscribe(() => {},
+          this.http.post(url, formData).subscribe(
             () => {
+              this.log.log('Directly upload photo (' + b + ') of part (' + partId + ')');
+            },
+            (error) => {
+              this.log.err('Error on upload of photo (' + b + ') of part (' + partId + ') ', error);
               this.offlineManager.storeRequest(url, 'POST', data);
             });
         }
@@ -61,8 +69,10 @@ export class ImageService {
           this.http.post<any>(url, formData).subscribe(
             response => {
               this.images.push(response.projectId, data);
+              this.log.log('Directly upload finding (' + b + ') of part (' + partId + ')');
             },
-            () => {
+            (error) => {
+              this.log.err('Error on upload of finding (' + b + ') of part (' + partId + ') ', error);
               this.offlineManager.storeRequest(url, 'POST', d);
             });
         }

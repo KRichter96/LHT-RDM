@@ -6,6 +6,7 @@ import {HttpClient} from '@angular/common/http';
 import {ToastService} from '../toast/toast.service';
 import {BackendUrlProviderService} from '../backend-url-provider/backend-url-provider.service';
 import {catchError, timeout} from 'rxjs/operators';
+import {LogProvider} from '../logging/log.service';
 
 export enum ConnectionStatus { Online, Offline }
 
@@ -17,8 +18,13 @@ export class NetworkService {
   private status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Online);
   private statusValue: number;
 
-  constructor(private network: Network, private plt: Platform, private http: HttpClient,
-              private toastCtrl: ToastService, private bupService: BackendUrlProviderService) {
+  constructor(private network: Network,
+              private plt: Platform,
+              private http: HttpClient,
+              private toastCtrl: ToastService,
+              private bupService: BackendUrlProviderService,
+              private log: LogProvider) {
+    // this.updateNetworkStatus(ConnectionStatus.Offline, '');
 
     this.plt.ready().then(() => {
       const status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
@@ -50,9 +56,11 @@ export class NetworkService {
   private async updateNetworkStatus(status: ConnectionStatus, msg: any) {
     if (this.status.getValue() === ConnectionStatus.Online && status === ConnectionStatus.Offline) {
       this.toastCtrl.displayToast('You are now Offline');
+      this.log.log('App is now offline.');
       this.status.next(status);
     } else if (this.status.getValue() === ConnectionStatus.Offline && status === ConnectionStatus.Online) {
       this.toastCtrl.displayToast('You are now Online');
+      this.log.log('App is now online.');
       this.status.next(status);
     }
   }

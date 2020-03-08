@@ -22,7 +22,7 @@
     <p>&nbsp;</p>
     <div *ngFor="let imageRequest of imageRequests; let i = index">
       <div class="indent">
-        <p>Image {{i}}</p>
+        <p>Image {{imageRequest.data.b}}</p>
         <p>
           <ion-button (click)="uploadImage(i)">Upload</ion-button>
           <ion-button (click)="deleteImageRequest(i)">Delete</ion-button>

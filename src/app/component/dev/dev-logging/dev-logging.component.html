@@ -1,0 +1,37 @@
+<ion-header>
+
+  <ion-toolbar color="primary">
+
+    <ion-title>Logging</ion-title>
+
+    <ion-buttons slot="start">
+      <ion-back-button [routerLink]="['/dev']" routerLinkActive="router-link-active"></ion-back-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="initializeLogs()">Refresh</ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="has-header">
+  <ion-text color="primary">
+    <div *ngFor="let logFile of logFiles; let i = index">
+      <div class="indent">
+        <p>LogFile {{logFile.name}}</p>
+        <p>
+          <ion-button (click)="showLogs(i)">Show Logs</ion-button>
+        </p>
+        <p>&nbsp;</p>
+      </div>
+    </div>
+  </ion-text>
+
+  <ion-text>
+    <div class="indent" style="white-space: pre-wrap">
+      {{logText}}
+    </div>
+  </ion-text>
+</ion-content>

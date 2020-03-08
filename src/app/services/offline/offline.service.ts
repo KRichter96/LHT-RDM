@@ -6,6 +6,7 @@ import {File} from '@ionic-native/file/ngx';
 import {ToastService} from '../toast/toast.service';
 import {mergeMap} from 'rxjs/operators';
 import {Platform} from '@ionic/angular';
+import {LogProvider} from '../logging/log.service';
 
 export const STORAGE_REQ_KEY = 'storedreq';
 
@@ -26,7 +27,8 @@ export class OfflineService {
               private toastService: ToastService,
               private http: HttpClient,
               private file: File,
-              private plt: Platform) { }
+              private plt: Platform,
+              private log: LogProvider) { }
 
   async checkForEvents() {
 
@@ -37,10 +39,12 @@ export class OfflineService {
 
         this.sendRequests(storedObj).subscribe(async () => {
           this.toastService.displayToast('Local data successfully synced to API!', 3000);
-
           await this.plt.ready().then();
           await this.storage.ready().then();
           this.storage.remove(STORAGE_REQ_KEY).then();
+          this.log.log('Successfully uploaded offline requests (' + storedObj.length + ')');
+        }, (error) => {
+          this.log.err('Error on offline uploads (' + storedObj.length + '): ', error);
         });
       }
       }
@@ -116,12 +120,13 @@ export class OfflineService {
         formData.append('description', op.data.description);
         return this.http.post(op.url, formData).pipe(
           mergeMap(() => {
+            this.log.log('Offline upload of image (' + op.data.b + ')');
             if (index < operations.length - 1) {
               return this.sendImageRequestsSequentially(operations, index + 1);
             }
 
             return of(null);
-          })
+          }),
         );
       })
     );
