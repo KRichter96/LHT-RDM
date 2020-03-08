@@ -58,7 +58,8 @@
                       (click)="uploadAllImages()">
             Upload Images
           </ion-button>
-          <ion-button  [disabled]="devInfo.disableAll">Details</ion-button>
+          <ion-button [routerLink]="['./image-req-details']" routerDirection="forward"
+                      [disabled]="devInfo.disableAll">Details</ion-button>
         </p>
         <p *ngIf="devInfo.uploadingImages">
           Uploading {{devInfo.currentlyUploadedImages}} of {{devInfo.unsynchronizedImages}} images

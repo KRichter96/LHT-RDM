@@ -4,6 +4,7 @@ import {DevComponent} from './dev.component';
 import {RouterModule, Routes} from '@angular/router';
 import {IonicModule} from '@ionic/angular';
 import {DevPartDetailsComponent} from './dev-part-details/dev-part-details.component';
+import {DevImageDetailsComponent} from './dev-image-details/dev-image-details.component';
 
 
 const routes: Routes = [
@@ -14,6 +15,10 @@ const routes: Routes = [
   {
     path: 'part-req-details',
     component: DevPartDetailsComponent
+  },
+  {
+    path: 'image-req-details',
+    component: DevImageDetailsComponent
   }
 ];
 
@@ -21,7 +26,8 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     DevComponent,
-    DevPartDetailsComponent
+    DevPartDetailsComponent,
+    DevImageDetailsComponent
   ],
   imports: [
     CommonModule,

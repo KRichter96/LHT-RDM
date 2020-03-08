@@ -10,6 +10,12 @@ export const removePartRequestFromStorage = (list: StoredRequest[], partId: stri
   });
 };
 
+export const removeImageRequestFromStorage = (list: StoredRequest[], imageName: string): StoredRequest[] => {
+  return list.filter(req => {
+    return (!req.url.endsWith('/findings') && !req.url.endsWith('/photos')) || req.data.b !== imageName;
+  });
+};
+
 @Injectable({
   providedIn: 'root'
 })

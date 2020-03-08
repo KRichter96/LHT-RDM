@@ -1,0 +1,34 @@
+<ion-header>
+
+  <ion-toolbar color="primary">
+
+    <ion-title>Image Request Details</ion-title>
+
+    <ion-buttons slot="start">
+      <ion-back-button [routerLink]="['/dev']" routerLinkActive="router-link-active"></ion-back-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="initializeRequests()">Refresh</ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="has-header">
+  <ion-text color="primary">
+    <p class="indent" style="color: orange">[To avoid errors always upload parts first!]</p>
+    <p>&nbsp;</p>
+    <div *ngFor="let imageRequest of imageRequests; let i = index">
+      <div class="indent">
+        <p>Image {{i}}</p>
+        <p>
+          <ion-button (click)="uploadImage(i)">Upload</ion-button>
+          <ion-button (click)="deleteImageRequest(i)">Delete</ion-button>
+        </p>
+        <p>&nbsp;</p>
+      </div>
+    </div>
+  </ion-text>
+</ion-content>

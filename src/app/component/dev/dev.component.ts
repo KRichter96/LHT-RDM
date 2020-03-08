@@ -1,13 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Storage} from '@ionic/storage';
 import {STORAGE_REQ_KEY, StoredRequest} from '../../services/offline/offline.service';
 import {ToastService} from '../../services/toast/toast.service';
 import {Entry, File} from '@ionic-native/file/ngx';
-import {Observable, of} from 'rxjs';
+import {from, Observable, of, Subscription} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {catchError, mergeMap} from 'rxjs/operators';
-import {removePartRequestFromStorage, StorageHelperService} from '../../services/storage-helper/storage-helper.service';
+import {
+  removeImageRequestFromStorage,
+  removePartRequestFromStorage,
+  StorageHelperService
+} from '../../services/storage-helper/storage-helper.service';
 import {ObservableQService} from '../../services/observable-q/observable-q.service';
+import {NavigationEnd, Router} from '@angular/router';
 
 export class DevInfo {
   // for images
@@ -29,9 +34,10 @@ export class DevInfo {
   templateUrl: './dev.component.html',
   styleUrls: ['./dev.component.scss'],
 })
-export class DevComponent implements OnInit {
+export class DevComponent implements OnInit, OnDestroy {
 
   devInfo = new DevInfo();
+  routerSub: Subscription;
 
   // storage keys for the application
   private requestsKey = STORAGE_REQ_KEY;
@@ -41,10 +47,22 @@ export class DevComponent implements OnInit {
               private file: File,
               private http: HttpClient,
               private storageHelperService: StorageHelperService,
-              private obsQ: ObservableQService) {}
+              private obsQ: ObservableQService,
+              private router: Router) {}
 
   ngOnInit() {
     this.initializeDevInfo();
+
+    this.routerSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd &&
+        event.urlAfterRedirects.includes('dev')) {
+        this.initializeDevInfo();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.routerSub.unsubscribe();
   }
 
   initializeDevInfo() {
@@ -195,8 +213,75 @@ export class DevComponent implements OnInit {
   }
 
   uploadAllImages(): void {
-    // nothing
+    this.devInfo.disableAll = true;
+    this.devInfo.uploadingImages = true;
+    this.storage.ready().then(() => {
+      this.storage.get(this.requestsKey).then( result => {
+        // extract images requests
+        let imageRequests: StoredRequest[];
+        try {
+          const requests: StoredRequest[]  = JSON.parse(result);
+          imageRequests = requests.filter(op => op.url.endsWith('/findings') || op.url.endsWith('/photos'));
+        } catch (e) {
+          this.toastService.displayToast('No valid request data found on device');
+        }
+
+        // upload requests recursively
+        this.toastService.displayToast('Starting the uploading process.');
+        this.uploadImage(imageRequests, 0).subscribe(() => {
+          // update devInfo 1s after response of last request succeeded
+          // from here it seems every request succeeds, because the errors are
+          // catched in uploadImage()
+          setTimeout(() => {
+            this.devInfo.disableAll = false;
+            this.devInfo.uploadingImages = false;
+            this.initializeDevInfo();
+            this.toastService.displayToast('Finished the uploading process. If there are still unsyched requests left, please ' +
+              'visit the details view.');
+          }, 1500);
+        });
+      });
+    });
   }
+
+  uploadImage(operations: StoredRequest[], index: number): Observable<any> {
+    const op = operations[index];
+
+    return from(this.file.readAsArrayBuffer(op.data.a, op.data.b)).pipe(
+      mergeMap((res) => {
+        // prepare request data
+        const blob = new Blob([res], {type: 'image/png'});
+        const formData = new FormData();
+        formData.append('image', blob);
+        formData.append('description', op.data.description);
+        return this.http.post(op.url, formData).pipe(
+          catchError(() => {
+            // request failed
+            // return a specific string
+            return of('req has failed');
+          }),
+          mergeMap((data) => {
+            if (data !== 'req has failed') {
+              // remove request from storage and update devInfo
+              const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
+                removeImageRequestFromStorage, [op.data.b]);
+              this.obsQ.addToQueue(storageRemove);
+              this.devInfo.currentlyUploadedImages += 1;
+            }
+
+            // execute next request if there are any
+            if (index + 1 < operations.length) {
+              return this.uploadImage(operations, index + 1);
+            }
+            // last request succeeded, upload process is finished
+            return of(null);
+          })
+        );
+      })
+    );
+  }
+
+  // TEST HELPER
 
   createPartThatWillFail(): void {
     this.storage.ready().then(() => {
@@ -223,5 +308,4 @@ export class DevComponent implements OnInit {
       });
     });
   }
-
 }
