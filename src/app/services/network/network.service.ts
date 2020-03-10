@@ -57,12 +57,14 @@ export class NetworkService {
     if (this.status.getValue() === ConnectionStatus.Online && status === ConnectionStatus.Offline) {
       this.toastCtrl.displayToast('You are now Offline');
       this.log.log('App is now offline.');
-      this.status.next(status);
     } else if (this.status.getValue() === ConnectionStatus.Offline && status === ConnectionStatus.Online) {
       this.toastCtrl.displayToast('You are now Online');
       this.log.log('App is now online.');
-      this.status.next(status);
     }
+    // always emit status
+    // this triggers and upload if the status is online and
+    // if no upload is running currently
+    this.status.next(status);
   }
 
   public onNetworkChange(): Observable<ConnectionStatus> {

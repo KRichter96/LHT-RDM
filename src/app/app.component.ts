@@ -28,6 +28,8 @@ export class AppComponent {
 
     this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
       if (status === ConnectionStatus.Online) {
+        // TODO does this trigger uploads multiple times or is the 'isCurrentlyUpload'
+        // TODO value in storage working?
         this.offlineManager.checkForEvents();
       }
     });

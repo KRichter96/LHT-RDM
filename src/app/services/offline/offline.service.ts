@@ -15,6 +15,8 @@ import {ObservableQService} from '../observable-q/observable-q.service';
 import {generateUUID} from 'ionic/lib/utils/uuid';
 
 export const STORAGE_REQ_KEY = 'storedreq';
+export const PARTS_UPLOAD_KEY = 'parts_upload_key';
+export const IMAGES_UPLOAD_KEY = 'images_upload_key';
 
 export interface StoredRequest {
   url: string;
@@ -40,22 +42,51 @@ export class OfflineService {
 
   async checkForEvents() {
 
-    this.storage.get(STORAGE_REQ_KEY).then(storedOperations => {
+    const isP = await this.storage.get(PARTS_UPLOAD_KEY) || false;
+    const isPartsUploadRunning = JSON.parse(isP || 'false'); // TODO does this work?
+    const isI = await this.storage.get(IMAGES_UPLOAD_KEY) || false;
+    const isImagesUploadRunning = JSON.parse(isI || 'false');
+
+    if (isPartsUploadRunning && isImagesUploadRunning) {
+      return;
+    }
+
+    this.storage.get(STORAGE_REQ_KEY).then(async storedOperations => {
 
       const storedObj = JSON.parse(storedOperations as string);
       if (storedObj && storedObj.length > 0) {
+        const otherOperations = storedObj.filter(op => !(op.url.endsWith('/findings') || op.url.endsWith('/photos')));
+        const imageOperations = storedObj.filter(op => op.url.endsWith('/findings') || op.url.endsWith('/photos'));
 
-        this.sendRequests(storedObj).subscribe(async () => {
-          this.toastService.displayToast('Local data successfully synced to API!', 3000);
-          await this.plt.ready().then();
-          await this.storage.ready().then();
-          this.log.log('Successfully uploaded offline requests (' + storedObj.length + ')');
-        }, (error) => {
-          this.log.err('Error on offline uploads (' + storedObj.length + '): ', error);
-        });
+        // trigger images upload
+        if (!isImagesUploadRunning && imageOperations.length > 0) {
+          // set value to true (images are currently uploading)
+          await this.storage.set(IMAGES_UPLOAD_KEY, JSON.stringify(true));
+          // upload images
+          this.sendImageRequestsSequentially(imageOperations, 0).subscribe(() => {
+            this.log.log('Successfully uploaded offline images requests (' + imageOperations.length + ')');
+            this.storage.set(IMAGES_UPLOAD_KEY, JSON.stringify(false));
+          }, (error) => {
+            this.log.err('Error on offline images uploads (' + imageOperations.length + '): ', error);
+            this.storage.set(IMAGES_UPLOAD_KEY, JSON.stringify(false));
+          });
+        }
+
+        // trigger parts upload
+        if (!isPartsUploadRunning && otherOperations.length > 0) {
+          // set value to true (parts are currently uploading)
+          await this.storage.set(PARTS_UPLOAD_KEY, JSON.stringify(true));
+          // upload parts
+          this.sendPartRequestsSequentially(otherOperations, 0).subscribe(() => {
+            this.log.log('Successfully uploaded offline parts requests (' + otherOperations.length + ')');
+            this.storage.set(PARTS_UPLOAD_KEY, JSON.stringify(false));
+          }, (error) => {
+            this.log.err('Error on offline parts uploads (' + otherOperations.length + '): ', error);
+            this.storage.set(PARTS_UPLOAD_KEY, JSON.stringify(false));
+          });
+        }
       }
-      }
-    );
+    });
   }
 
   /**
@@ -118,25 +149,6 @@ export class OfflineService {
     this.obsQ.addToQueue(storageAppend);
 
     return new Promise(() => {});
-  }
-
-  sendRequests(operations: StoredRequest[]) {
-    const obs = [];
-
-    const imageOperations = operations.filter(op => op.url.endsWith('/findings') || op.url.endsWith('/photos'));
-    const otherOperations = operations.filter(op => !(op.url.endsWith('/findings') || op.url.endsWith('/photos')));
-
-    // add part requests
-    if (otherOperations.length > 0) {
-      obs.push(this.sendPartRequestsSequentially(otherOperations, 0));
-    }
-
-    // add image requests
-    if (imageOperations.length > 0) {
-      obs.push(this.sendImageRequestsSequentially(imageOperations, 0));
-    }
-
-    return forkJoin(obs);
   }
 
   sendPartRequestsSequentially(operations: any[], index: number): Observable<any> {
