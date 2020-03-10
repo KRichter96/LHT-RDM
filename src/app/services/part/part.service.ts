@@ -49,13 +49,18 @@ export class PartService {
     }
   }
 
-  public createPart(data: PartModel) {
+  public async createPart(data: PartModel) {
     const partUrl = this.bupService.getUrl() + 'parts';
     setStatus(data);
     this.items.push(data);
     this.setLocalData('parts' + data.projectId, this.items);
 
-    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+    // do not upload directly if there are still unsynchronized parts
+    // this change could be overwritten by a change that's still waiting
+    // for it's upload. furthermore a direct upload could lead to inconsistent counterIds
+    const hasUnsynchedParts = await this.offlineManager.hasUnsynchedPartRequests();
+
+    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline || hasUnsynchedParts) {
       this.offlineManager.storeRequest(partUrl, 'POST', data).then();
     } else {
       this.http.post(partUrl, data).subscribe(
@@ -87,14 +92,19 @@ export class PartService {
     return this.items.find(x => x.counterId === counterId);
   }
 
-  public updatePart(data: PartModel) {
+  public async updatePart(data: PartModel) {
     const partUrl = this.bupService.getUrl() + 'parts';
     setStatus(data);
     data.isSynchronized = false;
     this.items[this.items.indexOf(this.getPartById(data.counterId))] = data;
     this.setLocalData('parts' + data.projectId, this.items);
 
-    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+    // do not upload directly if there are still unsynchronized parts
+    // this change could be overwritten by a change that's still waiting
+    // for it's upload. furthermore a direct upload could lead to inconsistent counterIds
+    const hasUnsynchedParts = await this.offlineManager.hasUnsynchedPartRequests();
+
+    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline || hasUnsynchedParts) {
       this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
     } else {
       this.http.put(partUrl, data).subscribe(
@@ -110,12 +120,17 @@ export class PartService {
   }
 
 
-  public deletePart(data: PartModel)  {
+  public async deletePart(data: PartModel)  {
     const partUrl = this.bupService.getUrl() + 'parts';
     this.items = this.items.filter(x => x.id !== data.id);
     this.setLocalData('parts' + data.projectId, this.items);
 
-    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+    // do not upload directly if there are still unsynchronized parts
+    // this change could be overwritten by a change that's still waiting
+    // for it's upload. furthermore a direct upload could lead to inconsistent counterIds
+    const hasUnsynchedParts = await this.offlineManager.hasUnsynchedPartRequests();
+
+    if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline || hasUnsynchedParts) {
       this.offlineManager.storeRequest(partUrl, 'PUT', data).then();
     } else {
       this.http.put(partUrl, data).subscribe(

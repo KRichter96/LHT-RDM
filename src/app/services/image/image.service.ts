@@ -21,8 +21,14 @@ export class ImageService {
               private bupService: BackendUrlProviderService,
               private log: LogProvider) {}
 
-  uploadImage(image: any, partId) {
+  async uploadImage(image: any, partId) {
     const url = `${this.bupService.getUrl() + 'parts/' + partId + '/photos'}`;
+
+    // do not upload directly if there are still unsynchronized requests
+    // if the parts this image belongs to is unsynchronized the backend will throw
+    // an error. if the image is directly uploaded while other images are uploaded
+    // the upload speed drops
+    const hasUnsynchedRequests = await this.offlineManager.hasUnsynchedRequests();
 
     const a = image.filePath.substring(0, image.filePath.lastIndexOf('/'));
     const b = image.filePath.substring(image.filePath.lastIndexOf('/') + 1);
@@ -33,7 +39,8 @@ export class ImageService {
         formData.append('image', blob);
         formData.append('description', '');
         const data = {a, b, description: ''};
-        if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+
+        if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline || hasUnsynchedRequests) {
           return from(this.offlineManager.storeRequest(url, 'POST', data));
         } else {
           this.http.post(url, formData).subscribe(
@@ -51,8 +58,14 @@ export class ImageService {
     });
   }
 
-  uploadFinding(data: any, partId) {
+  async uploadFinding(data: any, partId) {
     const url = `${this.bupService.getUrl() + 'parts/' + partId + '/findings'}`;
+
+    // do not upload directly if there are still unsynchronized requests
+    // if the parts this image belongs to is unsynchronized the backend will throw
+    // an error. if the image is directly uploaded while other images are uploaded
+    // the upload speed drops
+    const hasUnsynchedRequests = await this.offlineManager.hasUnsynchedRequests();
 
     const a = data.filePath.substring(0, data.filePath.lastIndexOf('/'));
     const b = data.filePath.substring(data.filePath.lastIndexOf('/') + 1);
@@ -63,7 +76,8 @@ export class ImageService {
         formData.append('image', blob);
         formData.append('description', data.description);
         const d = {a, b, description: data.description};
-        if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline) {
+
+        if (this.networkService.getCurrentNetworkStatus() === ConnectionStatus.Offline || hasUnsynchedRequests) {
           return from(this.offlineManager.storeRequest(url, 'POST', d));
         } else {
           this.http.post<any>(url, formData).subscribe(

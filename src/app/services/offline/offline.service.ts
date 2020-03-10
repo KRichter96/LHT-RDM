@@ -58,6 +58,47 @@ export class OfflineService {
     );
   }
 
+  /**
+   * Checks if there are unsynched part requests in the storage.
+   *
+   * @return true if there are unsynched requests and false if there are not
+   */
+  async hasUnsynchedPartRequests(): Promise<boolean> {
+    return this.storage.get(STORAGE_REQ_KEY).then(storedOperations => {
+      try {
+        const storedRequests: StoredRequest[] = JSON.parse(storedOperations as string);
+        if (storedRequests) {
+          const partRequests = storedRequests.filter(op => !(op.url.endsWith('/findings') || op.url.endsWith('/photos')));
+          return partRequests.length > 0;
+        } else {
+          return false;
+        }
+      } catch (e) {
+        return false;
+      }
+    });
+  }
+
+  /**
+   * Checks if there are unsynched requests in the storage.
+   *
+   * @return true if there are unsynched requests and false if there are not
+   */
+  async hasUnsynchedRequests(): Promise<boolean> {
+    return this.storage.get(STORAGE_REQ_KEY).then(storedOperations => {
+      try {
+        const storedRequests: StoredRequest[] = JSON.parse(storedOperations as string);
+        if (storedRequests) {
+          return storedRequests.length > 0;
+        } else {
+          return false;
+        }
+      } catch (e) {
+        return false;
+      }
+    });
+  }
+
   storeRequest(url, type, data) {
     // when adding a request look through all stored requests and remove eveything that's put/post
     // for the part the current request is stored for
