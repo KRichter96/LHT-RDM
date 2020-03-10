@@ -7,6 +7,12 @@ import {ToastService} from '../toast/toast.service';
 import {mergeMap} from 'rxjs/operators';
 import {Platform} from '@ionic/angular';
 import {LogProvider} from '../logging/log.service';
+import {
+  appendRequestToStorage, removeRequestFromStorage,
+  StorageHelperService
+} from '../storage-helper/storage-helper.service';
+import {ObservableQService} from '../observable-q/observable-q.service';
+import {generateUUID} from 'ionic/lib/utils/uuid';
 
 export const STORAGE_REQ_KEY = 'storedreq';
 
@@ -28,7 +34,9 @@ export class OfflineService {
               private http: HttpClient,
               private file: File,
               private plt: Platform,
-              private log: LogProvider) { }
+              private log: LogProvider,
+              private obsQ: ObservableQService,
+              private storageHelperService: StorageHelperService) { }
 
   async checkForEvents() {
 
@@ -41,7 +49,6 @@ export class OfflineService {
           this.toastService.displayToast('Local data successfully synced to API!', 3000);
           await this.plt.ready().then();
           await this.storage.ready().then();
-          this.storage.remove(STORAGE_REQ_KEY).then();
           this.log.log('Successfully uploaded offline requests (' + storedObj.length + ')');
         }, (error) => {
           this.log.err('Error on offline uploads (' + storedObj.length + '): ', error);
@@ -61,26 +68,15 @@ export class OfflineService {
       type,
       data,
       time: new Date().getTime(),
-      id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
+      id: generateUUID()
     };
 
-    return this.storage.get(STORAGE_REQ_KEY).then(storedOperations => {
-      let storedObj = JSON.parse(storedOperations) as StoredRequest[];
+    // append request in storage
+    const storageAppend: Observable<{}> = this.storageHelperService.getAndSetFromStorage(STORAGE_REQ_KEY,
+      appendRequestToStorage, [action]);
+    this.obsQ.addToQueue(storageAppend);
 
-      if (storedObj) {
-        // for post/put requests of parts
-        // look through all actions and remove prior post/put requests of the same part
-        if (action.url.endsWith('/parts') && (action.type === 'POST' || action.type === 'PUT')) {
-          storedObj = storedObj.filter(obj => !(obj.url.endsWith('/parts') && obj.data.id === action.data.id));
-        }
-
-        storedObj.push(action);
-      } else {
-        storedObj = [action];
-      }
-
-      return this.storage.set(STORAGE_REQ_KEY, JSON.stringify(storedObj));
-    });
+    return new Promise(() => {});
   }
 
   sendRequests(operations: StoredRequest[]) {
@@ -90,14 +86,8 @@ export class OfflineService {
     const otherOperations = operations.filter(op => !(op.url.endsWith('/findings') || op.url.endsWith('/photos')));
 
     // add part requests
-    for (const op of otherOperations) {
-      let oneObs; // do not make POST requests for creating parts in offline service
-      if (op.type === 'POST' && op.url.endsWith('/parts')) {
-        oneObs = this.http.request('PUT', op.url, {body: op.data});
-      } else {
-        oneObs = this.http.request(op.type, op.url, {body: op.data});
-      }
-      obs.push(oneObs);
+    if (otherOperations.length > 0) {
+      obs.push(this.sendPartRequestsSequentially(otherOperations, 0));
     }
 
     // add image requests
@@ -106,6 +96,33 @@ export class OfflineService {
     }
 
     return forkJoin(obs);
+  }
+
+  sendPartRequestsSequentially(operations: any[], index: number): Observable<any> {
+    const op = operations[index];
+    let type = '';
+
+    if (op.type === 'POST' && op.url.endsWith('/parts')) {
+      type = 'PUT';
+    } else {
+      type = op.type;
+    }
+    return this.http.request(type, op.url, {body: op.data}).pipe(
+      mergeMap(() => {
+        this.log.log('Offline upload of part (' + op.data.counterId + ')');
+
+        // remove request from storage
+        const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(STORAGE_REQ_KEY,
+          removeRequestFromStorage, [op.id]);
+        this.obsQ.addToQueue(storageRemove);
+
+        if (index < operations.length - 1) {
+          return this.sendPartRequestsSequentially(operations, index + 1);
+        }
+
+        return of(null);
+      }),
+    );
   }
 
   sendImageRequestsSequentially(operations: any[], index: number): Observable<any> {
@@ -121,6 +138,12 @@ export class OfflineService {
         return this.http.post(op.url, formData).pipe(
           mergeMap(() => {
             this.log.log('Offline upload of image (' + op.data.b + ')');
+
+            // remove request from storage and update devInfo
+            const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(STORAGE_REQ_KEY,
+              removeRequestFromStorage, [op.id]);
+            this.obsQ.addToQueue(storageRemove);
+
             if (index < operations.length - 1) {
               return this.sendImageRequestsSequentially(operations, index + 1);
             }

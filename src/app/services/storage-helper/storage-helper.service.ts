@@ -4,7 +4,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import {Storage} from '@ionic/storage';
 import {StoredRequest} from '../offline/offline.service';
 
-export const removePartRequestFromStorage = (list: StoredRequest[], partId: string): StoredRequest[] => {
+/*export const removePartRequestFromStorage = (list: StoredRequest[], partId: string): StoredRequest[] => {
   return list.filter(req => {
     return !req.url.endsWith('/parts') || req.data.id !== partId;
   });
@@ -14,6 +14,18 @@ export const removeImageRequestFromStorage = (list: StoredRequest[], imageName: 
   return list.filter(req => {
     return (!req.url.endsWith('/findings') && !req.url.endsWith('/photos')) || req.data.b !== imageName;
   });
+};*/
+
+export const removeRequestFromStorage = (list: StoredRequest[], requestId: string): StoredRequest[] => {
+  return list.filter(req => req.id !== requestId);
+};
+
+export const appendRequestToStorage = (list: StoredRequest[], op: StoredRequest): StoredRequest[] => {
+  if (list) {
+    return [...list, op];
+  } else {
+    return [op];
+  }
 };
 
 @Injectable({

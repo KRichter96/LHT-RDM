@@ -2,7 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {STORAGE_REQ_KEY, StoredRequest} from '../../../services/offline/offline.service';
 import {Storage} from '@ionic/storage';
 import {HttpClient} from '@angular/common/http';
-import {removeImageRequestFromStorage, StorageHelperService} from '../../../services/storage-helper/storage-helper.service';
+import {
+  removeRequestFromStorage,
+  StorageHelperService
+} from '../../../services/storage-helper/storage-helper.service';
 import {ObservableQService} from '../../../services/observable-q/observable-q.service';
 import {ToastService} from '../../../services/toast/toast.service';
 import {AlertController} from '@ionic/angular';
@@ -62,7 +65,7 @@ export class DevImageDetailsComponent implements OnInit {
       this.http.post(op.url, formData).subscribe(() => {
         // remove request
         const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
-          removeImageRequestFromStorage, [op.data.b]);
+          removeRequestFromStorage, [op.id]);
         this.obsQ.addToQueue(storageRemove);
 
         // inform user of success
@@ -96,7 +99,7 @@ export class DevImageDetailsComponent implements OnInit {
           handler: () => {
             // remove request
             const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
-              removeImageRequestFromStorage, [op.data.b]);
+              removeRequestFromStorage, [op.id]);
             this.obsQ.addToQueue(storageRemove);
 
             // TODO also delete image

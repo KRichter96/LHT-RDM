@@ -22,10 +22,10 @@
       <div class="indent">
         <p>Locally saved metadata: {{devInfo.locallySavedImageMeta}} ({{devInfo.locallySavedImageMetaImages}} Images)</p>
         <p>Locally saved images: {{devInfo.locallySavedImages}}</p>
-        <p>
+        <!--<p>
           <ion-button>Upload</ion-button>
           <ion-button>Details</ion-button>
-        </p>
+        </p>-->
       </div>
     </ion-text>
 
@@ -33,7 +33,6 @@
       <h1 class="ion-margin-start header">Unsynchronized Requests:</h1>
       <div class="indent">
         <p style="color: orange">[Always upload parts first!]</p>
-        <p>&nbsp;</p>
 
         <p>Parts: {{devInfo.unsynchronizedParts}}</p>
         <p>
@@ -50,7 +49,6 @@
           Uploading {{devInfo.currentlyUploadedParts}} of {{devInfo.unsynchronizedParts}} parts
         </p>
 
-        <p>&nbsp;</p>
 
         <p>Images: {{devInfo.unsynchronizedImages}}</p>
         <p>

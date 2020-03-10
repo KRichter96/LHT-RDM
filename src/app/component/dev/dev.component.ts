@@ -7,8 +7,7 @@ import {from, Observable, of, Subscription} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {catchError, mergeMap} from 'rxjs/operators';
 import {
-  removeImageRequestFromStorage,
-  removePartRequestFromStorage,
+  removeRequestFromStorage,
   StorageHelperService
 } from '../../services/storage-helper/storage-helper.service';
 import {ObservableQService} from '../../services/observable-q/observable-q.service';
@@ -202,7 +201,7 @@ export class DevComponent implements OnInit, OnDestroy {
         if (data !== 'req has failed') {
           // remove request from storage and update devInfo
           const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
-            removePartRequestFromStorage, [op.data.id]);
+            removeRequestFromStorage, [op.id]);
           this.obsQ.addToQueue(storageRemove);
           this.devInfo.currentlyUploadedParts += 1;
           this.log.log('Successful dev parts upload (' + (index + 1) + ') ');
@@ -273,7 +272,7 @@ export class DevComponent implements OnInit, OnDestroy {
             if (data !== 'req has failed') {
               // remove request from storage and update devInfo
               const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
-                removeImageRequestFromStorage, [op.data.b]);
+                removeRequestFromStorage, [op.id]);
               this.obsQ.addToQueue(storageRemove);
               this.devInfo.currentlyUploadedImages += 1;
               this.log.log('Successful dev images upload (' + (index + 1) + ') ');

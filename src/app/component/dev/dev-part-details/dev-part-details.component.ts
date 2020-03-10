@@ -4,7 +4,10 @@ import {Storage} from '@ionic/storage';
 import {ProjectModel} from '../../../models/project/ProjectModel';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {removePartRequestFromStorage, StorageHelperService} from '../../../services/storage-helper/storage-helper.service';
+import {
+  removeRequestFromStorage,
+  StorageHelperService
+} from '../../../services/storage-helper/storage-helper.service';
 import {ObservableQService} from '../../../services/observable-q/observable-q.service';
 import {ToastService} from '../../../services/toast/toast.service';
 import {AlertController} from '@ionic/angular';
@@ -71,7 +74,7 @@ export class DevPartDetailsComponent implements OnInit {
     this.http.request('PUT', op.url, {body: op.data}).subscribe(() => {
       // remove request from storage
       const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
-        removePartRequestFromStorage, [op.data.id]);
+        removeRequestFromStorage, [op.id]);
       this.obsQ.addToQueue(storageRemove);
 
       // inform user of success
@@ -104,7 +107,7 @@ export class DevPartDetailsComponent implements OnInit {
           handler: () => {
             // remove request
             const storageRemove: Observable<{}> = this.storageHelperService.getAndSetFromStorage(this.requestsKey,
-              removePartRequestFromStorage, [op.data.id]);
+              removeRequestFromStorage, [op.id]);
             this.obsQ.addToQueue(storageRemove);
 
             // after math
