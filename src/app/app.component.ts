@@ -8,7 +8,7 @@ import {ConnectionStatus, NetworkService} from './services/network/network.servi
 import {OfflineService} from './services/offline/offline.service';
 import {LogProvider} from './services/logging/log.service';
 
-export const VERSION_NUMBER = '1.6.0';
+export const VERSION_NUMBER = '1.7.0';
 
 @Component({
   selector: 'app-root',
@@ -28,8 +28,6 @@ export class AppComponent {
 
     this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
       if (status === ConnectionStatus.Online) {
-        // TODO does this trigger uploads multiple times or is the 'isCurrentlyUpload'
-        // TODO value in storage working?
         this.offlineManager.checkForEvents();
       }
     });
