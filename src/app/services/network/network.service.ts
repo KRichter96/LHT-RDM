@@ -30,7 +30,7 @@ export class NetworkService {
       const status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
       this.status.next(status);
       this.statusValue = status;
-      setInterval(() => { this.checkConnection(); }, 3000);
+      setInterval(() => { this.checkConnection(); }, 7500);
     });
   }
 
